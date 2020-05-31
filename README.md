@@ -31,7 +31,7 @@ For invoice, <a href="mailto:ical@kigkonsult.se">please e-mail</a>.
 ###### INSTALL
 
 ``` php
-composer require kigkonsult\asit:dev-master
+composer require kigkonsult/asit:dev-master
 ```
 
 Composer, in your `composer.json`:
@@ -39,7 +39,7 @@ Composer, in your `composer.json`:
 ``` json
 {
     "require": {
-        "kigkonsult\asit": "dev-master"
+        "kigkonsult/asit": "dev-master"
     }
 }
 ```
