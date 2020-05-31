@@ -1,5 +1,5 @@
 {
-    "name": "kigkonsult/Asit",
+    "name": "kigkonsult/asit",
     "description": "Asit manages assoc array, extends Iterator with (assoc) get-/set- and tag-methods",
     "keywords": [
         "array",
