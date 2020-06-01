@@ -1,10 +1,9 @@
+[comment]: # (This file is part of Asit, manages array collections. Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 ## Asit Summary
 
-Class Asit implements 
-* SeekableIterator, Countable and IteratorAggregate methods,
-* assoc array collection element get-/set-methods
-
-The collection element may, as for Iterator (et al.), be of any type.
+Class Asit 
+* Extends [It]
+* implements assoc array collection element get-/set-methods
 
 The assoc element array key is used as (unique) primary key.
 A primary key may be replaced by another (unique) key.
@@ -16,17 +15,10 @@ Collection elements are searchable using
 For non-assoc arrays,
 * primary key is the (numeric) array index
 
---- 
-```Asit::__construct( [ collection ] )```
-* Class Asit construct method
-* ```collection``` _array_
+Asit class extends
+* [Asittag], secondary keys, additional (non-unique) tags (aka attributes?) may be set for each element
+* [AsitList], assure collection elements of expected valueType
 
-```Asit::factory( [ collection ] )```
-* Class Asit factory method
-* ```collection``` _array_
-* Return _static_
-* static
-    
 #### Primary key methods
 
 ```Asit::assertPkey( pKey )```
@@ -73,12 +65,6 @@ For non-assoc arrays,
 * Return _static_
 * Throws InvalidArgumentException
     
-```Asit::setCollection( collection )```
-* Set (array) collection
-* ```collection``` _array_
-* Return _static_
-* Throws InvalidArgumentException
-
 ```Asit::replacePkey( oldPkey, newPkey )```
 * Replace (set) primary key for collection element
 * ```oldPkey``` _int_|_string_
@@ -102,68 +88,17 @@ For non-assoc arrays,
 ```Asit::setCurrentPkey( pKey )```
 * Set (i.e. reset) primary key for ```current``` element
 
-```Asit::append( element [, pKey ] )```
+```Asit::append( element, pKey )```
 * Note, last appended element is always ```current```
 
 ```Asit::pKeySeek( pKey )```
 * Seeks to a given position in the iterator using primary key
 
-#### SeekableIterator, Countable, IteratorAggregate et al. methods
-
-```Asit::count()```
-* Return count of collection elements
-* Required method implementing the Countable interface
-* Return int
-
-```Asit::current()```
-* Return the current element
-* Required method implementing the Iterator interface
-* Return mixed
-
-```Asit::exists( position )```
-* Checks if position is set
-* ```position``` _int_
-* Return bool
-
-```Asit::GetIterator()```
-* Return an external iterator
-* Required method implementing the IteratorAggregate interface, i.e. makes the class traversable using foreach.
-* Usage : ```foreach( $class as $value ) { .... }```
-* Return Traversable
+#### Iterator et al. related methods
 
 ```Asit::GetPkeyIterator()```
 * Return an external iterator ( pKey => element )
-* Return Traversable
-
-```Asit::key()```
-* Return the (numeric) key of the current element
-* Required method implementing the Iterator interface
-* Return int
-
-```Asit::last()```
-* Move position to last element
-* Return _static_
-
-```Asit::next()```
-* Move position forward to next element
-* Required method implementing the Iterator interface
-* Return _static_
-
-```Asit::previous()```
-* Move position backward to previous element
-* Return _static_
-
-```Asit::rewind()```
-* Rewind the Iterator to the first element
-* Required method implementing the Iterator interface
-* Return _static_
-
-```Asit::seek( position )```
-* Seeks to a given position in the iterator
-* Required method implementing the SeekableIterator interface
-* ```position``` _int_
-* Return void
-* Throws OutOfBoundsException
+* Return _Traversable_
 
 ```Asit::pKeySeek( pKey )```
 * Seeks to a given position in the iterator using primary key
@@ -171,12 +106,10 @@ For non-assoc arrays,
 * Return _static_
 * Throws InvalidArgumentException
 
-```Asit::valid()```
-* Checks if current position is valid
-* Required method implementing the Iterator interface
-* Return bool
+---
+Go to [README] - [Asittag] summary - [AsitList] Summary 
 
-Go to [README] - [Asittag] summary 
-
+[It]:ItSummary.md
+[AsitList]:ListSummary.md
 [Asittag]:AsittagSummary.md
 [README]:../README.md

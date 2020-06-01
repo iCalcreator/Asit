@@ -285,27 +285,6 @@ class AsitTest extends TestCase
     }
 
     /**
-     * Test Asit seek + OutOfBoundsException
-     *
-     * @test
-     */
-    public function asitTest23() {
-        $asit = Asit::factory( [ 1 => 'value' ] );
-        $ok = 0;
-        try {
-            $asit->seek( 23 );
-            $ok = 1;
-        }
-        catch( OutOfBoundsException $e ) {
-            $ok = 2;
-        }
-        catch( Exception $e ) {
-            $ok = 3;
-        }
-        $this->assertTrue( $ok == 2, 'test23, exp 2, got ' . $ok );
-    }
-
-    /**
      * Test Asit pKeySeek + InvalidArgumentException
      *
      * @test
@@ -1405,25 +1384,35 @@ class AsitTest extends TestCase
         foreach( [ Asit::factory( $data ), Asittag::factory( $data ) ] as $aIx => $asit ) {
             $ok   = 0;
             try {
-                $asit->append( 'value', 'key' );  // duplicate pKey
+                $asit->append( 'value2', 'key' );  // duplicate pKey
                 $ok = 1;
-            } catch( InvalidArgumentException $e ) {
+            }
+            catch( InvalidArgumentException $e ) {
                 $ok = 2;
-            } catch( Exception $e ) {
+            }
+            catch( Exception $e ) {
                 $ok = 3;
             }
-            $this->assertTrue( $ok == 2, 'test81-1-' . $aIx . ', exp 2, got ' . $ok );
+            $this->assertTrue(
+                ( $ok == 2 ),
+                'test81-1-' . $aIx . ', exp 2, got ' . $ok  . ' ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString()
+            );
 
             $ok = 0;
             try {
                 $asit->append( 'value2', [ 1, 2, 3 ] ); // unvalid key
                 $ok = 1;
-            } catch( InvalidArgumentException $e ) {
+            }
+            catch( InvalidArgumentException $e ) {
                 $ok = 2;
-            } catch( Exception $e ) {
+            }
+            catch( Exception $e ) {
                 $ok = 3;
             }
-            $this->assertTrue( $ok == 2, 'test81-2-' . $aIx . ', exp 2, got ' . $ok );
+            $this->assertTrue(
+                ( $ok == 2 ),
+                'test81-2-' . $aIx . ', exp 2, got ' . $ok  . ' ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString()
+            );
 
         } // end foreach
 

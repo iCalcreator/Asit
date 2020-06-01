@@ -1,6 +1,6 @@
 <?php
 /**
- * Asit manages assoc arrays
+ * Asit package manages array collections
  *
  * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * Link <https://kigkonsult.se>
@@ -30,7 +30,7 @@ use RuntimeException;
  * Class Asittag extends asit
  *
  * Also secondary keys, additional (non-unique) tags (aka attributes?)
- * may be set for each element. Tags are of int or string type.
+ * may be set for each element. Tags are of int or string valueType.
  *
  * Collection elements are searchable using
  *     Iterator (et al.) methods
@@ -105,7 +105,7 @@ class Asittag
     /**
      * Return bool true if single or any tag in array are set
      *
-     * @param  int|string|array $tags
+     * @param  int|string|array $tag
      * @return bool
      */
     public function tagExists( $tag ) {

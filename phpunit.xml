@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Asit manages assoc arrays
+ Asit package manages array collections
 
  Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  Link <https://kigkonsult.se>
@@ -31,8 +31,14 @@
          syntaxCheck="false"
          bootstrap="autoload.php">
     <testsuites>
+        <testsuite name="It Tests">
+            <file>./test/ItTest.php</file>
+        </testsuite>
         <testsuite name="Asit Tests">
             <file>./test/AsitTest.php</file>
+        </testsuite>
+        <testsuite name="Asit List Tests">
+            <file>./test/AsitListTest.php</file>
         </testsuite>
     </testsuites>
     <filter>
@@ -40,14 +46,20 @@
                 addUncoveredFilesFromWhitelist="true"
                 processUncoveredFilesFromWhitelist="true"
         >
+            <file>./src/It.php</file>
+            <file>./src/ItList.php</file>
             <file>./src/Asit.php</file>
+            <file>./src/AsitList.php</file>
             <file>./src/Asittag.php</file>
+            <file>./src/AsittagList.php</file>
+            <file>./src/ListTrait.php</file>
+            <file>./src/TypeTrait.php</file>
+            <file>./src/TypeInterface.php</file>
         </whitelist>
     </filter>
     <logging>
         <!-- Remove or comment after your own choice-->
         <!-- All logs will be saved in 'testDocs' folder -->
-
         <log type="coverage-html"
              target="testDocs/PHPUnitCoverage"
              lowUpperBound="35"

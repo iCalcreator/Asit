@@ -21,25 +21,38 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
+namespace Kigkonsult\Asit;
+
+use InvalidArgumentException;
+
 /**
- * Kigkonsult\Asit autoloader
+ * Class AsitList extends Asit, assure collection elements of expected valueType
+ *
+ * @package Kigkonsult\Asit
  */
-spl_autoload_register(
-    function( $class ) {
-        static $PREFIX   = 'Kigkonsult\\Asit\\';
-        static $BS       = '\\';
-        static $SRC      = 'src';
-        static $PHP      = '.php';
-        if ( 0 != strncmp( $PREFIX, $class, 16 )) {
-            return;
+class AsitList
+    extends Asit
+    implements TypeInterface
+{
+
+    use TypeTrait;
+
+    use ListTrait;
+
+    /**
+     * Append element to (array) collection, opt with primary key
+     *
+     * @override
+     * @param mixed $element
+     * @param int|string $pKey  MUST be unique
+     * @return static
+     * @throws InvalidArgumentException
+     */
+    public function append( $element, $pKey = null ) {
+        if( $this->isValueTypeSet()) {
+            $this->assertElementType( $element );
         }
-        $class = substr( $class, 16 );
-        if ( false !== strpos( $class, $BS )) {
-            $class = str_replace( $BS, DIRECTORY_SEPARATOR, $class );
-        }
-        $file = __DIR__ . DIRECTORY_SEPARATOR . $SRC . DIRECTORY_SEPARATOR . $class . $PHP;
-        if ( is_file( $file )) {
-            include $file;
-        }
+        return parent::append( $element, $pKey );
     }
-);
+
+}

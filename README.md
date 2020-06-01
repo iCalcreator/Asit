@@ -1,27 +1,48 @@
-> Class package Asit manages assoc arrays
+[comment]: # (This file is part of Asit, manages array collections. Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 
-Class Asit implements 
-* SeekableIterator, Countable and IteratorAggregate methods,
-* assoc array collection element get-/set-methods
+## Asit
 
-The collection element may, as for Iterator (et al.), be of any type.
+> Class It manages array collections
+* Implement _SeekableIterator_, _Countable and _IteratorAggregate_ methods,
+* The collection element may be of any value type.
 
-The assoc element array key is used as (unique) primary key.
-A primary key may be replaced by another (unique) key.
+>Class ItList
+* Extends _It_
+* Assure collection elements of expected valueType 
 
-Collection elements are searchable using
-* Iterator (et al.) methods
-* primary key(s)
+> Class Asit manages assoc array collections
+* Extends _It_ 
+* The assoc element array key is used as (unique) primary key.
+* A primary key may be replaced by another (unique) key.
+* Has primary key collection element get-/set-methods
+* Collection elements are searchable using
+  * Iterator (et al.) methods
+  * primary key(s)
+* For non-assoc arrays,
+  * primary key is the (numeric) array index
 
-For non-assoc arrays,
-* primary key is the (numeric) array index
-
->Class Asittag extends Asit
+>Class AsitList
+* Extends _Asit_
+* Assure collection elements of expected valueType
+ 
+>Class Asittag
+* Extends _Asit_
 * Also secondary keys, additional (non-unique) tags (aka attributes?) may be set for each element.
+* Collection elements are searchable using
+  * Iterator (et al.) methods
+  * primary key(s)
+  * tag(s)
+  * primary key(s) + tag(s)
+
+>Class AsittagList
+* Extends _Asittag_
+* Assure collection elements of expected valueType 
 
 ###### Method summary
+* [It Summary] 
 * [Asit Summary] 
 * [Asittag Summary]
+* It/Asit/Asitag[List Summary]
 
 ###### Sponsorship
 
@@ -72,5 +93,7 @@ This project is licensed under the LGPLv3 License
 
 [Asit Summary]:docs/AsitSummary.md
 [Asittag Summary]:docs/AsittagSummary.md
+[List Summary]:docs/ListSummary.md
 [Composer]:https://getcomposer.org/
 [github.com Asit]:https://github.com/iCalcreator/Asit
+[It Summary]:docs/ItSummary.md

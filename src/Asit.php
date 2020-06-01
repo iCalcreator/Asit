@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Asit manages assoc arrays
+ * Asit package manages array collections
  *
  * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * Link <https://kigkonsult.se>
@@ -33,11 +32,11 @@ use SeekableIterator;
 use Traversable;
 
 /**
- * Class Asit manages assoc arrays
+ * Class Asit extends It, manages assoc arrays
  *     and has, along with SeekableIterator, Countable and IteratorAggregate (+Traversable) methods,
  *     assoc array collection element get-/set-methods.
  *
- * The collection element may, as for Iterator (et al.), be of any type.
+ * The collection element may, as for Iterator (et al.), be of any valueType.
  *
  * The assoc element array key is used as (unique) primary key.
  * A primary key may be replaced by another (unique) key.
@@ -49,14 +48,20 @@ use Traversable;
  * For non-assoc arrays,
  *     primary key is the (numeric) array index
  *
+ * Class AsitList extends Asit
+ *   assure collection elements of expected valueType
+ *
  * Class Asittag extends Asit
  *   Also secondary keys, additional (non-unique) tags (aka attributes?)
  *   may be set for each element.
  *
+ * Class AsittagList extends Asittag
+ *   assure collection elements of expected valueType
+ *
  * @package    Kigkonsult\Asit
  */
 class Asit
-     implements SeekableIterator, Countable
+     extends It
 {
 
     protected static $CURRENTNOTVALID = 'Current not valid';
@@ -64,44 +69,11 @@ class Asit
     protected static $PKEYFOUND       = 'New primary key : %s found (position %d)';
 
     /**
-     * The collection of elements
-     *
-     * @var array
-     */
-    protected $collection = [];
-
-    /**
      * Primary keys for collection element
      *
      * @var array
      */
     protected $pKeys = [];
-
-    /**
-     * Iterator index
-     *
-     * @var int
-     */
-    protected $position = 0;
-
-    /**
-     * Class Asit construct method
-     *
-     * @param  array $collection
-     */
-    public function __construct( array $collection = [] ) {
-        $this->setCollection( $collection );
-    }
-
-    /**
-     * Class Asit factory method
-     *
-     * @param  array $collection
-     * @return static
-     */
-    public static function factory( array $collection = [] ) {
-        return new static( $collection );
-    }
 
     /**
      * Primary key methods
@@ -306,6 +278,7 @@ class Asit
      *
      * Note, last appended element is always 'current'
      *
+     * @override
      * @param mixed $element
      * @param int|string $pKey  MUST be unique
      * @return static
@@ -320,8 +293,8 @@ class Asit
         if( $this->pKeyExists( $pKey )) {
             throw new InvalidArgumentException( sprintf( self::$PKEYFOUND, $pKey, $this->pKeys[$pKey] ));
         }
-        $this->collection[$index] = $element;
         $this->setPkey( $pKey, $index );
+        $this->collection[$index] = $element;
         $this->position = $index;
         return $this;
     }
@@ -329,65 +302,20 @@ class Asit
     /**
      * Set (array) collection
      *
+     * @override
      * @param  array $collection
      * @return static
      * @throws InvalidArgumentException
      */
     public function setCollection( array $collection ) {
-        foreach( array_keys( $collection ) as $pKey ) {
-            $this->append( $collection[$pKey], $pKey );
+        foreach( array_keys( $collection ) as $cIx ) {
+            $this->append( $collection[$cIx], $cIx );
         }
         return $this;
     }
-
     /**
      * SeekableIterator, Countable, IteratorAggregate et al. methods
      */
-
-    /**
-     * Return count of collection elements
-     *
-     * Required method implementing the Countable interface
-     *
-     * @return int
-     */
-    public function count() {
-        return count( $this->collection );
-    }
-
-    /**
-     * Return the current element
-     *
-     * Required method implementing the Iterator interface
-     *
-     * @return mixed
-     */
-    public function current() {
-        return $this->collection[$this->position];
-    }
-
-    /**
-     * Checks if position is set
-     *
-     * @param  int $position
-     * @return bool
-     */
-    public function exists( $position ) {
-        return array_key_exists( $position, $this->collection );
-    }
-
-    /**
-     * Return an external iterator, Traversable
-     *
-     * Required method implementing the IteratorAggregate interface,
-     * i.e. makes the class traversable using foreach.
-     * Usage : 'foreach( $class as $value ) { .... }'
-     *
-     * @return Traversable
-     */
-    public function GetIterator() {
-        return new ArrayIterator( $this->collection );
-    }
 
     /**
      * Return an external iterator ( pKey => element ), Traversable
@@ -400,78 +328,6 @@ class Asit
             $output[$pKey] = $this->collection[$pIx];
         }
         return new ArrayIterator( $output );
-    }
-
-    /**
-     * Return the key of the current element
-     *
-     * Required method implementing the Iterator interface
-     *
-     * @return int
-     */
-    public function key() {
-        return $this->position;
-    }
-
-    /**
-     * Move position to last element
-     *
-     * @return static
-     */
-    public function last() {
-        $this->position = count( $this->collection ) - 1;
-        return $this;
-    }
-
-    /**
-     * Move position forward to next element
-     *
-     * Required method implementing the Iterator interface
-     *
-     * @return static
-     */
-    public function next() {
-        $this->position += 1;
-        return $this;
-    }
-
-    /**
-     * Move position backward to previous element
-     *
-     * @return static
-     */
-    public function previous() {
-        $this->position -= 1;
-        return $this;
-    }
-
-    /**
-     * Rewind the Iterator to the first element
-     *
-     * Required method implementing the Iterator interface
-     *
-     * @return static
-     */
-    public function rewind() {
-        $this->position = 0;
-        return $this;
-    }
-
-    /**
-     * Seeks to a given position in the iterator
-     *
-     * Required method implementing the SeekableIterator interface
-     *
-     * @param  int $position
-     * @return void
-     * @throws OutOfBoundsException
-     */
-    public function seek( $position ) {
-        static $ERRTXT = "Position %d not found!";
-        if( ! $this->exists( $position )) {
-            throw new OutOfBoundsException( sprintf( $ERRTXT, $position ));
-        }
-        $this->position = $position;
     }
 
     /**
@@ -489,14 +345,4 @@ class Asit
         return $this;
     }
 
-    /**
-     * Checks if current position is valid
-     *
-     * Required method implementing the Iterator interface
-     *
-     * @return bool
-     */
-    public function valid() {
-        return array_key_exists( $this->position, $this->collection );
-    }
 }

@@ -1,9 +1,11 @@
+[comment]: # (This file is part of Asit, manages array collections. Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 ## Asittag Summary
 
-Class Asittag extends Asit
+Class Asittag 
+* extends [Asit]
 
 Also secondary keys, additional (non-unique) tags (aka attributes?)
-may be set for each element. Tags are of int or string type.
+may be set for each element. Tags are of int or string valueType.
 
 Collection elements are searchable using
 * Iterator (et al.) methods
@@ -15,6 +17,9 @@ For non-assoc arrays,
 * primary key is the (numeric) array index
 * may also have tags
 
+Asittag class extends
+* [AsittagList], assure collection elements of expected valueType
+
 ---
 
 ```Asittag::getPkeys( [ tag [, sort ]] )```
@@ -23,6 +28,8 @@ For non-assoc arrays,
 * ```tag``` _int_|_string_
 * ```sort``` _int_ default _SORT_REGULAR_
 * Return _array_
+
+---
 
 ```assertTag( tag )```
 * Assert tag, int and string allowed
@@ -150,8 +157,13 @@ For non-assoc arrays,
 ```Asittag::removeCurrentTag( tag )```
 * Remove tag (secondary key) for current
 
----
-Go to [README] - [Asit] summary 
+```Asittag::append( element, pKey, tags )```
+* Append element to (array) collection, with primary key and/or tags (secondary keys)
 
+---
+Go to [README] - [It] summary - [Asit] summary - [AsittagList] Summary 
+
+[It]:ItSummary.md
 [Asit]:AsitSummary.md
+[AsittagList]:ListSummary.md
 [README]:../README.md

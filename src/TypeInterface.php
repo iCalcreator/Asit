@@ -1,6 +1,6 @@
 <?php
 /**
- * Asit package manages array collections
+ *  package
  *
  * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * Link <https://kigkonsult.se>
@@ -21,25 +21,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- * Kigkonsult\Asit autoloader
- */
-spl_autoload_register(
-    function( $class ) {
-        static $PREFIX   = 'Kigkonsult\\Asit\\';
-        static $BS       = '\\';
-        static $SRC      = 'src';
-        static $PHP      = '.php';
-        if ( 0 != strncmp( $PREFIX, $class, 16 )) {
-            return;
-        }
-        $class = substr( $class, 16 );
-        if ( false !== strpos( $class, $BS )) {
-            $class = str_replace( $BS, DIRECTORY_SEPARATOR, $class );
-        }
-        $file = __DIR__ . DIRECTORY_SEPARATOR . $SRC . DIRECTORY_SEPARATOR . $class . $PHP;
-        if ( is_file( $file )) {
-            include $file;
-        }
-    }
-);
+namespace Kigkonsult\Asit;
+
+interface TypeInterface
+{
+
+    const ARR_Y    = 'array';
+    const ARRAY2   = '[]';
+    const BOOL     = 'bool';
+    const BOOLEAN  = 'boolean';
+    const DOUBLE   = 'double';
+    const INT      = 'int';
+    const INTEGER  = 'integer';
+    const FLOAT    = 'float';
+    const STRING   = 'string';
+    const OBJECT   = 'object';
+    const RESOURCE = 'resource';
+    const CALL_BLE = 'callable';
+
+}

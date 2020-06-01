@@ -21,25 +21,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- * Kigkonsult\Asit autoloader
- */
-spl_autoload_register(
-    function( $class ) {
-        static $PREFIX   = 'Kigkonsult\\Asit\\';
-        static $BS       = '\\';
-        static $SRC      = 'src';
-        static $PHP      = '.php';
-        if ( 0 != strncmp( $PREFIX, $class, 16 )) {
-            return;
+namespace Kigkonsult\Asit;
+
+use InvalidArgumentException;
+
+trait ListTrait
+{
+
+    /**
+     * Extended construct method
+     *
+     * @override
+     * @param  array $collection
+     * @param  string $valueType
+     * @throws InvalidArgumentException
+     */
+    public function __construct( $collection = [], $valueType = null ) {
+        if( ! empty( $valueType )) {
+            $this->setValueType( $valueType );
         }
-        $class = substr( $class, 16 );
-        if ( false !== strpos( $class, $BS )) {
-            $class = str_replace( $BS, DIRECTORY_SEPARATOR, $class );
-        }
-        $file = __DIR__ . DIRECTORY_SEPARATOR . $SRC . DIRECTORY_SEPARATOR . $class . $PHP;
-        if ( is_file( $file )) {
-            include $file;
-        }
+        parent::__construct( $collection );
     }
-);
+
+    /**
+     * Extended factory method
+     *
+     * @override
+     * @param  array $collection
+     * @param  string $valueType
+     * @return static
+     * @throws InvalidArgumentException
+     */
+    public static function factory( array $collection = [], $valueType = null ) {
+        return new static( $collection, $valueType );
+    }
+
+}
