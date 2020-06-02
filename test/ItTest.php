@@ -25,6 +25,7 @@ namespace Kigkonsult\Asit;
 
 use Exception;
 use OutOfBoundsException;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Traversable;
 
@@ -255,6 +256,84 @@ class ItTest extends TestCase
             $ok = 3;
         }
         $this->assertTrue( $ok == 2, 'test23, exp 2, got ' . $ok );
+    }
+
+    protected static  $collection = [ 'value9-2', 'value1-3', 'Value3-1' ];
+
+    /**
+     * Test It sort - InvalidArgumentException
+     *
+     * @test
+     */
+    public function itTest31() {
+        $it = new It( self::$collection );
+        $ok = 0;
+        try {
+            $it->get( [] );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test31-1, exp 2, got ' . $ok );
+
+        $ok = 0;
+        try {
+            $it->get( 'dummy' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test31-2, exp 2, got ' . $ok );
+    }
+
+    /**
+     * Test It sort
+     *
+     * @test
+     */
+    public function itTest32() {
+        $it = It::factory( self::$collection );
+
+        $result  = $it->get(); // ignore keys
+        $result1 = reset( $result );
+        $this->assertEquals(
+            'value9-2',
+            $result1,
+            'test 32-1 exp "value9",  got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
+        );
+
+        $result  = $it->get( SORT_FLAG_CASE | SORT_STRING );
+        $result1 = reset( $result );
+        $this->assertEquals(
+            'value1-3',
+            $result1,
+            'test 32-2 exp "value1", got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
+        );
+
+        $result  = $it->get( [ self::class, 'cmp' ] );
+        $result1 = reset( $result );
+        $this->assertEquals(
+            'Value3-1',
+            $result1,
+            'test 32-2 exp "value1", got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
+        );
+    }
+
+    public static function cmp( $a, $b ) {
+        $aLast = substr( $a, -1 );
+        $bLast = substr( $b, -1 );
+        if( $aLast == $bLast ) {
+            return 0;
+        }
+        return ( $aLast < $bLast ) ? -1 : +1;
     }
 
 }

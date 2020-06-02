@@ -383,39 +383,40 @@ class Asittag
      * @param  int|string|array $tags   none-used tag is skipped
      * @param  bool  $union
      * @param  int|string|array $exclTags
+     * @param  int|callable $sortParam    asort sort_flags or uasort callable
      * @return array
      */
-    public function get( $pKeys = null, $tags = null, $union = true, $exclTags = [] ) {
-        if( empty( $pKeys ) && empty( $tags )) {
-            return $this->collection;
+    public function get( $pKeys = null, $tags = null, $union = true, $exclTags = [], $sortParam = null ) {
+        if( empty( $pKeys ) && empty( $tags ) ) {
+            return ( null === $sortParam ) ? $this->collection : self::sort( $this->collection, $sortParam );
         }
         $indexes = [];
         if( null !== $pKeys ) {
-            $indexes = $this->getPkeyIndexes((array) $pKeys );
-            if( empty( $indexes )) { // pKeys not found, ignore tags
+            $indexes = $this->getPkeyIndexes( (array)$pKeys );
+            if( empty( $indexes ) ) { // pKeys not found, ignore tags
                 return [];
             }
         } // end if
         $result = [];
-        if( null === $tags ) { // no tags
+        if( null === $tags ) { // pKeys found, no tags
             foreach( $indexes as $index ) {
-                if( ! $this->hasTag( $index, $exclTags )) {
+                if( ! $this->hasTag( $index, $exclTags ) ) {
                     $result[$index] = $this->collection[$index];
                 }
             } // end foreach
-            return $result;
+            return ( null === $sortParam ) ? $result : self::sort( $result, $sortParam );
         } // end if
-        foreach( $this->getTagIndexes((array) $tags, $union ) as $tagIx ) {
-            if(( null === $pKeys ) || in_array( $tagIx, $indexes )) {
+        foreach( $this->getTagIndexes( (array)$tags, $union ) as $tagIx ) {
+            if( ( null === $pKeys ) || in_array( $tagIx, $indexes ) ) {
                 $result[$tagIx] = $this->collection[$tagIx];
             }
         } // end foreach
         foreach( array_keys( $result ) as $hitIx ) {
-            if( $this->hasTag( $hitIx, $exclTags )) {
+            if( $this->hasTag( $hitIx, $exclTags ) ) {
                 unset( $result[$hitIx] );
             }
         } // end foreach
-        return $result;
+        return ( null === $sortParam ) ? $result : self::sort( $result, $sortParam );
     }
 
     /**
@@ -427,10 +428,11 @@ class Asittag
      * @param  int|string|array $tags
      * @param  bool  $union
      * @param  int|string|array $exclTags
+     * @param  int|callable $sortParam    asort sort_flags or callable uasort
      * @return array
      */
-    public function tagGet( $tags, $union = true, $exclTags = [] ) {
-        return $this->get( null, $tags, $union, $exclTags );
+    public function tagGet( $tags, $union = true, $exclTags = [], $sortParam = null ) {
+        return $this->get( null, $tags, $union, $exclTags, $sortParam );
     }
 
     /**

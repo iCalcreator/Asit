@@ -25,6 +25,15 @@ It class extends
 * Return _static_
 * static
     
+#### Get method
+
+```Asit::get( [ sortParam ] )```
+* Return (non-assoc) array of element(s) in collection
+* If primary keys (pKeys) are given, the return collection element matching the primary keys.
+* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
+* Return _array_
+
+    
 #### Set methods
 
 ```It::append( element )```

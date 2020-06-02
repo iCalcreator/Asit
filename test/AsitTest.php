@@ -25,7 +25,6 @@ namespace Kigkonsult\Asit;
 
 use Exception;
 use InvalidArgumentException;
-use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Traversable;
@@ -33,10 +32,10 @@ use Traversable;
 class AsitTest extends TestCase
 {
 
-    public function arrayLoader() {
+    public function arrayLoader( $max = 1000 ) {
 
         $output = [];
-        for( $ix=0; $ix < 1000; $ix++ ) {
+        for( $ix=0; $ix < $max; $ix++ ) {
             $output['key' . $ix] = 'element' . $ix;
         } // end for
 
@@ -1483,6 +1482,45 @@ class AsitTest extends TestCase
             count( $asit->get()),
             'test 10-1'
         );
+    }
+
+    /**
+     * Test AsitList::get with sort
+     *
+     * @test
+     */
+    public function asitTest11() {
+        $asit    = new AsitList( $this->arrayLoader( 10 ), AsitList::STRING );
+        $result  = $asit->get( null, [ self::class, 'cmp' ] );
+        $result1 = reset( $result );
+        $this->assertEquals(
+            'element9',
+            $result1,
+            'test 11-1 exp "element9", got : ' . $result1
+        );
+    }
+
+    /**
+     * Test AsittagList::get with sort
+     *
+     * @test
+     */
+    public function asittagTest12() {
+        $asit    = new AsittagList( $this->arrayLoader( 10 ), AsitList::STRING );
+        $result  = $asit->get( null, null, null, null, [ self::class, 'cmp' ] );
+        $result1 = reset( $result );
+        $this->assertEquals(
+            'element9',
+            $result1,
+            'test 12-1 exp "element9", got : ' . $result1
+        );
+    }
+
+    public static function cmp( $a, $b ) {
+        if( $a == $b ) {
+            return 0;
+        }
+        return ( $a > $b ) ? -1 : +1;
     }
 
 }

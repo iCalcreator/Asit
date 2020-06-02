@@ -43,16 +43,18 @@ Asit class extends
 
 #### Get-methods
 
-```Asit::get( [ pKeys ] )```
+```Asit::get( [ pKeys [, sortParam ]] )```
 * Return (non-assoc) array of element(s) in collection
 * If primary keys (pKeys) are given, the return collection element matching the primary keys.
 * ```pKeys``` _int_|_string_|_array_
+* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
 * Return _array_
 
-```Asit::pKeyGet( pKeys )```
+```Asit::pKeyGet( pKeys [, sortParam ] )```
 * Return (non-assoc array) sub-set of element(s) in collection using primary keys
 * Convenient ```get``` method alias
 * ```pKeys``` _int_|_string_|_array_
+* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
 * Return _array_
 
 #### Set methods

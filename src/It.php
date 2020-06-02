@@ -70,6 +70,55 @@ class It
     }
 
     /**
+     * Sort collection on values using sort constants (scalar values?) or callable
+     *
+     * For int sortParam, an asort is performed, for callable, uasort
+     *
+     * @param  array $collection
+     * @param  int|callable $sortParam
+     * @throws InvalidArgumentException
+     * @return array
+     */
+    protected static function sort( array $collection, $sortParam = SORT_REGULAR ) {
+        static $ERR1 = "Invalid sortParm %s";
+        static $ERR2 = "Sort error with sortParm %s";
+        $sortOk = false;
+        switch( true ) {
+            case is_int( $sortParam ) :
+                $sortOk = asort( $collection, $sortParam );
+                break;
+            case is_callable( $sortParam ) :
+                $sortOk = uasort( $collection, $sortParam );
+                break;
+            default :
+                throw new InvalidArgumentException( sprintf( $ERR1, var_export( $sortParam, true )));
+                break;
+        }
+        if( ! $sortOk ) {
+            throw new InvalidArgumentException( sprintf( $ERR2, var_export( $sortParam, true )));
+        }
+        return $collection;
+    }
+
+    /**
+     * Get-methods
+     */
+
+    /**
+     * Return collection, opt sorted
+     *
+     * @param  int|callable $sortParam
+     * @return array
+     */
+    public function get( $sortParam = null ) {
+        if( null !== $sortParam ) {
+            $result = $this->collection;
+            return self::sort( $result, $sortParam );
+        }
+        return $this->collection;
+    }
+
+    /**
      * Set-methods
      */
 

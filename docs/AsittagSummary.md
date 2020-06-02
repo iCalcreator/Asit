@@ -82,7 +82,7 @@ Asittag class extends
 
 #### Get methods
 
-```Asittag::get( [ pKeys [, tags [, union [, exclTags ]]]] )```
+```Asittag::get( [ pKeys [, tags [, union [, exclTags [, sortParam]]]]] )```
 * Return (non-assoc) array of element(s) in collection, opt using primary keys and/or tag(s)
 * If primary keys are given, the return collection element includes only these matching the primary keys.
 * Then, and if tags are given and if union is bool true, the result collection element hits match all tags, false match any tag.
@@ -92,15 +92,17 @@ Asittag class extends
 * ```tags``` _int_|_string_|_array_   none-used tag is skipped
 * ```union``` _bool_ default true
 * ```exclTags``` _int_|_string_|_array_ tags to exclude
+* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
 * Return _array_
 
-```Asittag::tagGet( tags [, union [, exclTags ]]] )```
+```Asittag::tagGet( tags [, union [, exclTags [, sortParam ] ]]] )```
 * Return (non-assoc array) sub-set of element(s) in collection using tags
 * If union is bool true, the result collection element hits match all tags, false match any tag.
 * Convenient get method alias
 * ```tags``` _int_|_string_|_array_   none-used tag is skipped
 * ```union``` _bool_ default true
 * ```exclTags``` _int_|_string_|_array_ tags to exclude
+* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
 * Return _array_
 
 #### Set methods

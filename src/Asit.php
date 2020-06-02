@@ -240,11 +240,12 @@ class Asit
      * If primary keys are given, the return collection element includes only these matching the primary keys.
      *
      * @param  int|string|array $pKeys
+     * @param  int|callable $sortParam    asort sort_flags or callable uasort
      * @return array
      */
-    public function get( $pKeys = null ) {
+    public function get( $pKeys = null, $sortParam = null ) {
         if( empty( $pKeys )) {
-            return $this->collection;
+            return ( null === $sortParam ) ? $this->collection : self::sort( $this->collection, $sortParam );
         }
         $indexes = $this->getPkeyIndexes((array) $pKeys );
         if( empty( $indexes )) {
@@ -254,7 +255,7 @@ class Asit
         foreach( $indexes as $pIx ) {
             $result[$pIx] = $this->collection[$pIx];
         }
-        return $result;
+        return ( null === $sortParam ) ? $result : self::sort( $result, $sortParam );
     }
 
     /**
@@ -263,10 +264,11 @@ class Asit
      * Convenient get method alias
      *
      * @param  int|string|array $pKeys
+     * @param  int|callable $sortParam    asort sort_flags or callable uasort
      * @return array
      */
-    public function pKeyGet( $pKeys ) {
-        return $this->get( $pKeys );
+    public function pKeyGet( $pKeys, $sortParam = null ) {
+        return $this->get( $pKeys, $sortParam );
     }
 
     /**
