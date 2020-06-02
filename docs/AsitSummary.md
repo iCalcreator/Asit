@@ -96,7 +96,7 @@ Asit class extends
 
 #### Iterator et al. related methods
 
-```Asit::GetPkeyIterator()```
+```Asit::getPkeyIterator()```
 * Return an external iterator ( pKey => element )
 * Return _Traversable_
 

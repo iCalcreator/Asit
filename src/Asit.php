@@ -322,7 +322,7 @@ class Asit
      *
      * @return Traversable
      */
-    public function GetPkeyIterator() {
+    public function getPkeyIterator() {
         $output = [];
         foreach( $this->pKeys as $pKey => $pIx ) {
             $output[$pKey] = $this->collection[$pIx];

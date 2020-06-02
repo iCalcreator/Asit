@@ -57,7 +57,7 @@ It class extends
 * ```position``` _int_
 * Return bool
 
-```It::GetIterator()```
+```It::getIterator()```
 * Return an external iterator
 * Required method implementing the IteratorAggregate interface, i.e. makes the class traversable using foreach.
 * Usage : ```foreach( $class as $value ) { .... }```

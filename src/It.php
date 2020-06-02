@@ -148,7 +148,7 @@ class It
      *
      * @return Traversable
      */
-    public function GetIterator() {
+    public function getIterator() {
         return new ArrayIterator( $this->collection );
     }
 
