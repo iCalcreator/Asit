@@ -30,6 +30,16 @@ use OutOfBoundsException;
 use SeekableIterator;
 use Traversable;
 
+use function array_key_exists;
+use function array_keys;
+use function asort;
+use function count;
+use function is_callable;
+use function is_int;
+use function sprintf;
+use function uasort;
+use function var_export;
+
 class It
     implements SeekableIterator, Countable
 {
@@ -70,7 +80,14 @@ class It
     }
 
     /**
-     * Sort collection on values using sort constants (scalar values?) or callable
+     * Clear (remove) collection
+     */
+    public function init() {
+        $this->collection = [];
+    }
+
+    /**
+     * Sort collection on values using sort constants (for scalar values?) or callable (complex values)
      *
      * For int sortParam, an asort is performed, for callable, uasort
      *
@@ -80,8 +97,8 @@ class It
      * @return array
      */
     protected static function sort( array $collection, $sortParam = SORT_REGULAR ) {
-        static $ERR1 = "Invalid sortParm %s";
-        static $ERR2 = "Sort error with sortParm %s";
+        static $ERR1 = "Invalid sortParam %s";
+        static $ERR2 = "Sort error with sortParam %s";
         $sortOk = false;
         switch( true ) {
             case is_int( $sortParam ) :

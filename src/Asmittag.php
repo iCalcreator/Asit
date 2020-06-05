@@ -23,36 +23,30 @@
  */
 namespace Kigkonsult\Asit;
 
-use InvalidArgumentException;
-
 /**
- * Class AsitList extends Asit, assure collection elements of expected valueType
+ * Class Asittag extends asit
  *
- * @package Kigkonsult\Asit
+ * Also secondary keys, additional (non-unique) tags (aka attributes?)
+ * may be set for each element. Tags are of int or string valueType.
+ *
+ * Collection elements are searchable using
+ *     Iterator (et al.) methods
+ *     primary key(s)
+ *     tag(s)
+ *     primary key(s) + tag(s)
+ *
+ * For non-assoc arrays,
+ *     primary key is the (numeric) array index
+ *     may also have tags
+ *
+ * @package    Kigkonsult\Asit
  */
-class AsitList
-    extends Asit
-    implements TypeInterface
+class Asmittag
+     extends Asmit
 {
 
-    use TypeTrait;
+    use TagTrait;
 
-    use ListTrait;
-
-    /**
-     * Append assured element to (array) collection, opt with primary key
-     *
-     * @override
-     * @param mixed $element
-     * @param int|string $pKey  MUST be unique
-     * @return static
-     * @throws InvalidArgumentException
-     */
-    public function append( $element, $pKey = null ) {
-        if( $this->isValueTypeSet()) {
-            $this->assertElementType( $element );
-        }
-        return parent::append( $element, $pKey );
-    }
+    use PkeyTagTrait;
 
 }

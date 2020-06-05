@@ -26,12 +26,12 @@ namespace Kigkonsult\Asit;
 use InvalidArgumentException;
 
 /**
- * Class AsitList extends Asit, assure collection elements of expected valueType
+ * Class AsittagList extends Asittag, assure collection elements of preset valueType
  *
  * @package Kigkonsult\Asit
  */
-class AsitList
-    extends Asit
+class AsmittagList
+    extends Asmittag
     implements TypeInterface
 {
 
@@ -45,14 +45,15 @@ class AsitList
      * @override
      * @param mixed $element
      * @param int|string $pKey  MUST be unique
+     * @param array $tags       only int or string allowed
      * @return static
      * @throws InvalidArgumentException
      */
-    public function append( $element, $pKey = null ) {
+    public function append( $element, $pKey = null, $tags = null ) {
         if( $this->isValueTypeSet()) {
             $this->assertElementType( $element );
         }
-        return parent::append( $element, $pKey );
+        return parent::append( $element, $pKey, $tags );
     }
 
 }

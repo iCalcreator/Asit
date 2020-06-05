@@ -40,14 +40,14 @@ class ItList
     use ListTrait;
 
     /**
-     * Append element to (array) collection
+     * Append assured element to (array) collection
      *
      * @override
      * @param mixed $element
      * @return static
      * @throws InvalidArgumentException
      */
-    public function append( $element, $pKey = null ) {
+    public function append( $element ) {
         if( $this->isValueTypeSet()) {
             $this->assertElementType( $element );
         }

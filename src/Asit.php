@@ -24,29 +24,39 @@
 namespace Kigkonsult\Asit;
 
 use ArrayIterator;
-use Countable;
 use InvalidArgumentException;
-use OutOfBoundsException;
 use RuntimeException;
-use SeekableIterator;
 use Traversable;
+
+use function array_key_exists;
+use function array_keys;
+use function array_search;
+use function is_int;
+use function is_string;
+use function ksort;
+use function sort;
+use function sprintf;
+use function var_export;
 
 /**
  * Class Asit extends It, manages assoc arrays
- *     and has, along with SeekableIterator, Countable and IteratorAggregate (+Traversable) methods,
- *     assoc array collection element get-/set-methods.
+ *   and has, along with SeekableIterator, Countable and IteratorAggregate (+Traversable) methods,
+ *   assoc array collection element get-/set-methods.
+ *   The assoc element array key is used as (unique) primary key.
  *
  * The collection element may, as for Iterator (et al.), be of any valueType.
  *
- * The assoc element array key is used as (unique) primary key.
  * A primary key may be replaced by another (unique) key.
  *
  * Collection elements are searchable using
- *     Iterator (et al.) methods
- *     primary key(s)
+ *   Iterator (et al.) methods
+ *   primary key(s)
  *
  * For non-assoc arrays,
- *     primary key is the (numeric) array index
+ *   primary key is the (numeric) array index
+ *
+ * Class AsmitList extends Asit
+ *   Each collection element may have more than one primary key.
  *
  * Class AsitList extends Asit
  *   assure collection elements of expected valueType
@@ -74,6 +84,16 @@ class Asit
      * @var array
      */
     protected $pKeys = [];
+
+    /**
+     * Clear (remove) collection
+     *
+     * @override
+     */
+    public function init() {
+        $this->pKeys = [];
+        parent::init();
+    }
 
     /**
      * Primary key methods
@@ -121,22 +141,20 @@ class Asit
     /**
      * Return all primary keys
      *
-     * @param int $sort  default SORT_REGULAR
+     * @param int $sortFlag  default SORT_REGULAR
      * @return array
      */
-    public function getPkeys( $sort = SORT_REGULAR ) {
-        if( $sort != SORT_REGULAR ) {
-            $pKeys = array_keys( $this->pKeys );
-            sort( $pKeys, $sort );
+    public function getPkeys( $sortFlag = SORT_REGULAR ) {
+        $pKeys = array_keys( $this->pKeys );
+        if( $sortFlag != SORT_REGULAR ) {
+            sort( $pKeys, $sortFlag );
             return $pKeys;
         }
-        return array_keys( $this->pKeys );
+        return $pKeys;
     }
 
     /**
-     * Set (or reset) primary key for a collection element
-     *
-     * Assert && check exist pKey tests before invoke
+     * Set (or reset) the unique primary key for a collection element
      *
      * @param int|string $pKey 0 (zero) allowed
      * @param int        $index
@@ -173,12 +191,18 @@ class Asit
             throw new InvalidArgumentException( sprintf( self::$PKEYFOUND, $newPkey, $this->pKeys[$newPkey] ));
         }
         $this->setPkey( $newPkey, $this->pKeys[$oldPkey] );
-        unset( $this->pKeys[$oldPkey] );
+        $list = [];
+        foreach( $this->pKeys as $pKey2 => $index2 ) {
+            if( $oldPkey != $pKey2 ) {
+                $list[$pKey2] = $index2;
+            }
+        }
+        $this->pKeys = $list;
         return $this;
     }
 
     /**
-     * Return pKey for 'current', false on not found
+     * Return pKey for 'current'
      *
      * To be used in parallel with the Iterator 'current' method, below
      *
@@ -222,11 +246,11 @@ class Asit
     public function getPkeyIndexes( $pKeys = [] ) {
         $result = [];
         foreach( $pKeys as $pKey ) {
-            if( ! $this->pKeyExists( $pKey )) {
-                continue;
+            if( $this->pKeyExists( $pKey )) {
+                $pIndex          = $this->pKeys[$pKey];
+                $result[$pIndex] = $pIndex;
             }
-            $result[] = $this->pKeys[$pKey];
-        }
+        } // end foreach
         return $result;
     }
 
@@ -237,7 +261,7 @@ class Asit
     /**
      * Return (non-assoc) array of element(s) in collection, opt using primary keys and/or tag(s)
      *
-     * If primary keys are given, the return collection element includes only these matching the primary keys.
+     * Using the opt. primary keys for selection
      *
      * @param  int|string|array $pKeys
      * @param  int|callable $sortParam    asort sort_flags or callable uasort
@@ -302,7 +326,7 @@ class Asit
     }
 
     /**
-     * Set (array) collection
+     * Set (array) collection using array key as primary key
      *
      * @override
      * @param  array $collection

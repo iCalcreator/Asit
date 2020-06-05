@@ -46,15 +46,21 @@
                 addUncoveredFilesFromWhitelist="true"
                 processUncoveredFilesFromWhitelist="true"
         >
-            <file>./src/It.php</file>
-            <file>./src/ItList.php</file>
             <file>./src/Asit.php</file>
             <file>./src/AsitList.php</file>
             <file>./src/Asittag.php</file>
             <file>./src/AsittagList.php</file>
+            <file>./src/Asmit.php</file>
+            <file>./src/AsmitList.php</file>
+            <file>./src/Asmittag.php</file>
+            <file>./src/AsmittagList.php</file>
+            <file>./src/It.php</file>
+            <file>./src/ItList.php</file>
             <file>./src/ListTrait.php</file>
-            <file>./src/TypeTrait.php</file>
+            <file>./src/PkeyTagTrait.php</file>
+            <file>./src/TagTrait.php</file>
             <file>./src/TypeInterface.php</file>
+            <file>./src/TypeTrait.php</file>
         </whitelist>
     </filter>
     <logging>

@@ -26,12 +26,12 @@ namespace Kigkonsult\Asit;
 use InvalidArgumentException;
 
 /**
- * Class AsitList extends Asit, assure collection elements of expected valueType
+ * Class AsmitList extends Asmit, assure collection elements of expected valueType
  *
  * @package Kigkonsult\Asit
  */
-class AsitList
-    extends Asit
+class AsmitList
+    extends Asmit
     implements TypeInterface
 {
 

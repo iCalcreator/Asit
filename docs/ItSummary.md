@@ -9,7 +9,7 @@ The collection element may be of any valueType.
 Collection elements are searchable using
 * Iterator etc methods, below
 
-It class extends
+It class extends :
 * [ItList], assure collection elements of expected valueType
 * [Asit], implements assoc array collection element get-/set-methods
 
@@ -23,13 +23,12 @@ It class extends
 * Class Asit factory method
 * ```collection``` _array_
 * Return _static_
-* static
+* Static
     
 #### Get method
 
 ```Asit::get( [ sortParam ] )```
 * Return (non-assoc) array of element(s) in collection
-* If primary keys (pKeys) are given, the return collection element matching the primary keys.
 * ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
 * Return _array_
 

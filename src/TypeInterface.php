@@ -1,6 +1,6 @@
 <?php
 /**
- *  package
+ * Asit package manages array collections
  *
  * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * Link <https://kigkonsult.se>

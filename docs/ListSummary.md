@@ -1,12 +1,16 @@
 [comment]: # (This file is part of Asit, manages array collections. Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
-## ItList, AsitList and AsittagList Summary
+## List Summary
 
-> Class ItList extends [It]
+> Class **ItList** extends [It]
 
-> Class AsitList extends [Asit]
+> Class **AsitList** extends [Asit]
 
-> Class AsittagList extends [Asittag]
->
+> Class **AsittagList** extends [Asittag]
+
+> Class **AsmitList** extends [Asit]
+
+> Class **AsmittagList** extends [Asmittag]
+
 * assure collection elements of expected valueType 
 
 #### Shared methods
@@ -22,7 +26,7 @@
 * ```valueType``` _string_
   * one of TypeInterface constants or FQCN (for class or interface)
 * Return _static_
-* static
+* Static
 
 ----
 
@@ -38,6 +42,7 @@
   * one of TypeInterface constants or FQCN (for class or interface)
 * ```valueType``` _string_
 * Throws InvalidArgumentException
+* Static
 
 ---
 
@@ -60,9 +65,11 @@
 * Static
 
 ---
-Go to [README] - [It] - [Asit] - [Asittag] summary 
+Go to [README] - [It] summary - [Asit]/[Asmit] summary - [Asittag]/[Asmittag] summary 
 
-[It]:ItSummary.md
 [Asit]:AsitSummary.md
+[Asmit]:AsitSummary.md
 [Asittag]:AsittagSummary.md
+[Asmittag]:AsittagSummary.md
+[It]:ItSummary.md
 [README]:../README.md

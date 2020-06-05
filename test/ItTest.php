@@ -1,6 +1,6 @@
 <?php
 /**
- * Asit manages assoc arrays
+ * Asit package manages assoc arrays
  *
  * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * Link <https://kigkonsult.se>

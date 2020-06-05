@@ -1,6 +1,6 @@
 <?php
 /**
- * Asit manages assoc arrays
+ * Asit package manages assoc arrays
  *
  * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * Link <https://kigkonsult.se>
@@ -67,309 +67,449 @@ class AsitListTest extends TestCase
     }
 
     /**
+     * test list::_construct/factory
+     *
+     * @test
+     *
+     */
+    public function ListTest0() {
+        $data1  = [ 'key1' => 'value1' ];
+        $data24 = [ 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', ];
+        $list1 = new AsmitList( $data1, AsmitList::STRING);
+        foreach( $data24 as $key => $value ) {
+            $list1->append( $value, $key );
+        }
+        $list2 =             AsmitList::factory( $data1, AsmitList::STRING)
+            ->append( 'value2', 'key2' )
+            ->append( 'value3', 'key3' )
+            ->append( 'value4', 'key4' );
+
+        $this->assertEquals(
+            $list1->get(),
+            $list2->get(),
+            'test0'
+        );
+        $this->assertEquals(
+            $list1->getPkeyIterator(),
+            $list2->getPkeyIterator(),
+            'test1'
+        );
+    }
+
+    /**
+     * dataProvider
+     *
+     * @return array
+     */
+    public function listLoader() {
+        $testData = [];
+
+        $testData[] = [
+            1,
+            new ItList()
+        ];
+
+        $testData[] = [
+            2,
+            new AsitList()
+        ];
+
+        $testData[] = [
+            3,
+            new AsmitList()
+        ];
+
+        $testData[] = [
+            4,
+            AsittagList::factory()
+        ];
+
+        $testData[] = [
+            5,
+            AsmittagList::factory()
+        ];
+
+        return $testData;
+    }
+
+    /**
      * test assertValueType
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest1() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $lIx => $list ) {
-            $ok = 0;
-            try {
-                $list->assertValueType( AsitList::ARRAY2 );
-                $list->assertValueType( 12345 );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test1-1-' . $lIx . ', exp 2, got ' . $ok );
-        } // end foreach
+    public function ListTest1( $case, $list ) {
+        $case += 10;
+        $ok    = 0;
+        try {
+            $list->assertValueType( AsitList::ARRAY2 );
+            $list->assertValueType( 12345 );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test1-1-' . $case . ', exp 2, got ' . $ok );
     }
 
     /**
      * test assertElementType
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest20() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $lIx => $list ) {
-            $ok = 0;
-            try {
-                $list->assertElementType( 'string' );
-                $ok = 1;
-            } catch( Exception $e ) {
-                $ok = 2;
-            }
-            $this->assertTrue( $ok == 1, 'test20-' . $lIx . ', exp 1, got ' . $ok );
-        } // end foreach
+    public function ListTest20( $case, $list ) {
+        $case += 200;
+        $ok    = 0;
+        try {
+            $list->assertElementType( 'string' );
+            $ok = 1;
+        }
+        catch( Exception $e ) {
+            $ok = 2;
+        }
+        $this->assertTrue( $ok == 1, 'test20-' . $case . ', exp 1, got ' . $ok );
     }
 
     /**
      * test assertElementType
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest21() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $lIx => $list ) {
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::ARR_Y )->assertElementType( 'string' );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test21-1-' . $lIx . ', exp 2, got ' . $ok );
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::ARRAY2 )->assertElementType( 'string' );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test21-2-' . $lIx . ', exp 2, got ' . $ok );
-        } // end foreach
+    public function ListTest21( $case, $list ) {
+        $case += 210;
+        $ok   = 0;
+        try {
+            $list->setValueType( AsitList::ARR_Y )->assertElementType( 'string' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test21-1-' . $case . ', exp 2, got ' . $ok );
+        $ok = 0;
+        try {
+            $list->setValueType( AsitList::ARRAY2 )->assertElementType( 'string' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test21-2-' . $case . ', exp 2, got ' . $ok );
     }
 
     /**
      * test assertElementType
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest22() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $lIx => $list ) {
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::BOOL )->assertElementType( 'string' );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test22-1-' . $lIx . ', exp 2, got ' . $ok );
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::BOOLEAN )->assertElementType( 'string' );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test22-2-' . $lIx . ', exp 2, got ' . $ok );
-        } // end foreach
+    public function ListTest22( $case, $list ) {
+        $case += 220;
+        $ok   = 0;
+        try {
+            $list->setValueType( AsitList::BOOL )->assertElementType( 'string' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test22-1-' . $case . ', exp 2, got ' . $ok );
+        $ok = 0;
+        try {
+            $list->setValueType( AsitList::BOOLEAN )->assertElementType( 'string' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test22-2-' . $case . ', exp 2, got ' . $ok );
     }
 
     /**
      * test assertElementType
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest23() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $lIx => $list ) {
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::INT )->assertElementType( 'string' );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test23-1-' . $lIx . ', exp 2, got ' . $ok );
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::INTEGER )->assertElementType( 'string' );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test23-2-' . $lIx . ', exp 2, got ' . $ok );
-        } // end foreach
+    public function ListTest23( $case, $list ) {
+        $case += 230;
+        $ok   = 0;
+        try {
+            $list->setValueType( AsitList::INT )->assertElementType( 'string' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test23-1-' . $case . ', exp 2, got ' . $ok );
+        $ok = 0;
+        try {
+            $list->setValueType( AsitList::INTEGER )->assertElementType( 'string' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test23-2-' . $case . ', exp 2, got ' . $ok );
     }
 
     /**
      * test assertElementType
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest24() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $lIx => $list ) {
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::DOUBLE )->assertElementType( 'string' );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test24-1-' . $lIx . ', exp 2, got ' . $ok );
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::FLOAT )->assertElementType( 'string' );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test24-2-' . $lIx . ', exp 2, got ' . $ok );
-        } // end foreach
+    public function ListTest24( $case, $list ) {
+        $case += 240;
+        $ok   = 0;
+        try {
+            $list->setValueType( AsitList::DOUBLE )->assertElementType( 'string' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test24-1-' . $case . ', exp 2, got ' . $ok );
+        $ok = 0;
+        try {
+            $list->setValueType( AsitList::FLOAT )->assertElementType( 'string' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test24-2-' . $case . ', exp 2, got ' . $ok );
     }
 
     /**
      * test assertElementType
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest25() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $lIx => $list ) {
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::STRING )->assertElementType( 12345 );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test25-1-' . $lIx . ', exp 2, got ' . $ok );
-        } // end foreach
+    public function ListTest25( $case, $list ) {
+        $case += 250;
+        $ok   = 0;
+        try {
+            $list->setValueType( AsitList::STRING )->assertElementType( 12345 );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test25-1-' . $case . ', exp 2, got ' . $ok );
     }
 
     /**
      * test assertElementType
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest26() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $lIx => $list ) {
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::OBJECT )->assertElementType( 'string' );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test26-1-' . $lIx . ', exp 2, got ' . $ok );
-        } // end foreach
+    public function ListTest26( $case, $list ) {
+        $case += 260;
+        $ok   = 0;
+        try {
+            $list->setValueType( AsitList::OBJECT )->assertElementType( 'string' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test26-1-' . $case . ', exp 2, got ' . $ok );
     }
 
     /**
      * test assertElementType
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest27() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $lIx => $list ) {
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::RESOURCE )->assertElementType( 'string' );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test27-1-' . $lIx . ', exp 2, got ' . $ok );
-        } // end foreach
+    public function ListTest27( $case, $list ) {
+        $case += 270;
+        $ok   = 0;
+        try {
+            $list->setValueType( AsitList::RESOURCE )->assertElementType( 'string' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test27-1-' . $case . ', exp 2, got ' . $ok );
     }
 
     /**
      * test assertElementType
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest28() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $lIx => $list ) {
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::CALL_BLE )->assertElementType( 12345 );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test28-1-' . $lIx . ', exp 2, got ' . $ok );
-        } // end foreach
+    public function ListTest28( $case, $list ) {
+        $case += 280;
+        $ok   = 0;
+        try {
+            $list->setValueType( AsitList::CALL_BLE )->assertElementType( 12345 );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test28-1-' . $case . ', exp 2, got ' . $ok );
     }
 
     /**
      * test assertElementType
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest29() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $lIx => $list ) {
-            $ok = 0;
-            try {
-                $list->setValueType( testIfc::class )->assertElementType( new testClass1() );
-                $ok = 1;
-            } catch( Exception $e ) {
-                $ok = 2;
-            }
-            $this->assertTrue( $ok == 1, 'test29-1-' . $lIx . ', exp 1, got ' . $ok );
-            $ok = 0;
-            try {
-                $list->setValueType( testIfc::class )->assertElementType( new testClass2() );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test29-2-' . $lIx . ', exp 2, got ' . $ok );
+    public function ListTest29( $case, $list ) {
+        $case += 290;
+        $ok   = 0;
+        try {
+            $list->setValueType( testIfc::class )->assertElementType( new testClass1() );
+            $ok = 1;
+        }
+        catch( Exception $e ) {
+            $ok = 2;
+        }
+        $this->assertTrue( $ok == 1, 'test29-1-' . $case . ', exp 1, got ' . $ok );
+        $ok = 0;
+        try {
+            $list->setValueType( testIfc::class )->assertElementType( new testClass2() );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test29-2-' . $case . ', exp 2, got ' . $ok );
 
-            $ok = 0;
-            try {
-                $list->setValueType( AsitList::class )->assertElementType( 12345 );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test29-3-' . $lIx . ', exp 2, got ' . $ok );
+        $ok = 0;
+        try {
+            $list->setValueType( AsitList::class )->assertElementType( 12345 );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test29-3-' . $case . ', exp 2, got ' . $ok );
 
-            $ok = 0;
-            try {
-                $list->setValueType( AsittagList::class )->assertElementType( new testClass1() );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test29-4-' . $lIx . ', exp 2, got ' . $ok );
+        $ok = 0;
+        try {
+            $list->setValueType( AsittagList::class )->assertElementType( new testClass1() );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test29-4-' . $case . ', exp 2, got ' . $ok );
 
-            $ok = 0;
-            try {
-                $list->setValueType( AsittagList::class )->assertElementType( fopen( self::$file1, 'r' ) );
-                $ok = 1;
-            } catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            } catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertTrue( $ok == 2, 'test29-5-' . $lIx . ', exp 2, got ' . $ok );
-        } // end foreach
+        $ok = 0;
+        try {
+            $list->setValueType( AsittagList::class )->assertElementType( fopen( self::$file1, 'r' ) );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue( $ok == 2, 'test29-5-' . $case . ', exp 2, got ' . $ok );
     }
 
     /**
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest3() {
+    public function ListTest3( $case, $list ) {
+        $case += 300;
         foreach(
             [
                 AsitList::BOOL,
@@ -385,34 +525,28 @@ class AsitListTest extends TestCase
                 AsitList::CALL_BLE,
             ]
             as $vIx => $valueType ) {
+            $list->setValueType( $valueType );
+            $this->assertEquals(
+                $valueType,
+                $list->getValueType(),
+                'test' . $case . '-1-' . $vIx . ', exp : ' . $valueType . ', got : ' . $list->getValueType()
+            );
 
-            foreach( [
-                new ItList( null, $valueType ),
-                new AsitList( null, $valueType ),
-                AsittagList::factory( [], $valueType ),
-            ] as $cIx => $list ) {
+            $ok = 0;
+            try {
+                $list->init();
+                $list->setCollection( $this->arrayLoader( $valueType ) );
+                $ok = 1;
+            }
+            catch( Exception $e ) {
+                $ok = $e->getMessage();
+            }
+            $this->assertTrue(
+                ( $ok == 1 ),
+                'test' . $case . '-2-' . $vIx . ' - ' . get_class( $list ) . ' - ' . $valueType . ', exp 1, got ' . $ok
+            );
 
-                $this->assertEquals(
-                    $valueType,
-                    $list->getValueType(),
-                    'test3-1, exp : ' . $valueType . ', got : ' . $list->getValueType()
-                );
-
-                $ok = 0;
-                try {
-                    $list->setCollection( $this->arrayLoader( $valueType ));
-                    $ok = 1;
-                }
-                catch( Exception $e ) {
-                    $ok = $e->getMessage();
-                }
-                $this->assertTrue(
-                    ( $ok == 1 ),
-                    'test3-2 - ' . get_class( $list ) . ' - ' . $valueType . ', exp 1, got ' . $ok
-                );
-
-            } // end foreach 2
-        } // end foreach 1
+        } // end foreach
 
     }
 
@@ -420,22 +554,25 @@ class AsitListTest extends TestCase
      * test fqcn
      *
      * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
      */
-    public function ListTest4() {
-        foreach( [ new ItList(), new AsitList(), AsittagList::factory(), ] as $cIx => $list ) {
-            $list->setValueType( testClass1::class );
+    public function ListTest4( $case, $list ) {
+        $case += 400;
+        $list->setValueType( testClass1::class );
 
-            for( $ix = 0; $ix < 3; $ix++ ) {
-                $list->append( new testClass1() );
-            }
+        for( $ix = 0; $ix < 3; $ix++ ) {
+            $list->append( new testClass1() );
+        }
 
-            foreach( $list as $element ) {
-                $this->asserttrue(
-                    ( $element instanceof testClass1 ),
-                    'test4-1'
-                );
-            }
-        } // end foreach
+        foreach( $list as $element ) {
+            $this->asserttrue(
+                ( $element instanceof testClass1 ),
+                'test4-1-' . $case . '-' . $ix
+            );
+        }
 
     }
 

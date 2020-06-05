@@ -40,9 +40,7 @@ class AsittagList
     use ListTrait;
 
     /**
-     * Append element to (array) collection, opt with primary key and/or tags (secondary keys)
-     *
-     * Note, last appended element is always 'current'
+     * Append assured element to (array) collection, opt with primary key
      *
      * @override
      * @param mixed $element
@@ -51,7 +49,7 @@ class AsittagList
      * @return static
      * @throws InvalidArgumentException
      */
-    public function append( $element, $pKey = null, array $tags = [] ) {
+    public function append( $element, $pKey = null, $tags = null ) {
         if( $this->isValueTypeSet()) {
             $this->assertElementType( $element );
         }
