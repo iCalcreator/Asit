@@ -24,7 +24,7 @@
 namespace Kigkonsult\Asit;
 
 /**
- * Class Asittag extends asit
+ * Class Asittag extends asit, allow collection elements tags
  *
  * Also secondary keys, additional (non-unique) tags (aka attributes?)
  * may be set for each element. Tags are of int or string valueType.

@@ -35,11 +35,12 @@ use function ksort;
 use function sprintf;
 
 /**
- * Class Asmit extends Asit, manages assoc arrays
- *   and has, along with SeekableIterator, Countable and IteratorAggregate (+Traversable) methods,
- *   assoc array collection element get-/set-methods
- *   The assoc element array key is used as (unique) primary key.
- *   Each collection element may have more than one primary key.
+ * Class Asmit extends Asit, allow collection element multiple primary keys
+ *
+ * Asmit has, along with SeekableIterator, Countable and IteratorAggregate (+Traversable) methods,
+ * assoc array collection element get-/set-methods.
+ * The assoc element array key is used as (unique) primary key.
+ * Each collection element may have more than one primary key.
  *
  * The collection element may, as for Iterator (et al.), be of any valueType.
  *
@@ -147,6 +148,19 @@ class Asmit
         return $firstFound
             ? array_search( $this->position, $this->pKeys, true )
             : array_keys( $this->pKeys, $this->position, true );
+    }
+
+    /**
+     * Add another 'current' pKey
+     *
+     * setCurrentPkey() alias
+     *
+     * @param int|string $pKey
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     */
+    public function addCurrentPkey( $pKey ) {
+        $this->setCurrentPkey( $pKey );
     }
 
     /**

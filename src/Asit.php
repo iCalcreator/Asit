@@ -39,10 +39,11 @@ use function sprintf;
 use function var_export;
 
 /**
- * Class Asit extends It, manages assoc arrays
- *   and has, along with SeekableIterator, Countable and IteratorAggregate (+Traversable) methods,
- *   assoc array collection element get-/set-methods.
- *   The assoc element array key is used as (unique) primary key.
+ * Class Asit extends It, allow collection element (unique) primary key
+ *
+ * Asit has, along with SeekableIterator, Countable and IteratorAggregate (+Traversable) methods,
+ * assoc array collection element get-/set-methods.
+ * The assoc element array key is used as (unique) primary key.
  *
  * The collection element may, as for Iterator (et al.), be of any valueType.
  *
@@ -74,6 +75,11 @@ class Asit
      extends It
 {
 
+    /**
+     * Error texts
+     *
+     * @var string
+     */
     protected static $CURRENTNOTVALID = 'Current not valid';
     protected static $PKEYNOTFOUND    = 'Primary key : %s not found';
     protected static $PKEYFOUND       = 'New primary key : %s found (position %d)';

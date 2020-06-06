@@ -46,13 +46,6 @@ Asmit class extends :
 * Throws InvalidArgumentException
 * Return _int_
 
-```Asmit::removePkey( pKey )```
-* ```Asmit``` only
-* Remove primary key for collection element but not last
-* ```pKey``` _int_|_string_
-* Throws InvalidArgumentException
-* Return _int_
-
 ```Asit::getPkeys( [ sortFlag ] )```
 * ```sortFlag``` _int_ default _SORT_REGULAR_
 * Return _array_  all primary keys
@@ -63,6 +56,13 @@ Asmit class extends :
 * ```firstFound``` _bool_ ```Asmit``` only, one (firstFound=true, default) or (array) all
 * Return _int_|_string_|_array_
 * Throws RuntimeException
+
+```Asmit::removePkey( pKey )```
+* ```Asmit``` only
+* Remove primary key for collection element but not last
+* ```pKey``` _int_|_string_
+* Throws InvalidArgumentException
+* Return _int_
 
 #### Get-methods
 
@@ -103,7 +103,15 @@ Asmit class extends :
 * Throws InvalidArgumentException
 
 ```Asit::setCurrentPkey( pKey )```
-* ```Asit``` : reset primary key for ```current``` element
+* ```Asit``` : alter primary key for ```current``` element
+* ```Asmit``` : add primary key for ```current``` element
+* To be used in parallel with the Iterator ```current``` method, below
+* ```pKey``` _int_|_string_
+* Return _static_
+* Throws InvalidArgumentException
+* Throws RuntimeException
+
+```Asmit::addCurrentPkey( pKey )```
 * ```Asmit``` : add primary key for ```current``` element
 * To be used in parallel with the Iterator ```current``` method, below
 * ```pKey``` _int_|_string_
@@ -117,7 +125,9 @@ Asmit class extends :
 * Return primary key for ```current```
 
 ```Asit::setCurrentPkey( pKey )```
-* ```Asit``` : reset primary key for ```current``` element
+* ```Asit``` : alter primary key for ```current``` element
+
+```Asmit::addCurrentPkey( pKey )```
 * ```Asmit``` : add primary key for ```current``` element
 
 ```Asit::append( element, pKey )```

@@ -23,6 +23,13 @@
  */
 namespace Kigkonsult\Asit;
 
+/**
+ * Interface TypeInterface
+ *
+ * Type constants
+ *
+ * @package Kigkonsult\Asit
+ */
 interface TypeInterface
 {
 

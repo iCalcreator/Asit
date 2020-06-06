@@ -25,6 +25,11 @@ namespace Kigkonsult\Asit;
 
 use InvalidArgumentException;
 
+/**
+ * Trait ListTrait, pKey/tag methods
+ *
+ * @package Kigkonsult\Asit
+ */
 trait ListTrait
 {
 
@@ -52,7 +57,7 @@ trait ListTrait
      * @return static
      * @throws InvalidArgumentException
      */
-    public static function factory( array $collection = [], $valueType = null ) {
+    public static function factory( $collection = [], $valueType = null ) {
         return new static( $collection, $valueType );
     }
 

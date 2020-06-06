@@ -36,6 +36,11 @@ use function sort;
 use function sprintf;
 use function var_export;
 
+/**
+ * Trait PkeyTagTrait, pKey/tag methods
+ *
+ * @package Kigkonsult\Asit
+ */
 trait PkeyTagTrait
 {
     /**

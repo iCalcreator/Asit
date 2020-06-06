@@ -40,6 +40,11 @@ use function sprintf;
 use function uasort;
 use function var_export;
 
+/**
+ * Class It, manages array collection of elements
+ *
+ * @package Kigkonsult\Asit
+ */
 class It
     implements SeekableIterator, Countable
 {
@@ -75,7 +80,7 @@ class It
      * @param  array $collection
      * @return static
      */
-    public static function factory( array $collection = [] ) {
+    public static function factory( $collection = [] ) {
         return new static( $collection );
     }
 
@@ -193,6 +198,15 @@ class It
      */
     public function current() {
         return $this->collection[$this->position];
+    }
+
+    /**
+     * Return bool true is the collection is not empty
+     *
+     * @return bool
+     */
+    public function isCollectionSet() {
+        return ( 0 != $this->count());
     }
 
     /**

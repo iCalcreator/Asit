@@ -40,10 +40,17 @@ use function is_string;
 use function sprintf;
 use function var_export;
 
+/**
+ * Trait TypeTrait, property and methods for collection element value types
+ *
+ * @package Kigkonsult\Asit
+ */
 trait TypeTrait
 {
 
     /**
+     * The collection element value type
+     *
      * @var string
      */
     protected $valueType = null;
@@ -130,6 +137,8 @@ trait TypeTrait
     }
 
     /**
+     * Return the collection element value type
+     *
      * @return string
      */
     public function getValueType() {
@@ -137,6 +146,8 @@ trait TypeTrait
     }
 
     /**
+     * Return bool true if collection is not empty
+     *
      * @return bool
      */
     public function isValueTypeSet() {
@@ -144,6 +155,8 @@ trait TypeTrait
     }
 
     /**
+     * Set collection element value type
+     *
      * @param string $valueType
      * @return static
      * @throws InvalidArgumentException

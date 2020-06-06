@@ -61,43 +61,54 @@ class ItTest extends TestCase
     }
 
     /**
-     * @test It exists, count,
+     * @test It isCollectionSet, exists, count,
      *
      */
     public function itTest1() {
         $it = new It();
+
+        $this->assertFalse(
+            $it->isCollectionSet(),
+            'test10'
+        );
+
         foreach( $this->arrayLoader() as  $value ) {
             $it->append( $value );
         } // end for
 
         $this->assertTrue(
-            ( 1000 == $it->count()),
+            $it->isCollectionSet(),
             'test11'
         );
 
         $this->assertTrue(
-            $it->exists( 0 ),
+            ( 1000 == $it->count()),
             'test12'
         );
-        $this->assertFalse(
-            $it->exists( -1 ),
+
+        $this->assertTrue(
+            $it->exists( 0 ),
             'test13'
         );
         $this->assertFalse(
-            $it->exists( -1111 ),
+            $it->exists( -1 ),
             'test14'
+        );
+        $this->assertFalse(
+            $it->exists( -1111 ),
+            'test15'
         );
         $this->assertTrue(
             $it->exists( 999 ),
-            'test15'
-        );
-        $this->assertFalse(
-            $it->exists( 1000 ),
             'test16'
         );
         $this->assertFalse(
+            $it->exists( 1000 ),
+            'test17'
+        );
+        $this->assertFalse(
             $it->exists( 100000 ),
-            'test7'
+            'test18'
         );
     }
 

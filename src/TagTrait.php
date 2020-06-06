@@ -32,6 +32,11 @@ use function count;
 use function in_array;
 use function ksort;
 
+/**
+ * Trait TagTrait, property and methods for tags
+ *
+ * @package Kigkonsult\Asit
+ */
 trait TagTrait
 {
     /**

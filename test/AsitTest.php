@@ -360,7 +360,7 @@ class AsitTest extends TestCase
     }
 
     /**
-     * Test Asmit countPkey/removePkey/getCurrentPkey
+     * Test Asmit addCurrentPkey/countPkey/removePkey/getCurrentPkey
      *
      * @test
      */
@@ -387,7 +387,7 @@ class AsitTest extends TestCase
         );
 
         $pKey2 = 'test24';
-        $asmit->setCurrentPkey( 'test24' );
+        $asmit->addCurrentPkey( 'test24' );
         $this->assertEquals(
             2,
             $asmit->countPkey( $pKey2 ),
@@ -406,7 +406,7 @@ class AsitTest extends TestCase
         );
 
         $pKey3 = 'test24-3';
-        $asmit->setCurrentPkey( $pKey3 );
+        $asmit->addCurrentPkey( $pKey3 );
         $exp   = [ $pKey2, $pKey3 ];
         $pKeys = $asmit->getCurrentPkey( false);
         $this->assertEquals(

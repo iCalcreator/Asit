@@ -71,6 +71,9 @@ It class extends :
 * Usage : ```foreach( $class as $value ) { .... }```
 * Return Traversable
 
+```It::isCollectionSet()```
+* Return _bool_ - true if collection is not empty
+
 ```It::key()```
 * Return the (numeric) key of the current element
 * Required method implementing the Iterator interface
