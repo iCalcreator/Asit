@@ -33,6 +33,8 @@ use function array_search;
 use function count;
 use function ksort;
 use function sprintf;
+use function str_pad;
+use function strlen;
 
 /**
  * Class Asmit extends Asit, allow collection element multiple primary keys
@@ -68,6 +70,27 @@ use function sprintf;
 class Asmit
      extends Asit
 {
+
+    /**
+     * toString
+     *
+     * @return string
+     */
+    public function toString() {
+        static $SP0    = '';
+        $string = $SP0;
+        $pLen   = strlen((string) $this->count());
+        $this->rewind();
+        while( $this->valid()) {
+            $key     = self::prepKeyString( $this->key(), $pLen );
+            foreach( $this->getCurrentPkey( false ) as $pKey ) {
+                $string .= self::pKey2String($key, $pKey );
+            }
+            $string .= self::element2String( $key, $this->current());
+            $this->next();
+        }
+        return $string;
+    }
 
     /**
      * Primary key methods
@@ -134,7 +157,7 @@ class Asmit
     }
 
     /**
-     * Return pKey(s) for 'current', one (firstFound=true) or (array) all
+     * Return pKey(s) for 'current', one (firstFound=true) or all (array)
      *
      * @override
      * @param bool $firstFound

@@ -576,6 +576,65 @@ class AsitListTest extends TestCase
 
     }
 
+    /**
+     * @test
+     * @dataProvider listLoader
+     *
+     * @param int $case
+     * @param mixed $list
+     */
+    public function ListTest5( $case, $list ) {
+        $case  += 500;
+        $string = '';
+        $class  = get_class( $list );
+
+        foreach(
+            [
+                AsitList::BOOL,
+                AsitList::BOOLEAN,
+                AsitList::INT,
+                AsitList::INTEGER,
+                AsitList::FLOAT,
+                AsitList::ARR_Y,
+                AsitList::DOUBLE,
+                AsitList::STRING,
+                AsitList::OBJECT,
+                AsitList::RESOURCE,
+                AsitList::CALL_BLE,
+            ]
+            as $vIx => $valueType ) {
+            $list->setValueType( $valueType );
+            $list->init();
+            for( $x = 0; $x < 99; $x++  ) {
+                foreach( $this->arrayLoader( $valueType ) as $pKey => $element ) {
+                    $list->append( $element, $x . $pKey );
+                    if( $class == ItList::class ) {
+                        continue;
+                    }
+                    if(( in_array( $class, [ AsmitList::class, AsmittagList::class ] )) &&
+                        ( 0 == ( $list->key() % 3 ))) {
+                        $list->addCurrentPkey( 'test' . $x );
+                    }
+                    if( in_array( $class, [ AsittagList::class, AsmittagList::class ] )) {
+                        $list->addCurrentTag( self::getAttribute( $list->key()));
+                        $list->addCurrentTag( self::getAttribute(( $list->key() + 5 )));
+                    }
+                } // end foreach
+            } // end for
+            $string = $list->toString();
+            $list->seek( array_rand( array_flip( range( 2, 192 )))); // set current
+            $this->assertTrue(
+                ( false !== strpos( $string, (string) $list->key())),
+                'test' . $case . '-' . 1 . ' key:' . $list->key() . ' ' .  get_class( $list ) . PHP_EOL . $string
+            );
+        } // end foreach
+        /*
+        if( $class == AsmittagList::class ) {
+            echo $class . ' : ' . PHP_EOL . $string . PHP_EOL; // the very last
+        }
+        */
+    }
+
     public static function getElement( $valueType ) {
         $ix = array_rand( [ 0, 1 ] );
         switch( $valueType ) {
@@ -648,6 +707,24 @@ class AsitListTest extends TestCase
         } // end for
 
         return $output;
+    }
+
+    public static $COLORS = [
+        0 => 'Black',
+        1 => 'Gray',
+        2 => 'Blue',
+        3 => 'Green',
+        4 => 'Yellow',
+        5 => 'Brown',
+        6 => 'Orange',
+        7 => 'Red',
+        8 => 'Pink',
+        9 => 'Purple'
+    ];
+
+    public static function getAttribute( $index ) {
+        $cIx = $index % 10;
+        return self::$COLORS[$cIx];
     }
 
 }

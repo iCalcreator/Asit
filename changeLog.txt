@@ -1,4 +1,7 @@
 
+1.3.5 toString() methods
+1.3.4 ErrTxt upd
+
 1.3.3 It::isCollectionSet() new (i.e. not empty)
 1.3.2 Asmit::addCurrentPkey() new (alias)
 1.3.1 factory method arg alter

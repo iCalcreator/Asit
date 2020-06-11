@@ -54,6 +54,8 @@
 * Extends _Asmittag_
 * Assure collection elements of expected valueType 
 
+But, review pros and cons not using some PHP built-in iterator class, ex [ArrayIterator]!
+
 ###### Method summary
 * [It Summary] 
 * [Asit/Asmit] Summary 
@@ -107,6 +109,7 @@ For support go to [github.com Asit]
 This project is licensed under the LGPLv3 License
 
 
+[ArrayIterator]:https://www.php.net/manual/en/class.arrayiterator
 [Asit/Asmit]:docs/AsitSummary.md
 [Asittag/Asmittag]:docs/AsittagSummary.md
 [Composer]:https://getcomposer.org/

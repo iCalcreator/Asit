@@ -55,7 +55,7 @@ class AsitTest extends TestCase
         9 => 'Purple'
     ];
 
-    public function getAttribute( $index ) {
+    public static function getAttribute( $index ) {
         $cIx = $index % 10;
         return self::$COLORS[$cIx];
     }
@@ -621,7 +621,7 @@ class AsitTest extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, $this->getAttribute( $asit->key()));
+            $asit->addPkeyTag( $key, AsitTest::getAttribute( $asit->key() ) );
         } // end for
         $asit->rewind()->previous(); // no valid current
 
@@ -807,7 +807,7 @@ class AsitTest extends TestCase
         $asit = new AsittagList();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, $this->getAttribute( $asit->key()));
+            $asit->addPkeyTag( $key, AsitTest::getAttribute( $asit->key() ) );
         } // end for
 
         $asit->seek( array_rand( array_flip( range( 30, 39 ))));
@@ -835,7 +835,7 @@ class AsitTest extends TestCase
         $asit = new AsmittagList();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, $this->getAttribute( $asit->key()));
+            $asit->addPkeyTag( $key, AsitTest::getAttribute( $asit->key() ) );
         } // end for
 
         $asit->seek( array_rand( array_flip( range( 0, 99 ))));
@@ -875,7 +875,7 @@ class AsitTest extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, $this->getAttribute( $asit->key()));
+            $asit->addPkeyTag( $key, AsitTest::getAttribute( $asit->key() ) );
         } // end for
 
         $asit->seek( array_rand( array_flip( range( 30, 34 ))));
@@ -1110,7 +1110,7 @@ class AsitTest extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, $this->getAttribute( $asit->key()));
+            $asit->addPkeyTag( $key, AsitTest::getAttribute( $asit->key() ) );
         } // end for
         $asit->seek( array_rand( array_flip( range( 40, 44 ))));
 
@@ -1184,7 +1184,7 @@ class AsitTest extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, $this->getAttribute( $asit->key()));
+            $asit->addPkeyTag( $key, AsitTest::getAttribute( $asit->key() ) );
         } // end for
         $asit->seek( array_rand( array_flip( range( 50, 59 ))));
 
@@ -1286,7 +1286,7 @@ class AsitTest extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, $this->getAttribute( $asit->key()));
+            $asit->addPkeyTag( $key, AsitTest::getAttribute( $asit->key() ) );
         } // end for
         $asit->seek( array_rand( array_flip( range( 61, 69 ))));
 
@@ -1400,7 +1400,7 @@ class AsitTest extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, $this->getAttribute( $asit->key()));
+            $asit->addPkeyTag( $key, AsitTest::getAttribute( $asit->key() ) );
         } // end for
 
         $ok   = 0;
@@ -1549,7 +1549,7 @@ class AsitTest extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, $this->getAttribute( $asit->key()));
+            $asit->addPkeyTag( $key, AsitTest::getAttribute( $asit->key() ) );
         } // end for
         $asit->seek( array_rand( array_flip( range( 0, 99 ))));
 

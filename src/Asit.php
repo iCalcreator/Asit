@@ -36,6 +36,8 @@ use function is_string;
 use function ksort;
 use function sort;
 use function sprintf;
+use function str_pad;
+use function strlen;
 use function var_export;
 
 /**
@@ -82,7 +84,7 @@ class Asit
      */
     protected static $CURRENTNOTVALID = 'Current not valid';
     protected static $PKEYNOTFOUND    = 'Primary key : %s not found';
-    protected static $PKEYFOUND       = 'New primary key : %s found (position %d)';
+    protected static $PKEYFOUND       = 'The new primary key : \'%s\' exists for position %d';
 
     /**
      * Primary keys for collection element
@@ -99,6 +101,37 @@ class Asit
     public function init() {
         $this->pKeys = [];
         parent::init();
+    }
+
+    /**
+     * toString
+     *
+     * @return string
+     */
+    public function toString() {
+        static $SP0   = '';
+        $string = $SP0;
+        $pLen   = strlen((string) $this->count());
+        $this->rewind();
+        while( $this->valid()) {
+            $key     = self::prepKeyString( $this->key(), $pLen );
+            $string .= self::pKey2String( $key, $this->getCurrentPkey());
+            $string .= self::element2String( $key, $this->current());
+            $this->next();
+        }
+        return $string;
+    }
+
+    /**
+     * Return key and pKey as string
+     *
+     * $param string $key
+     * @param string $pKey
+     * @return string
+     */
+    protected static function pKey2String( $key, $pKey ) {
+        static $ROWpk = '%s : (pKey) %s ';
+        return sprintf( $ROWpk, $key, $pKey ) . PHP_EOL;
     }
 
     /**

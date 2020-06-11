@@ -23,6 +23,9 @@
  */
 namespace Kigkonsult\Asit;
 
+use function str_pad;
+use function strlen;
+
 /**
  * Class Asittag extends asit, allow collection elements tags
  *
@@ -48,5 +51,25 @@ class Asittag
     use TagTrait;
 
     use PkeyTagTrait;
+
+    /**
+     * toString
+     *
+     * @return string
+     */
+    public function toString() {
+        static $SP0 = '';
+        $string = $SP0;
+        $pLen   = strlen((string) $this->count());
+        $this->rewind();
+        while( $this->valid()) {
+            $key     = self::prepKeyString( $this->key(), $pLen );
+            $string .= self::pKey2String( $key, $this->getCurrentPkey());
+            $string .= self::tags2String( $key, $this->getCurrentTags());
+            $string .= self::element2String( $key, $this->current());
+            $this->next();
+        }
+        return $string;
+    }
 
 }

@@ -29,8 +29,10 @@ use RuntimeException;
 use function array_key_exists;
 use function array_search;
 use function count;
+use function implode;
 use function in_array;
 use function ksort;
+use function sprintf;
 
 /**
  * Trait TagTrait, property and methods for tags
@@ -68,6 +70,19 @@ trait TagTrait
     public static function assertTag( $tag ) {
         static $ERR = 'Invalid tag : %s';
         self::assertKey( $tag, $ERR );
+    }
+
+    /**
+     * Return key and tags as string
+     *
+     * $param string $key
+     * @param array  $tags
+     * @return string
+     */
+    protected static function tags2String( $key, array $tags ) {
+        static $ROWtags = '%s : (tags) %s ';
+        static $COMMA   = ', ';
+        return sprintf( $ROWtags, $key, implode( $COMMA, $tags )) . PHP_EOL;
     }
 
     /**

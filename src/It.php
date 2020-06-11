@@ -34,9 +34,16 @@ use function array_key_exists;
 use function array_keys;
 use function asort;
 use function count;
+use function get_class;
+use function gettype;
+use function is_array;
+use function is_bool;
 use function is_callable;
 use function is_int;
+use function is_scalar;
 use function sprintf;
+use function str_pad;
+use function strlen;
 use function uasort;
 use function var_export;
 
@@ -89,6 +96,72 @@ class It
      */
     public function init() {
         $this->collection = [];
+    }
+
+    /**
+     * toString
+     *
+     * @return string
+     */
+    public function toString() {
+        static $SP0  = '';
+        $string = $SP0;
+        $pLen   = strlen((string) $this->count());
+        $this->rewind();
+        while( $this->valid()) {
+            $string .= self::element2String( self::prepKeyString( $this->key(), $pLen ), $this->current());
+            $this->next();
+        }
+        return $string;
+    }
+
+    /**
+     * Return key and element(-type) string
+     *
+     * $param int $key
+     * @param int $len
+     * @return string
+     */
+    protected static function prepKeyString( $key, $len ) {
+        static $SP1 = ' ';
+        return str_pad((string) $key, $len, $SP1, STR_PAD_LEFT );
+    }
+
+    /**
+     * Return key and element(-type) string
+     *
+     * $param string $key
+     * @param mixed $element
+     * @return string
+     */
+    protected static function element2String( $key, $element ) {
+        static $ROW1     = '%s : (%s) ';
+        static $OBJECT   = 'object';
+        static $RESOURCE = 'resource';
+        $type   = gettype( $element );
+        $string = sprintf( $ROW1, $key, $type );
+        switch( true ) {
+            case is_bool( $element ) :
+                $string .= var_export( $element, true );
+                break;
+            case is_scalar( $element ) :
+                $string .= $element;
+                break;
+            case is_array( $element ) :
+                $string .= var_export( $element, true );
+                break;
+            case ( $OBJECT == $type ) :
+                $string .= get_class( $element );
+                break;
+            case ( $RESOURCE == $type ) :
+                $string .= $RESOURCE;
+                break;
+            default :
+                $string .= var_export( $element, true );
+                break;
+        }
+        $string .= PHP_EOL;
+        return $string;
     }
 
     /**
