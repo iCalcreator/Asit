@@ -23,22 +23,22 @@
  */
 namespace Kigkonsult\Asit;
 
+use ArrayIterator;
 use Exception;
 use OutOfBoundsException;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Traversable;
 
 class ItTest extends TestCase
 {
 
     public function arrayLoader() {
-
         $output = [];
         for( $ix=0; $ix < 1000; $ix++ ) {
             $output['key' . $ix] = 'element' . $ix;
         } // end for
-
         return $output;
     }
 
@@ -113,99 +113,181 @@ class ItTest extends TestCase
     }
 
     /**
-     * Testing It Iterator methods excl GetIterator - Traversable
+     * Testing It + Asit append + constructor/setCollection array+Traversable
      *
      * @test
      */
     public function itTest21() {
 
-        $it = new It();
+        $it1 = new It();
         foreach( $this->arrayLoader() as $value ) {
-            $it->append( $value );
+            $it1->append( $value );
         } // end for
+
+        $asit1 = new Asit();
+        foreach( $this->arrayLoader() as $value ) {
+            $asit1->append( $value );
+        } // end for
+
+        foreach(
+            [
+                $it1,                             // loaded using append
+                new It( $this->arrayLoader()),    // loaded using array
+                new It( $it1 ),                   // loaded using It, Traversable
+                new It( new ArrayIterator( $this->arrayLoader())), // any Traversable
+                $asit1,                           // loaded using append
+                new Asit( $this->arrayLoader()),  // loaded using array
+                new Asit( $asit1 ),               // loaded using Asit, Traversable
+                new Asit( new ArrayIterator( $this->arrayLoader())) // any Traversable
+            ] as $ix => $it ) {
+            $this->itTest21test( $ix, $it );
+        }
+    }
+
+    /**
+     * Testing It Iterator methods excl GetIterator - Traversable
+     *
+     * @param int $case
+     * @param Traversable $it
+     */
+    public function itTest21test( $case, Traversable $it ) {
+        $case += 1;
+
+        $this->assertTrue(
+            1000 == $it->count(),
+            'test21-0-' . $case . ' exp: 1000, got: ' . $it->count()
+        );
 
         $it->rewind();               // test rewind
         $this->assertTrue(
             0 == $it->key(),
-            'test21-1'
+            'test21-1-' . $case
         );
         $this->assertTrue(
             'element0' == $it->current(),
-            'test21-2'
+            'test21-2-' . $case
         );
 
         $it->next();             // test next
         $this->assertTrue(
             1 == $it->key(),
-            'test21-4'
+            'test21-4-' . $case . ' exp: 1. got: ' . $it->key()
         );
         $this->assertTrue(
             'element1' == $it->current(),
-            'test21-5'
+            'test21-5-' . $case
         );
 
         $it->last();           // test last
         $this->assertTrue(
             999 == $it->key(),
-            'test21-7'
+            'test21-7-' . $case . ' exp: 999, got: ' . $it->key()
         );
         $this->assertTrue(
             'element999' == $it->current(),
-            'test21-8'
+            'test21-8-' . $case
         );
 
         $it->previous();    // test previous
         $this->assertTrue(
             998 == $it->key(),
-            'test21-10'
+            'test21-10-' . $case
         );
         $this->assertTrue(
             'element998' == $it->current(),
-            'test21-11'
+            'test21-11-' . $case
         );
 
         $it->last();
         $it->next();
         $this->assertTrue(
             1000 == $it->key(),
-            'test21-13'
+            'test21-13-' . $case
         );
         $this->assertFalse(
             $it->valid(),
-            'test21-14'
+            'test21-14-' . $case
         );
 
         $it->rewind();
         $it->previous();
         $this->assertTrue(
             -1 == $it->key(),
-            'test21-15'
+            'test21-15-' . $case
         );
         $this->assertFalse(
             $it->valid(),
-            'test21-16'
+            'test21-16-' . $case
         );
 
         $it->seek( 0 );   // test seek
         $this->assertTrue(
             0 == $it->key(),
-            'test21-17'
+            'test21-17-' . $case
         );
         $this->assertTrue(
             'element0' == $it->current(),
-            'test21-18'
+            'test21-18-' . $case
         );
 
         $it->seek( 50 );
         $this->assertTrue(
             50 == $it->key(),
-            'test21-20'
+            'test21-20-' . $case
         );
         $this->assertTrue(
             'element50' == $it->current(),
-            'test21-21'
+            'test21-21-' . $case
         );
 
+    }
+
+    /**
+     * Test It / Asit setCollection + InvalidArgumentException
+     *
+     * @test
+     */
+    public function ItTest21exception() {
+        $invalid = new stdClass;
+        foreach( [ It::factory(), Asit::factory() ] as $it ) {
+            $ok = 0;
+            try {
+                $it->setCollection( $invalid );
+                $ok = 1;
+            } catch( InvalidArgumentException $e ) {
+                $ok = 2;
+            } catch( Exception $e ) {
+                $ok = 3;
+            }
+            $this->assertTrue( $ok == 2, 'test21 exception, exp 2, got ' . $ok );
+        } // end foreach
+    }
+
+    /**
+     * Test It / Asit multiple setCollections, note, Asit requires unique pkeys
+     *
+     * @test
+     */
+    public function ItTest22() {
+        $payLoad1 = array_values( $this->arrayLoader());
+        $payLoad2 = array_combine( range( 1000, 1999 ), $this->arrayLoader());
+        foreach( [ It::factory( $payLoad1 ) , Asit::factory( $payLoad1 ) ] as $it ) {
+            $it->setCollection( $payLoad2 );
+            $this->assertTrue(     // test count
+                2000 == $it->count(),
+                'test22-1 exp: 2000, got: ' . $it->count()
+            );
+            $it->rewind();         // test rewind
+            $this->assertTrue(
+                0 == $it->key(),
+                'test22-2'
+            );
+            $it->last();           // test last
+            $this->assertTrue(
+                1999 == $it->key(),
+                'test22-3'
+            );
+        }
     }
 
     /**
@@ -215,7 +297,7 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function itTest22() {
+    public function itTest25() {
 
         $it = new It();
         foreach( $this->arrayLoader() as $value ) {
@@ -224,11 +306,11 @@ class ItTest extends TestCase
 
         $this->assertTrue(
             ( $it->GetIterator() instanceof Traversable ),   // test GetIterator - Traversable
-            'test22-1'
+            'test25-1'
         );
         $this->assertTrue(
             ( $it instanceof Traversable ),  // test Asit - Traversable
-            'test22-2'
+            'test25-2'
         );
 
         // testing Traversable, i.e. makes the class traversable using foreach
@@ -239,11 +321,11 @@ class ItTest extends TestCase
         $this->assertTrue( ( 1000 == $cnt ), 'test92-3' );
         $this->assertTrue(
             999 == $key,
-            'test22-4'
+            'test25-4'
         );
         $this->assertTrue(
             ( 'element999' == $value ),
-            'test22-5'
+            'test25-5'
         );
 
     }
@@ -253,11 +335,11 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function itTest23() {
+    public function itTest26() {
         $it = It::factory( [ 1 => 'value' ] );
         $ok = 0;
         try {
-            $it->seek( 23 );
+            $it->seek( 26 );
             $ok = 1;
         }
         catch( OutOfBoundsException $e ) {
@@ -266,7 +348,7 @@ class ItTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test23, exp 2, got ' . $ok );
+        $this->assertTrue( $ok == 2, 'test26, exp 2, got ' . $ok );
     }
 
     protected static  $collection = [ 'value9-2', 'value1-3', 'Value3-1' ];

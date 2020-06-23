@@ -12,32 +12,39 @@
 > Class **AsmittagList** extends [Asmittag]
 
 * assure collection elements of expected valueType 
+  * one of TypeInterface constants or FQCN (for class or interface)
+
 
 #### Shared methods
 
-```__construct( [ collection, [ valueType ]] )```
-* ```collection``` _array_
+```*List::__construct( [ collection, [ valueType ]] )```
+* ```collection``` _array_ / _Traversable_
 * ```valueType``` _string_
-  * one of TypeInterface constants or FQCN (for class or interface)
 
-
-```factory( [ collection, [ valueType ]] )```
-* ```collection``` _array_
+```*List::__construct( valueType )```
 * ```valueType``` _string_
-  * one of TypeInterface constants or FQCN (for class or interface)
+
+```*List::factory( [ collection, [ valueType ]] )```
+* ```collection``` _array_ / _Traversable_
+* ```valueType``` _string_
+* Return _static_
+* Static
+
+```*List::factory( valueType )```
+* ```valueType``` _string_
 * Return _static_
 * Static
 
 ----
 
-```assertElementType( element )```
+```*List::assertElementType( element )```
 * Assert collection element value type
 * ```element``` _mixed_
 * Throws InvalidArgumentException
 
 ---
 
-```assertValueType( valueType )```
+```*List::assertValueType( valueType )```
 * Assert value type
   * one of TypeInterface constants or FQCN (for class or interface)
 * ```valueType``` _string_
@@ -46,23 +53,21 @@
 
 ---
 
-```getValueType()```
+```*List::getValueType()```
 * Return _string_
 
 ---
 
-```isValueTypeSet()```
-
+```*List::isValueTypeSet()```
 * Return _bool_
 
 ---
 
-```setValueType( valueType )```
+```*List::setValueType( valueType )```
 * ```valueType``` _string_
   * one of TypeInterface constants or FQCN (for class or interface)
 * Return _static_
 * Throws InvalidArgumentException
-* Static
 
 ---
 Go to [README] - [It] summary - [Asit]/[Asmit] summary - [Asittag]/[Asmittag] summary 

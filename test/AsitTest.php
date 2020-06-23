@@ -266,7 +266,7 @@ class AsitTest extends TestCase
             $asit->seek( $key ); // position iterator last
             $this->assertTrue(
                 ( 'key99' == $asit->getCurrentPkey() ),
-                'test22-6'
+                'test22-6, exp: key99, got: ' . $asit->getCurrentPkey()
             );
 
             $this->assertTrue(

@@ -1,4 +1,7 @@
 
+1.4.2 Simplified List constructor
+1.4.1 Accept Traversable as collection
+
 1.3.5 toString() methods
 1.3.4 ErrTxt upd
 

@@ -3,7 +3,7 @@
 ## Asit
 
 > Class It manages array collections
-* Implement _SeekableIterator_, _Countable and _IteratorAggregate_ methods,
+* Implement _SeekableIterator_, _Countable_ and _IteratorAggregate_ methods,
 * Collection elements are searchable using
   * Iterator (et al.) methods
 * The collection element may be of any value type.
@@ -57,10 +57,10 @@
 But, review pros and cons not using some PHP built-in iterator class, ex [ArrayIterator]!
 
 ###### Method summary
-* [It Summary] 
-* [Asit/Asmit] Summary 
-* [Asittag/Asmittag] Summary
-* It/Asit/Asmit/Asitag/Asmitag[List Summary]
+* [It] summary
+* [Asit/Asmit] summary 
+* [Asittag/Asmittag] summary
+* It/Asit/Asmit/Asitag/Asmitag[List] summary
 
 ###### Sponsorship
 
@@ -114,5 +114,5 @@ This project is licensed under the LGPLv3 License
 [Asittag/Asmittag]:docs/AsittagSummary.md
 [Composer]:https://getcomposer.org/
 [github.com Asit]:https://github.com/iCalcreator/Asit
-[It Summary]:docs/ItSummary.md
-[List Summary]:docs/ListSummary.md
+[It]:docs/ItSummary.md
+[List]:docs/ListSummary.md

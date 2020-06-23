@@ -25,6 +25,8 @@ namespace Kigkonsult\Asit;
 
 use InvalidArgumentException;
 
+use function is_string;
+
 /**
  * Trait ListTrait, pKey/tag methods
  *
@@ -34,30 +36,36 @@ trait ListTrait
 {
 
     /**
-     * Extended construct method
+     * Extended construct method, accepts value type as single or second argument
      *
      * @override
-     * @param  array $collection
+     * @param  mixed $collection
      * @param  string $valueType
      * @throws InvalidArgumentException
      */
-    public function __construct( $collection = [], $valueType = null ) {
-        if( ! empty( $valueType )) {
-            $this->setValueType( $valueType );
+    public function __construct( $collection = null, $valueType = null ) {
+        switch( true ) {
+            case ( is_string( $collection ) && ( null == $valueType )) :
+                $this->setValueType( $collection );
+                $collection = null;
+                break;
+            case ( null !== $valueType ) :
+                $this->setValueType( $valueType );
+                break;
         }
         parent::__construct( $collection );
     }
 
     /**
-     * Extended factory method
+     * Extended factory method, accepts value type as single or second argument
      *
      * @override
-     * @param  array $collection
+     * @param  mixed $collection
      * @param  string $valueType
      * @return static
      * @throws InvalidArgumentException
      */
-    public static function factory( $collection = [], $valueType = null ) {
+    public static function factory( $collection = null, $valueType = null ) {
         return new static( $collection, $valueType );
     }
 

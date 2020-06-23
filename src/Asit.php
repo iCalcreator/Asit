@@ -368,13 +368,30 @@ class Asit
      * Set (array) collection using array key as primary key
      *
      * @override
-     * @param  array $collection
+     * @param  array|Traversable $collection
      * @return static
      * @throws InvalidArgumentException
      */
-    public function setCollection( array $collection ) {
-        foreach( array_keys( $collection ) as $cIx ) {
-            $this->append( $collection[$cIx], $cIx );
+    public function setCollection( $collection ) {
+        switch( true ) {
+            case is_array( $collection ) :
+                foreach( array_keys( $collection ) as $cIx ) {
+                    $this->append( $collection[$cIx], $cIx );
+                }
+                break;
+            case ( ! ( $collection instanceof Traversable )) :
+                throw new InvalidArgumentException( sprintf( self::$ERRSETTXT, self::getErrType ( $collection )));
+                break;
+            case ( $collection instanceof Asit ) :
+                foreach( $collection->getPkeyIterator() as $cIx => $element ) {
+                    $this->append( $element, $cIx );
+                }
+                break;
+            default :
+                foreach( $collection as $cIx => $element ) {
+                    $this->append( $element, $cIx );
+                }
+                break;
         }
         return $this;
     }

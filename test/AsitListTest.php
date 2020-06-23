@@ -72,14 +72,20 @@ class AsitListTest extends TestCase
      * @test
      *
      */
-    public function ListTest0() {
+    public function ListTest11() {
         $data1  = [ 'key1' => 'value1' ];
         $data24 = [ 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', ];
         $list1 = new AsmitList( $data1, AsmitList::STRING);
         foreach( $data24 as $key => $value ) {
             $list1->append( $value, $key );
         }
-        $list2 =             AsmitList::factory( $data1, AsmitList::STRING)
+        $list2 = AsmitList::factory( $data1, AsmitList::STRING )
+            ->append( 'value2', 'key2' )
+            ->append( 'value3', 'key3' )
+            ->append( 'value4', 'key4' );
+
+        $list3 = AsmitList::factory( AsmitList::STRING )
+            ->append( 'value1', 'key1' )
             ->append( 'value2', 'key2' )
             ->append( 'value3', 'key3' )
             ->append( 'value4', 'key4' );
@@ -87,12 +93,25 @@ class AsitListTest extends TestCase
         $this->assertEquals(
             $list1->get(),
             $list2->get(),
-            'test0'
+            'test11-1-12'
         );
+
+        $this->assertEquals(
+            $list1->get(),
+            $list3->get(),
+            'test11-1-13'
+        );
+
         $this->assertEquals(
             $list1->getPkeyIterator(),
             $list2->getPkeyIterator(),
-            'test1'
+            'test11-2-12'
+        );
+
+        $this->assertEquals(
+            $list1->getPkeyIterator(),
+            $list3->getPkeyIterator(),
+            'test11-2-13'
         );
     }
 
@@ -141,7 +160,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest1( $case, $list ) {
+    public function ListTest12( $case, $list ) {
         $case += 10;
         $ok    = 0;
         try {
@@ -155,7 +174,7 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test1-1-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue( $ok == 2, 'test12-1-' . $case . ', exp 2, got ' . $ok );
     }
 
     /**
@@ -448,6 +467,7 @@ class AsitListTest extends TestCase
             $ok = 2;
         }
         $this->assertTrue( $ok == 1, 'test29-1-' . $case . ', exp 1, got ' . $ok );
+
         $ok = 0;
         try {
             $list->setValueType( testIfc::class )->assertElementType( new testClass2() );

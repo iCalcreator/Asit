@@ -52,7 +52,6 @@ Asmit class extends :
 
 ```Asit::getCurrentPkey( [ firstFound ] )```
 * Return primary key for ```current```
-* To be used in parallel with the Iterator ```current``` method, below
 * ```firstFound``` _bool_ ```Asmit``` only, one (firstFound=true, default) or (array) all
 * Return _int_|_string_|_array_
 * Throws RuntimeException
@@ -82,7 +81,7 @@ Asmit class extends :
 #### Set methods
 
 ```Asit::append( element [, pKey ] )```
-* Append element to (array) collection, opt with primary key (pKey)
+* Append element to collection, opt with primary key (pKey)
 * Note, last appended element is always ```current```
 * ```element``` _mixed_
 * ```pKey``` _int_|_string_  MUST be unique
@@ -90,8 +89,10 @@ Asmit class extends :
 * Throws InvalidArgumentException
     
 ```Asit::setCollection( collection )```
-* Set (array) collection using array key as primary key
-* ```collection``` _array_
+* Set collection using keys as primary key
+* Multiple setCollections allowed, i.e. batch appends
+  * note, unique primary keys
+* ```collection``` _array_ / _Traversable_
 * Return _static_
 * Throws InvalidArgumentException
 
@@ -105,7 +106,6 @@ Asmit class extends :
 ```Asit::setCurrentPkey( pKey )```
 * ```Asit``` : alter primary key for ```current``` element
 * ```Asmit``` : add primary key for ```current``` element
-* To be used in parallel with the Iterator ```current``` method, below
 * ```pKey``` _int_|_string_
 * Return _static_
 * Throws InvalidArgumentException
@@ -113,7 +113,6 @@ Asmit class extends :
 
 ```Asmit::addCurrentPkey( pKey )```
 * ```Asmit``` : add primary key for ```current``` element
-* To be used in parallel with the Iterator ```current``` method, below
 * ```pKey``` _int_|_string_
 * Return _static_
 * Throws InvalidArgumentException

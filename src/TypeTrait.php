@@ -24,6 +24,7 @@
 namespace Kigkonsult\Asit;
 
 use InvalidArgumentException;
+use Traversable;
 
 use function class_exists;
 use function get_class;
@@ -111,6 +112,11 @@ trait TypeTrait
                     $errType = 8;
                 }
                 break;
+            case self::TRAVERSABLE :
+                if( ! $element instanceof Traversable ) {
+                    $errType = 8;
+                }
+                break;
             default :
                 if(( self::OBJECT != gettype( $element )) ||
                     ! ( $element instanceof $this->valueType )) {
@@ -191,6 +197,7 @@ trait TypeTrait
             self::OBJECT,
             self::RESOURCE,
             self::CALL_BLE,
+            self::TRAVERSABLE,
         ];
         static $ERR = 'Invalid value type : %s';
         if( $valueType == self::ARRAY2 ) {

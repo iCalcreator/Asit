@@ -73,10 +73,10 @@ class It
     /**
      * Class It construct method
      *
-     * @param  array $collection
+     * @param  array|Traversable $collection
      */
-    public function __construct( $collection = [] ) {
-        if( ! empty( $collection )) {
+    public function __construct( $collection = null ) {
+        if( null !== $collection ) {
             $this->setCollection( $collection );
         }
     }
@@ -84,10 +84,10 @@ class It
     /**
      * Class It factory method
      *
-     * @param  array $collection
+     * @param  array|Traversable $collection
      * @return static
      */
-    public static function factory( $collection = [] ) {
+    public static function factory( $collection = null ) {
         return new static( $collection );
     }
 
@@ -234,17 +234,44 @@ class It
     }
 
     /**
+     * @var string
+     */
+    protected static $ERRSETTXT = 'Invalid input, no array or Traversable : %s';
+
+    /**
      * Set (array) collection
      *
-     * @param  array $collection
+     * @param  array|Traversable $collection
      * @return static
      * @throws InvalidArgumentException
      */
-    public function setCollection( array $collection ) {
-        foreach( array_keys( $collection ) as $cIx ) {
-            $this->append( $collection[$cIx] );
+    public function setCollection( $collection ) {
+        switch( true ) {
+            case is_array( $collection ) :
+                foreach( array_keys( $collection ) as $cIx ) {
+                    $this->append( $collection[$cIx] );
+                }
+                break;
+            case ( $collection instanceof Traversable ) :
+                foreach( $collection as $element ) {
+                    $this->append( $element );
+                }
+                break;
+            default :
+                throw new InvalidArgumentException( sprintf( self::$ERRSETTXT, self::getErrType ( $collection )));
+                break;
         }
         return $this;
+    }
+
+    /**
+     * @param mixed $collection
+     * @return string
+     */
+    protected static function getErrType ( $collection ) {
+        static $OBJECT = 'object';
+        $type = gettype( $collection );
+        return ( $OBJECT == $type ) ? get_class( $collection ) : $type;
     }
 
     /**
