@@ -21,10 +21,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
-namespace Kigkonsult\Asit;
+namespace Kigkonsult\Asit\Traits;
 
-use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\PkeyException;
+use Kigkonsult\Asit\Exceptions\SortException;
+use Kigkonsult\Asit\Exceptions\TagException;
 
+use function array_filter;
 use function array_intersect;
 use function array_keys;
 use function array_merge;
@@ -70,11 +73,12 @@ trait PkeyTagTrait
      *
      * @param  int|string $pKey
      * @param int|string  $tag  0 (zero) allowed also duplicates
-     * @throws InvalidArgumentException
+     * @throws PkeyException
+     * @throws TagException
      */
     public function addPkeyTag( $pKey, $tag ) {
         if( ! $this->pKeyExists( $pKey )) {
-            throw new InvalidArgumentException( sprintf( self::$PKEYNOTFOUND, var_export( $pKey, true )));
+            throw new PkeyException( sprintf( PkeyException::$PKEYNOTFOUND, var_export( $pKey, true )));
         }
         $this->addTag( $tag, $this->pKeys[$pKey] );
     }
@@ -89,14 +93,14 @@ trait PkeyTagTrait
      * @param  int|string $pKey
      * @param int|string  $tag  0 (zero) allowed also duplicates
      * @return static
-     * @throws InvalidArgumentException
+     * @throws PkeyException
      */
     public function removePkeyTag( $pKey, $tag ) {
         if( ! $this->tagExists( $tag )) {
             return $this;
         }
         if( ! $this->pKeyExists( $pKey )) {
-            throw new InvalidArgumentException( sprintf( self::$PKEYNOTFOUND, var_export( $pKey, true )));
+            throw new PkeyException( sprintf( PkeyException::$PKEYNOTFOUND, var_export( $pKey, true )));
         }
         $index = $this->pKeys[$pKey];
         if( ! in_array( $index, $this->tags[$tag] )) {
@@ -107,12 +111,7 @@ trait PkeyTagTrait
         $this->tags[$tag] = array_values( $this->tags[$tag] );
         if( empty( $this->tags[$tag] )) {
             unset( $this->tags[$tag] );
-            $tags = [];
-            foreach( $this->tags as $tag => $ixArr ) {
-                if( ! empty( $ixArr )) {
-                    $tags[$tag] = $ixArr;
-                }
-            }
+            $this->tags = array_filter( $this->tags );
         } // end if
         return $this;
     }
@@ -239,10 +238,11 @@ trait PkeyTagTrait
      * @override
      * @param  int|string|array $pKeys
      * @param  int|string|array $tags   none-used tag is skipped
-     * @param  bool  $union
+     * @param  bool             $union
      * @param  int|string|array $exclTags
-     * @param  int|callable $sortParam    asort sort_flags or uasort callable
+     * @param  int|callable     $sortParam    asort sort_flags or uasort callable
      * @return array
+     * @throws SortException
      */
     public function get( $pKeys = null, $tags = null, $union = true, $exclTags = [], $sortParam = null ) {
         if( empty( $pKeys ) && empty( $tags ) ) {
@@ -291,7 +291,8 @@ trait PkeyTagTrait
      * @param int|string $pKey  MUST be unique
      * @param array $tags       only int or string allowed
      * @return static
-     * @throws InvalidArgumentException
+     * @throws PkeyException
+     * @throws TagException
      */
     public function append( $element, $pKey = null, $tags = null ) {
         $index = $this->count();
@@ -300,7 +301,7 @@ trait PkeyTagTrait
         }
         self::assertPkey( $pKey );
         if( $this->pKeyExists( $pKey )) {
-            throw new InvalidArgumentException( sprintf( self::$PKEYFOUND, $pKey, $this->pKeys[$pKey] ));
+            throw new PkeyException( sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] ));
         }
         foreach((array) $tags as $tag ) {
             self::assertTag( $tag );

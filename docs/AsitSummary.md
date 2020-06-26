@@ -27,12 +27,17 @@ Asmit class extends :
 * [Asmittag], secondary keys, additional (non-unique) tags (aka attributes?) may be set for each element
 * [AsmitList], assure collection elements of expected valueType
 
+#### Inherited methods
+
+Inherited methods from [It]
+
 #### Primary key methods
 
 ```Asit::assertPkey( pKey )```
 * Assert primary key, int and string allowed
 * ```pKey``` _mixed_
 * Return void
+* Throws PkeyException
 * Static
 
 ```Asit::pKeyExists( pKey )```
@@ -43,7 +48,7 @@ Asmit class extends :
 * Return count of primary keys for collection element, not found return 0
 * ```Asmit``` only
 * ```pKey``` _int_|_string_
-* Throws InvalidArgumentException
+* Throws PkeyException
 * Return _int_
 
 ```Asit::getPkeys( [ sortFlag ] )```
@@ -60,7 +65,7 @@ Asmit class extends :
 * ```Asmit``` only
 * Remove primary key for collection element but not last
 * ```pKey``` _int_|_string_
-* Throws InvalidArgumentException
+* Throws PkeyException
 * Return _int_
 
 #### Get-methods
@@ -70,6 +75,7 @@ Asmit class extends :
 * ```pKeys``` _int_|_string_|_array_
 * ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
 * Return _array_
+* Throws SortException
 
 ```Asit::pKeyGet( pKeys [, sortParam ] )```
 * Return (non-assoc array) sub-set of element(s) in collection using primary keys
@@ -77,64 +83,70 @@ Asmit class extends :
 * ```pKeys``` _int_|_string_|_array_
 * ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
 * Return _array_
+* Throws SortException
 
 #### Set methods
 
 ```Asit::append( element [, pKey ] )```
-* Append element to collection, opt with primary key (pKey)
+* Append element to (array) collection, opt with primary key (pKey)
 * Note, last appended element is always ```current```
 * ```element``` _mixed_
 * ```pKey``` _int_|_string_  MUST be unique
 * Return _static_
-* Throws InvalidArgumentException
+* Throws PkeyException
     
 ```Asit::setCollection( collection )```
-* Set collection using keys as primary key
+* Set collection using array key as primary key
 * Multiple setCollections allowed, i.e. batch appends
   * note, unique primary keys
 * ```collection``` _array_ / _Traversable_
 * Return _static_
-* Throws InvalidArgumentException
+* Throws InvalidArgumentException, PkeyException
 
 ```Asit::replacePkey( oldPkey, newPkey )```
 * Replace (set) primary key for collection element
 * ```oldPkey``` _int_|_string_
 * ```newPkey``` _int_|_string_
 * Return _static_
-* Throws InvalidArgumentException
+* Throws PkeyException
 
 ```Asit::setCurrentPkey( pKey )```
 * ```Asit``` : alter primary key for ```current``` element
 * ```Asmit``` : add primary key for ```current``` element
+* To be used in parallel with the Iterator ```current``` method, below
 * ```pKey``` _int_|_string_
 * Return _static_
-* Throws InvalidArgumentException
-* Throws RuntimeException
+* Throws RuntimeException, PkeyException
 
 ```Asmit::addCurrentPkey( pKey )```
 * ```Asmit``` : add primary key for ```current``` element
+* To be used in parallel with the Iterator ```current``` method, below
 * ```pKey``` _int_|_string_
 * Return _static_
-* Throws InvalidArgumentException
-* Throws RuntimeException
+* Throws InvalidArgumentException, RuntimeException
 
 #### Current element primary key methods summary
 
 ```Asit::getCurrentPkey()```
 * Return primary key for ```current```
+* Throws RuntimeException
 
 ```Asit::setCurrentPkey( pKey )```
 * ```Asit``` : alter primary key for ```current``` element
+* Throws PkeyException, RuntimeException
 
 ```Asmit::addCurrentPkey( pKey )```
 * ```Asmit``` : add primary key for ```current``` element
+* Throws PkeyException, RuntimeException
 
 ```Asit::append( element, pKey )```
 * Append element to (array) collection, opt with primary key (pKey)
 * Note, last appended element is always ```current```
+* Throws PkeyException
 
 ```Asit::pKeySeek( pKey )```
 * Seeks to a given position in the iterator using primary key
+* Throws PkeyException
 
 #### Iterator et al. related methods
 
@@ -147,7 +159,7 @@ Asmit class extends :
 * Seeks to a given position in the iterator using primary key
 * ```pKey``` _int_|_string_
 * Return _static_
-* Throws InvalidArgumentException
+* Throws PkeyException
 
 ---
 Go to [README] - [It] summary - [Asittag]/[Asmittag] summary - [AsitList]/[AsmitList] summary

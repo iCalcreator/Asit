@@ -23,7 +23,11 @@
  */
 namespace Kigkonsult\Asit;
 
-use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\PkeyException;
+use Kigkonsult\Asit\Exceptions\TagException;
+use Kigkonsult\Asit\Exceptions\TypeException;
+use Kigkonsult\Asit\Traits\TypeTrait;
+use Kigkonsult\Asit\Traits\ListTrait;
 
 /**
  * Class AsittagList extends Asittag, assure collection elements of preset valueType
@@ -47,7 +51,9 @@ class AsittagList
      * @param int|string $pKey  MUST be unique
      * @param array $tags       only int or string allowed
      * @return static
-     * @throws InvalidArgumentException
+     * @throws PkeyException
+     * @throws TagException
+     * @throws TypeException
      */
     public function append( $element, $pKey = null, $tags = null ) {
         if( $this->isValueTypeSet()) {

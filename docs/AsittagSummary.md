@@ -28,7 +28,11 @@ Asittag class extends :
 Asmittag class extends :
 * [AsmittagList], assure collection elements of expected valueType
 
----
+#### Inherited methods
+
+Inherited methods from [It] - [Asit]
+
+#### Pkey - Tag methods
 
 ```Asittag::getPkeys( [ tag [, sortFlag ]] )```
 * Return all primary keys, primary keys for collection elements using tag or empty array on not found
@@ -37,25 +41,11 @@ Asmittag class extends :
 * ```sortFlag``` _int_ default _SORT_REGULAR_
 * Return _array_
 
----
-
-```assertTag( tag )```
-* Assert tag, int and string allowed
-* ```tag``` _mixed_
-* Return _void_
-* Static
-
-```Asittag::tagExists( tag )```
-* Return bool true if single or any tag in array are set
-* ```tag``` _int_|_string_|_array_
-* Return _bool_
-
 ```Asittag::getTags( [ pKey [, sortFlag ]] )```
 * Return all tags, tags for one collection element using the primary key or empty array on not found
 * ```pKey``` _int_|_string_
 * ```sortFlag``` _int_ default _SORT_REGULAR_
 * Return _array_
-
 
 ```Asittag::getPkeyTags( pKey [, sortFlag ] )```
 * Return tags for one collection element using the primary key or empty array on not found
@@ -63,18 +53,34 @@ Asmittag class extends :
 * ```pKey``` _int_|_string_
 * ```sortFlag``` _int_ default _SORT_REGULAR_
 * Return _array_
- 
-```Asittag::getCurrentTags()```
-* Return tags for ```current```
-* Return _array_
-* Throws RuntimeException
 
 ```Asittag::hasPkeyTag( pKey, tag )```
 * Return bool true if element (identified by pKey) has tag(s), not found pKey/tag return false
 * ```pKey``` _int_|_string_
 * ```tag``` _int_|_string_|_array_
 * Return _bool_
-    
+   
+
+#### Tag methods
+
+
+```assertTag( tag )```
+* Assert tag, int and string allowed
+* ```tag``` _mixed_
+* Return _void_
+* Throws TagException
+* Static
+
+```Asittag::tagExists( tag )```
+* Return bool true if single or any tag in array are set
+* ```tag``` _int_|_string_|_array_
+* Return _bool_
+
+```Asittag::getCurrentTags()```
+* Return tags for ```current```
+* Return _array_
+* Throws RuntimeException
+
 ```Asittag::hasCurrentTag( tag )```
 * Return bool true if ```current``` has tag(s)
 * ```tag``` _int_|_string_|_array_
@@ -100,6 +106,7 @@ Asmittag class extends :
 * ```exclTags``` _int_|_string_|_array_ tags to exclude
 * ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
 * Return _array_
+* Throws SortException
 
 ```Asittag::tagGet( tags [, union [, exclTags [, sortParam ]]]] )```
 * Return (non-assoc array) sub-set of element(s) in collection using tags
@@ -110,6 +117,7 @@ Asmittag class extends :
 * ```exclTags``` _int_|_string_|_array_ tags to exclude
 * ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
 * Return _array_
+* Throws SortException
 
 #### Set methods
 
@@ -121,19 +129,18 @@ Asmittag class extends :
 * ```pKey``` _int_|_string_  MUST be unique
 * ```tags``` _array_
 * Return _static_
-* Throws InvalidArgumentException
+* Throws PkeyException, TagException
 
 ```Asittag::addPkeyTag( pKey, tag )```
 * Add tag (secondary key) for primary key element
 * ```pKey``` _int_|_string_
 * ```tag``` _int_|_string_
-* Throws InvalidArgumentException
+* Throws PkeyException, TagException
 
 ```Asittag::addCurrentTag( tag )```
 * Add tag (secondary key) for ```current```
 * ```tag``` _int_|_string_
-* Throws InvalidArgumentException
-* Throws RuntimeException
+* Throws RuntimeException, TagException
 
 #### Remove methods
 
@@ -142,13 +149,12 @@ Asmittag class extends :
 * ```pKey``` _int_|_string_
 * ```tag``` _int_|_string_
 * Return _static_
-* Throws InvalidArgumentException
+* Throws PkeyException
 
 ```Asittag::removeCurrentTag( tag )```
 * Remove tag (secondary key) for ```current```
 * ```tag``` _int_|_string_
 * Return _static_
-* Throws InvalidArgumentException
 * Throws RuntimeException
     
 
@@ -156,16 +162,20 @@ Asmittag class extends :
 
 ```Asittag::hasCurrentTag( tag )```
 * Return bool true if ```current``` has tag(s)
+* Throws RuntimeException
 
 ```Asittag::addCurrentTag( tag )```
 * Add tag (secondary key) for ```current```
+* Throws RuntimeException, TagException
 
 ```Asittag::removeCurrentTag( tag )```
 * Remove tag (secondary key) for ```current```
+* Throws RuntimeException
 
 ```Asittag::append( element, pKey, tags )```
 * Append element to (array) collection, with primary key and/or tags (secondary keys)
 * Note, last appended element is always ```current```
+* Throws PkeyException, TagException
 
 ---
 Go to [README] - [It] summary - [Asit] / [Asmit] summary - [AsittagList] / [AsmittagList] summary 

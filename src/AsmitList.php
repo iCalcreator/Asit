@@ -23,7 +23,10 @@
  */
 namespace Kigkonsult\Asit;
 
-use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\PkeyException;
+use Kigkonsult\Asit\Exceptions\TypeException;
+use Kigkonsult\Asit\Traits\TypeTrait;
+use Kigkonsult\Asit\Traits\ListTrait;
 
 /**
  * Class AsmitList extends Asmit, assure collection elements of expected valueType
@@ -46,7 +49,8 @@ class AsmitList
      * @param mixed $element
      * @param int|string $pKey  MUST be unique
      * @return static
-     * @throws InvalidArgumentException
+     * @throws PkeyException
+     * @throws TypeException
      */
     public function append( $element, $pKey = null ) {
         if( $this->isValueTypeSet()) {

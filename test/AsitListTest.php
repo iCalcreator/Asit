@@ -116,6 +116,31 @@ class AsitListTest extends TestCase
     }
 
     /**
+     * @test *List singleton
+     *
+     */
+    public function ListTest2() {
+        $list1  = AsmittagList::singleton(
+            $this->arrayLoader( AsmittagList::STRING ),
+            AsmittagList::STRING
+        );
+        $cnt1   = $list1->count();
+
+        $list2  = AsmittagList::singleton();
+
+        $this->assertEquals(
+            $cnt1,
+            $list2->count(),
+            'test2-1'
+        );
+        $this->assertEquals(
+            AsmittagList::STRING,
+            $list2->getValueType(),
+            'test2-2'
+        );
+    }
+
+    /**
      * dataProvider
      *
      * @return array

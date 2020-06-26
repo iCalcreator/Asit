@@ -34,9 +34,9 @@ use Traversable;
 class ItTest extends TestCase
 {
 
-    public function arrayLoader() {
+    public function arrayLoader( $max = 100 ) {
         $output = [];
-        for( $ix=0; $ix < 1000; $ix++ ) {
+        for( $ix=0; $ix < $max; $ix++ ) {
             $output['key' . $ix] = 'element' . $ix;
         } // end for
         return $output;
@@ -82,7 +82,7 @@ class ItTest extends TestCase
         );
 
         $this->assertTrue(
-            ( 1000 == $it->count()),
+            ( 100 == $it->count()),
             'test12'
         );
 
@@ -99,16 +99,33 @@ class ItTest extends TestCase
             'test15'
         );
         $this->assertTrue(
-            $it->exists( 999 ),
+            $it->exists( 99 ),
             'test16'
         );
         $this->assertFalse(
-            $it->exists( 1000 ),
+            $it->exists( 100 ),
             'test17'
         );
         $this->assertFalse(
-            $it->exists( 100000 ),
+            $it->exists( 1000 ),
             'test18'
+        );
+    }
+
+    /**
+     * @test It singleton
+     *
+     */
+    public function itTest2() {
+        $it1  = It::singleton( $this->arrayLoader());
+        $cnt1 = $it1->count();
+
+        $it2 = It::singleton();
+
+        $this->assertEquals(
+            $cnt1,
+            $it2->count(),
+            'test2-1'
         );
     }
 
@@ -154,8 +171,8 @@ class ItTest extends TestCase
         $case += 1;
 
         $this->assertTrue(
-            1000 == $it->count(),
-            'test21-0-' . $case . ' exp: 1000, got: ' . $it->count()
+            ( 100 == $it->count()),
+            'test21-0-' . $case . ' exp: 100, got: ' . $it->count()
         );
 
         $it->rewind();               // test rewind
@@ -180,28 +197,28 @@ class ItTest extends TestCase
 
         $it->last();           // test last
         $this->assertTrue(
-            999 == $it->key(),
+            99 == $it->key(),
             'test21-7-' . $case . ' exp: 999, got: ' . $it->key()
         );
         $this->assertTrue(
-            'element999' == $it->current(),
+            'element99' == $it->current(),
             'test21-8-' . $case
         );
 
         $it->previous();    // test previous
         $this->assertTrue(
-            998 == $it->key(),
+            98 == $it->key(),
             'test21-10-' . $case
         );
         $this->assertTrue(
-            'element998' == $it->current(),
+            'element98' == $it->current(),
             'test21-11-' . $case
         );
 
         $it->last();
         $it->next();
         $this->assertTrue(
-            1000 == $it->key(),
+            100 == $it->key(),
             'test21-13-' . $case
         );
         $this->assertFalse(
@@ -254,9 +271,11 @@ class ItTest extends TestCase
             try {
                 $it->setCollection( $invalid );
                 $ok = 1;
-            } catch( InvalidArgumentException $e ) {
+            }
+            catch( InvalidArgumentException $e ) {
                 $ok = 2;
-            } catch( Exception $e ) {
+            }
+            catch( Exception $e ) {
                 $ok = 3;
             }
             $this->assertTrue( $ok == 2, 'test21 exception, exp 2, got ' . $ok );
@@ -270,12 +289,12 @@ class ItTest extends TestCase
      */
     public function ItTest22() {
         $payLoad1 = array_values( $this->arrayLoader());
-        $payLoad2 = array_combine( range( 1000, 1999 ), $this->arrayLoader());
+        $payLoad2 = array_combine( range( 100, 199 ), $this->arrayLoader());
         foreach( [ It::factory( $payLoad1 ) , Asit::factory( $payLoad1 ) ] as $it ) {
             $it->setCollection( $payLoad2 );
             $this->assertTrue(     // test count
-                2000 == $it->count(),
-                'test22-1 exp: 2000, got: ' . $it->count()
+                200 == $it->count(),
+                'test22-1 exp: 200, got: ' . $it->count()
             );
             $it->rewind();         // test rewind
             $this->assertTrue(
@@ -284,7 +303,7 @@ class ItTest extends TestCase
             );
             $it->last();           // test last
             $this->assertTrue(
-                1999 == $it->key(),
+                199 == $it->key(),
                 'test22-3'
             );
         }
@@ -318,13 +337,13 @@ class ItTest extends TestCase
         foreach(   $it   as $key => $value ) { // 'internal key', NOT pKey
             $cnt += 1;
         }
-        $this->assertTrue( ( 1000 == $cnt ), 'test92-3' );
+        $this->assertTrue( ( 100 == $cnt ), 'test92-3' );
         $this->assertTrue(
-            999 == $key,
+            99 == $key,
             'test25-4'
         );
         $this->assertTrue(
-            ( 'element999' == $value ),
+            ( 'element99' == $value ),
             'test25-5'
         );
 

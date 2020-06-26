@@ -23,7 +23,9 @@
  */
 namespace Kigkonsult\Asit;
 
-use function str_pad;
+use Kigkonsult\Asit\Traits\TagTrait;
+use Kigkonsult\Asit\Traits\PkeyTagTrait;
+
 use function strlen;
 
 /**

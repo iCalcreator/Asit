@@ -7,7 +7,7 @@
 
 > Class **AsittagList** extends [Asittag]
 
-> Class **AsmitList** extends [Asit]
+> Class **AsmitList** extends [Asmit]
 
 > Class **AsmittagList** extends [Asmittag]
 
@@ -35,12 +35,28 @@
 * Return _static_
 * Static
 
-----
+```*List::singleton( [ collection, [ valueType ]] )```
+* ```collection``` _array_ / _Traversable_
+* ```valueType``` _string_
+* Return _static_
+* Static
+
+```*List::singleton( valueType )```
+* ```valueType``` _string_
+* Return _static_
+* Static
+
+#### Inherited methods
+
+Inherited methods from [It] - [Asit] - [Asmit] - [Asittag] - [Asmittag]
+
+
+#### Element value type methods
 
 ```*List::assertElementType( element )```
 * Assert collection element value type
 * ```element``` _mixed_
-* Throws InvalidArgumentException
+* Throws TypeException
 
 ---
 
@@ -48,7 +64,7 @@
 * Assert value type
   * one of TypeInterface constants or FQCN (for class or interface)
 * ```valueType``` _string_
-* Throws InvalidArgumentException
+* Throws TypeException
 * Static
 
 ---
@@ -67,7 +83,7 @@
 * ```valueType``` _string_
   * one of TypeInterface constants or FQCN (for class or interface)
 * Return _static_
-* Throws InvalidArgumentException
+* Throws TypeException
 
 ---
 Go to [README] - [It] summary - [Asit]/[Asmit] summary - [Asittag]/[Asmittag] summary 

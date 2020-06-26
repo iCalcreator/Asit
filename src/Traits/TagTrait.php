@@ -21,9 +21,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
-namespace Kigkonsult\Asit;
+namespace Kigkonsult\Asit\Traits;
 
 use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\SortException;
+use Kigkonsult\Asit\Exceptions\TagException;
 use RuntimeException;
 
 use function array_key_exists;
@@ -55,10 +57,11 @@ trait TagTrait
      * Clear (remove) collection
      *
      * @override
+     * @return static
      */
     public function init() {
-        $this->Tags = [];
-        parent::init();
+        $this->tags = [];
+        return parent::init();
     }
 
     /**
@@ -66,16 +69,22 @@ trait TagTrait
      *
      * @param  mixed $tag
      * @return void
+     * @throws TagException
      */
     public static function assertTag( $tag ) {
         static $ERR = 'Invalid tag : %s';
-        self::assertKey( $tag, $ERR );
+        try {
+            self::assertKey( $tag, $ERR );
+        }
+        catch( InvalidArgumentException $e ) {
+            throw new TagException( $e->getMessage(), 20, $e );
+        }
     }
 
     /**
      * Return key and tags as string
      *
-     * $param string $key
+     * @param string $key
      * @param array  $tags
      * @return string
      */
@@ -174,7 +183,7 @@ trait TagTrait
      *
      * @param mixed $tag  0 (zero) allowed also duplicates
      * @param int $index
-     * @throws InvalidArgumentException
+     * @throws TagException
      */
     private function addTag( $tag, $index ) {
         self::assertTag( $tag );
@@ -196,6 +205,7 @@ trait TagTrait
      * @param int|string  $tag  0 (zero) allowed also duplicates
      * @throws InvalidArgumentException
      * @throws RuntimeException
+     * @throws TagException
      */
     public function addCurrentTag( $tag ) {
         if( ! $this->valid()) {
@@ -215,7 +225,6 @@ trait TagTrait
      *
      * @param int|string  $tag  0 (zero) allowed also duplicates
      * @return static
-     * @throws InvalidArgumentException
      * @throws RuntimeException
      */
     public function removeCurrentTag( $tag ) {
@@ -239,8 +248,9 @@ trait TagTrait
      * @param  int|string|array $tags
      * @param  bool  $union
      * @param  int|string|array $exclTags
-     * @param  int|callable $sortParam    asort sort_flags or callable uasort
+     * @param  int|callable $sortParam    asort sort_flags or uasort callable
      * @return array
+     * @throws SortException
      */
     public function tagGet( $tags, $union = true, $exclTags = [], $sortParam = null ) {
         return $this->get( null, $tags, $union, $exclTags, $sortParam );

@@ -18,29 +18,38 @@ It class extends :
 ```It::__construct( [ collection ] )```
 * Class It construct method
 * ```collection``` _array_ / _Traversable_
+* Throws InvalidArgumentException
 
 ```It::factory( [ collection ] )```
 * Class It factory method
 * ```collection``` _array_ / _Traversable_
 * Return _static_
+* Throws InvalidArgumentException
+* Static
+    
+```It::singleton( [ collection ] )```
+* Class It singleton method
+* ```collection``` _array_ / _Traversable_
+* Return _static_
+* Throws InvalidArgumentException
 * Static
     
 #### Get method
 
 ```It::get( [ sortParam ] )```
-* Return (non-assoc) array of elements in collection
+* Return (non-assoc) array of element(s) in collection
 * ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
 * Return _array_
+* Throws SortException
 
     
 #### Set methods
 
 ```It::append( element )```
-* Append element to collection
+* Append element to (array) collection
 * Note, last appended element is always ```current```
 * ```element``` _mixed_
 * Return _static_
-* Throws InvalidArgumentException
     
 ```It::setCollection( collection )```
 * Set collection

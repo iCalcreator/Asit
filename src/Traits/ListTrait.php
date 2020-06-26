@@ -21,9 +21,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
-namespace Kigkonsult\Asit;
+namespace Kigkonsult\Asit\Traits;
 
 use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\TypeException;
 
 use function is_string;
 
@@ -42,6 +43,7 @@ trait ListTrait
      * @param  mixed $collection
      * @param  string $valueType
      * @throws InvalidArgumentException
+     * @throws TypeException
      */
     public function __construct( $collection = null, $valueType = null ) {
         switch( true ) {
@@ -52,7 +54,7 @@ trait ListTrait
             case ( null !== $valueType ) :
                 $this->setValueType( $valueType );
                 break;
-        }
+        } // end switch
         parent::__construct( $collection );
     }
 
@@ -64,9 +66,28 @@ trait ListTrait
      * @param  string $valueType
      * @return static
      * @throws InvalidArgumentException
+     * @throws TypeException
      */
     public static function factory( $collection = null, $valueType = null ) {
         return new static( $collection, $valueType );
+    }
+
+    /**
+     * Extended class singleton method
+     *
+     * @override
+     * @param  mixed $collection
+     * @param  string $valueType
+     * @return static
+     * @throws InvalidArgumentException
+     * @throws TypeException
+     */
+    public static function singleton( $collection = null, $valueType = null ) {
+        static $instance = null;
+        if( null === $instance ) {
+            $instance = new static( $collection, $valueType );
+        }
+        return $instance;
     }
 
 }

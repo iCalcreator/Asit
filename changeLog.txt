@@ -1,4 +1,9 @@
 
+1.4.6 Singleton support
+1.4.5 *::init() upd
+1.4.4 Exceptions
+1.4.3 Traits rework
+
 1.4.2 Simplified List constructor
 1.4.1 Accept Traversable as collection
 

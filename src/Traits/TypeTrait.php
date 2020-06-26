@@ -21,9 +21,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
-namespace Kigkonsult\Asit;
+namespace Kigkonsult\Asit\Traits;
 
-use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\TypeException;
 use Traversable;
 
 use function class_exists;
@@ -60,9 +60,9 @@ trait TypeTrait
      * Assert collection element value type, extended 'gettype'
      *
      * @param mixed $element
+     * @throws TypeException
      */
     public function assertElementType( $element ) {
-        static $ERR = 'Invalid value type (#%d) : %s, expects %s';
         if( ! $this->isValueTypeSet()) {
             return;
         }
@@ -138,7 +138,7 @@ trait TypeTrait
                     $type = $getType;
                     break;
             } // end switch
-            throw new InvalidArgumentException( sprintf( $ERR, $errType, $type, $this->valueType ));
+            throw new TypeException( sprintf( TypeException::$ERR1, $errType, $type, $this->valueType ));
         } // end if
     }
 
@@ -165,7 +165,7 @@ trait TypeTrait
      *
      * @param string $valueType
      * @return static
-     * @throws InvalidArgumentException
+     * @throws TypeException
      */
     public function setValueType( $valueType ) {
         if( $valueType == self::ARRAY2 ) {
@@ -182,7 +182,7 @@ trait TypeTrait
      * Accept TypeInterface constants or FQCN (for class or interface)
      *
      * @param string $valueType
-     * @throws InvalidArgumentException
+     * @throws TypeException
      */
     public static function assertValueType( $valueType ) {
         static $TYPES = [
@@ -199,18 +199,20 @@ trait TypeTrait
             self::CALL_BLE,
             self::TRAVERSABLE,
         ];
-        static $ERR = 'Invalid value type : %s';
-        if( $valueType == self::ARRAY2 ) {
-            return;
-        }
-        if( in_array( $valueType, $TYPES )) {
-            return;
-        }
-        if( is_string( $valueType ) &&
-            ( class_exists( $valueType ) || interface_exists( $valueType ))) {
-            return;
-        }
-        throw new InvalidArgumentException( sprintf( $ERR, var_export( $valueType, true )));
+        switch( true ) {
+            case ( $valueType == self::ARRAY2 ) :
+                return;
+                break;
+            case in_array( $valueType, $TYPES ) :
+                return;
+                break;
+            case ( is_string( $valueType ) && ( class_exists( $valueType ) || interface_exists( $valueType ))) :
+                return;
+                break;
+            default :
+                throw new TypeException( sprintf( TypeException::$ERR2, var_export( $valueType, true )));
+                break;
+        } // end switch
     }
 
 }

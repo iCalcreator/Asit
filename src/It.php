@@ -26,6 +26,7 @@ namespace Kigkonsult\Asit;
 use ArrayIterator;
 use Countable;
 use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\SortException;
 use OutOfBoundsException;
 use SeekableIterator;
 use Traversable;
@@ -71,9 +72,10 @@ class It
     protected $position = 0;
 
     /**
-     * Class It construct method
+     * Class construct method
      *
-     * @param  array|Traversable $collection
+     * @param  mixed $collection
+     * @throws InvalidArgumentException
      */
     public function __construct( $collection = null ) {
         if( null !== $collection ) {
@@ -82,20 +84,39 @@ class It
     }
 
     /**
-     * Class It factory method
+     * Class factory method
      *
-     * @param  array|Traversable $collection
+     * @param  mixed $collection
      * @return static
+     * @throws InvalidArgumentException
      */
     public static function factory( $collection = null ) {
         return new static( $collection );
     }
 
     /**
+     * Class singleton method
+     *
+     * @param  mixed $collection
+     * @return static
+     * @throws InvalidArgumentException
+     */
+    public static function singleton( $collection = null ) {
+        static $instance = null;
+        if( null === $instance ) {
+            $instance = new static( $collection );
+        }
+        return $instance;
+    }
+
+    /**
      * Clear (remove) collection
+     *
+     * @return static
      */
     public function init() {
         $this->collection = [];
+        return $this;
     }
 
     /**
@@ -118,7 +139,7 @@ class It
     /**
      * Return key and element(-type) string
      *
-     * $param int $key
+     * @param int $key
      * @param int $len
      * @return string
      */
@@ -130,7 +151,7 @@ class It
     /**
      * Return key and element(-type) string
      *
-     * $param string $key
+     * @param string $key
      * @param mixed $element
      * @return string
      */
@@ -171,12 +192,10 @@ class It
      *
      * @param  array $collection
      * @param  int|callable $sortParam
-     * @throws InvalidArgumentException
+     * @throws SortException
      * @return array
      */
     protected static function sort( array $collection, $sortParam = SORT_REGULAR ) {
-        static $ERR1 = "Invalid sortParam %s";
-        static $ERR2 = "Sort error with sortParam %s";
         $sortOk = false;
         switch( true ) {
             case is_int( $sortParam ) :
@@ -186,11 +205,11 @@ class It
                 $sortOk = uasort( $collection, $sortParam );
                 break;
             default :
-                throw new InvalidArgumentException( sprintf( $ERR1, var_export( $sortParam, true )));
+                throw new SortException( sprintf( SortException::$ERR1, var_export( $sortParam, true )));
                 break;
         }
         if( ! $sortOk ) {
-            throw new InvalidArgumentException( sprintf( $ERR2, var_export( $sortParam, true )));
+            throw new SortException( sprintf( SortException::$ERR2, var_export( $sortParam, true )));
         }
         return $collection;
     }
@@ -204,6 +223,7 @@ class It
      *
      * @param  int|callable $sortParam
      * @return array
+     * @throws SortException
      */
     public function get( $sortParam = null ) {
         if( null !== $sortParam ) {
@@ -224,7 +244,6 @@ class It
      *
      * @param mixed $element
      * @return static
-     * @throws InvalidArgumentException
      */
     public function append( $element) {
         $index = $this->count();
@@ -236,7 +255,7 @@ class It
     /**
      * @var string
      */
-    protected static $ERRSETTXT = 'Invalid input, no array or Traversable : %s';
+    protected static $ERRSETTXT = 'Invalid input, no array or Traversable :  %s';
 
     /**
      * Set (array) collection
@@ -258,20 +277,10 @@ class It
                 }
                 break;
             default :
-                throw new InvalidArgumentException( sprintf( self::$ERRSETTXT, self::getErrType ( $collection )));
+                throw new InvalidArgumentException( sprintf( self::$ERRSETTXT, gettype( $collection )));
                 break;
         }
         return $this;
-    }
-
-    /**
-     * @param mixed $collection
-     * @return string
-     */
-    protected static function getErrType ( $collection ) {
-        static $OBJECT = 'object';
-        $type = gettype( $collection );
-        return ( $OBJECT == $type ) ? get_class( $collection ) : $type;
     }
 
     /**

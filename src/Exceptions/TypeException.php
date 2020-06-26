@@ -21,39 +21,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
-namespace Kigkonsult\Asit;
 
-use Kigkonsult\Asit\Exceptions\TypeException;
-use Kigkonsult\Asit\Traits\TypeTrait;
-use Kigkonsult\Asit\Traits\ListTrait;
+namespace Kigkonsult\Asit\Exceptions;
 
-/**
- * Class ItList extends It, assure collection elements of expected valueType
- *
- * @package Kigkonsult\Asit
- */
-class ItList
-    extends It
-    implements TypeInterface
+use InvalidArgumentException;
+
+class TypeException extends InvalidArgumentException
 {
-
-    use TypeTrait;
-
-    use ListTrait;
-
-    /**
-     * Append assured element to (array) collection
-     *
-     * @override
-     * @param mixed $element
-     * @return static
-     * @throws TypeException
-     */
-    public function append( $element ) {
-        if( $this->isValueTypeSet()) {
-            $this->assertElementType( $element );
-        }
-        return parent::append( $element );
-    }
+    public static $ERR1 = 'Invalid value type (#%d) : %s, expects %s';
+    public static $ERR2 = 'Invalid value type : %s';
 
 }

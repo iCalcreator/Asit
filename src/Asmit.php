@@ -24,7 +24,7 @@
 namespace Kigkonsult\Asit;
 
 use ArrayIterator;
-use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\PkeyException;
 use RuntimeException;
 use Traversable;
 
@@ -33,7 +33,6 @@ use function array_search;
 use function count;
 use function ksort;
 use function sprintf;
-use function str_pad;
 use function strlen;
 
 /**
@@ -103,13 +102,13 @@ class Asmit
      * @param int|string $pKey 0 (zero) allowed
      * @param int        $index
      * @return static
-     * @throws InvalidArgumentException
+     * @throws PkeyException
      */
     protected function setPkey( $pKey, $index ) {
         self::assertPkey( $pKey );
         if( $this->pKeyExists( $pKey )) {
             if( $index != $this->pKeys[$pKey] ) {
-                throw new InvalidArgumentException( sprintf( self::$PKEYFOUND, $pKey, $this->pKeys[$pKey] ));
+                throw new PkeyException( sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] ));
             }
             return $this;
         }
@@ -123,11 +122,11 @@ class Asmit
      *
      * @param int|string $pKey 0 (zero) allowed
      * @return int
-     * @throws InvalidArgumentException
+     * @throws PkeyException
      */
     public function countPkey( $pKey ) {
         if( ! $this->pKeyExists( $pKey )) {
-            throw new InvalidArgumentException( sprintf( self::$PKEYNOTFOUND, $pKey ));
+            throw new PkeyException( sprintf( PkeyException::$PKEYNOTFOUND, $pKey ));
         }
         return count( array_keys( $this->pKeys, $this->pKeys[$pKey], true ));
     }
@@ -137,11 +136,11 @@ class Asmit
      *
      * @param int|string $pKey
      * @return static
-     * @throws InvalidArgumentException
+     * @throws PkeyException
      */
     public function removePkey( $pKey ) {
         if( ! $this->pKeyExists( $pKey )) {
-            throw new InvalidArgumentException( sprintf( self::$PKEYNOTFOUND, $pKey ));
+            throw new PkeyException( sprintf( PkeyException::$PKEYNOTFOUND, $pKey ));
         }
         if( 2 > $this->countPkey( $pKey )) {
             return $this;
@@ -179,7 +178,7 @@ class Asmit
      * setCurrentPkey() alias
      *
      * @param int|string $pKey
-     * @throws InvalidArgumentException
+     * @throws PkeyException
      * @throws RuntimeException
      */
     public function addCurrentPkey( $pKey ) {
@@ -203,7 +202,7 @@ class Asmit
         foreach( $this->pKeys as $pKey => $pIx ) {
             if( ! isset( $ixList[$pIx] )) {
                 $output[$pKey] = $this->collection[$pIx];
-                $ixList[$pIx] = $pIx;
+                $ixList[$pIx]  = $pIx;
             }
         }
         return new ArrayIterator( $output );

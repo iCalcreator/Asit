@@ -3,10 +3,10 @@
 ## Asit
 
 > Class It manages array collections
-* Implement _SeekableIterator_, _Countable_ and _IteratorAggregate_ methods,
+* Implement _SeekableIterator_, _Countable_ and _IteratorAggregate_ methods
 * Collection elements are searchable using
   * Iterator (et al.) methods
-* The collection element may be of any value type.
+* The collection element may be of any value type
 
 >Class ItList
 * Extends _It_
@@ -14,8 +14,8 @@
 
 > Class Asit manages assoc array collections
 * Extends _It_ 
-* The assoc element array key is used as (unique) primary key.
-* A primary key may be replaced by another (unique) key.
+* The assoc element array key is used as (unique) primary key
+* A primary key may be replaced by another (unique) key
 * Has primary key collection element get-/set-methods
 * Collection elements are also searchable using
   * primary key(s)
@@ -28,11 +28,11 @@
  
 > Class Asmit
 * Extends _Asit_
-* Allow multiple (unique) primary keys for (each)) collection element.
+* Allow multiple (unique) primary keys for (each)) collection element
 
 >Class Asittag
 * Extends _Asit_
-* Also secondary keys, additional (non-unique) tags (aka attributes?) may be set for each element.
+* Also secondary keys, additional (non-unique) tags (aka attributes?) may be set for each element
 * Collection elements are also searchable using
   * tag(s)
   * primary key(s) + tag(s)
@@ -43,7 +43,7 @@
 
 >Class Asmittag
 * Extends _Asmit_
-* Also secondary keys, additional (non-unique) tags (aka attributes?) may be set for each element.
+* Also secondary keys, additional (non-unique) tags (aka attributes?) may be set for each element
 * Collection elements are searchable using
   * Iterator (et al.) methods
   * primary key(s)
@@ -90,7 +90,7 @@ use Kigkonsult\Asit\Asit;
 include 'vendor/autoload.php';
 ```
 
-Otherwise , download and acquire..
+Otherwise , download and acquire
 
 ``` php
 use Kigkonsult\Asit\Asit;
