@@ -29,34 +29,31 @@ use Kigkonsult\Asit\Traits\TypeTrait;
 use Kigkonsult\Asit\Traits\ListTrait;
 
 /**
- * Class AsmitList extends Asmit, assure collection elements of expected valueType
+ * Class AsmitList extends Asmit, assert collection elements of expected valueType
  *
  * @package Kigkonsult\Asit
  */
-class AsmitList
-    extends Asmit
-    implements TypeInterface
+class AsmitList extends Asmit implements TypeInterface
 {
-
     use TypeTrait;
 
     use ListTrait;
 
     /**
-     * Append assured element to (array) collection, opt with primary key
+     * Append typed element to (array) collection, opt with primary key
      *
      * @override
-     * @param mixed $element
-     * @param int|string $pKey  MUST be unique
+     * @param mixed      $element
+     * @param int|string $pKey     MUST be unique
      * @return static
      * @throws PkeyException
      * @throws TypeException
      */
-    public function append( $element, $pKey = null ) {
+    public function append( $element, $pKey = null )
+    {
         if( $this->isValueTypeSet()) {
             $this->assertElementType( $element );
         }
         return parent::append( $element, $pKey );
     }
-
 }

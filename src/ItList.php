@@ -28,32 +28,29 @@ use Kigkonsult\Asit\Traits\TypeTrait;
 use Kigkonsult\Asit\Traits\ListTrait;
 
 /**
- * Class ItList extends It, assure collection elements of expected valueType
+ * Class ItList extends It, assert collection elements of expected valueType
  *
  * @package Kigkonsult\Asit
  */
-class ItList
-    extends It
-    implements TypeInterface
+class ItList extends It implements TypeInterface
 {
-
     use TypeTrait;
 
     use ListTrait;
 
     /**
-     * Append assured element to (array) collection
+     * Append typed element to (array) collection
      *
      * @override
      * @param mixed $element
      * @return static
      * @throws TypeException
      */
-    public function append( $element ) {
+    public function append( $element )
+    {
         if( $this->isValueTypeSet()) {
             $this->assertElementType( $element );
         }
         return parent::append( $element );
     }
-
 }

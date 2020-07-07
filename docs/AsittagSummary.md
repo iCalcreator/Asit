@@ -23,10 +23,10 @@ For non-assoc arrays,
 * may also have tags
 
 Asittag class extends :
-* [AsittagList], assure collection elements of expected valueType
+* [AsittagList], assert collection elements of expected valueType
 
 Asmittag class extends :
-* [AsmittagList], assure collection elements of expected valueType
+* [AsmittagList], assert collection elements of expected valueType
 
 #### Inherited methods
 
@@ -135,11 +135,13 @@ Inherited methods from [It] - [Asit]
 * Add tag (secondary key) for primary key element
 * ```pKey``` _int_|_string_
 * ```tag``` _int_|_string_
+* Return _static_
 * Throws PkeyException, TagException
 
 ```Asittag::addCurrentTag( tag )```
 * Add tag (secondary key) for ```current```
 * ```tag``` _int_|_string_
+* Return _static_
 * Throws RuntimeException, TagException
 
 #### Remove methods

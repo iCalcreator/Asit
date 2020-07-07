@@ -70,7 +70,7 @@ class Asit2Test extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, Asit1Test::getAttribute( $asit->key() ) );
+            $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
         $asit->rewind()->previous(); // no valid current
 
@@ -155,7 +155,7 @@ class Asit2Test extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, Asit1Test::getAttribute( $asit->key() ) );
+            $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
 
         $asit->seek( array_rand( array_flip( range( 30, 34 ))));
@@ -211,14 +211,6 @@ class Asit2Test extends TestCase
             'test37-14'
         );
 
-        $asit->replacePkey( $orgPkey, $orgPkey ); // replace by itself - test ??
-        $orgIndex2 = $asit->getPkeyIndexes( [ $orgPkey ] );
-        $orgIndex1 = reset( $orgIndex2 );
-            $this->assertEquals(
-            $orgIndex, $orgIndex1,
-            'test37-15 org : ' . $orgIndex . ', org2 : ' . implode(',', $orgIndex2 )
-        );
-
         $newPkey = 'key9876';
         $tags    = $asit->getTags( $orgPkey );
         $asit->replacePkey( $orgPkey, $newPkey ); // alter pKey, replacePkey, ok
@@ -235,11 +227,13 @@ class Asit2Test extends TestCase
         );
 
         $this->assertEquals(
-            $newPkey, $asit->getCurrentPkey(),
+            $newPkey,
+            $asit->getCurrentPkey(),
             'test37-20 current ix :' . $asit->key()
         );
         $this->assertEquals(
-            [ $orgIndex => $current ], $asit->get( $newPkey ),
+            [ $orgIndex => $current ],
+            $asit->get( $newPkey ),
             'test37-21'
         );
         $this->assertEquals(
@@ -260,6 +254,67 @@ class Asit2Test extends TestCase
         );
 
         $asit = null;
+    }
+
+    /**
+     * Testing Asit/Asmit replacePkey and reuse key
+     *
+     * @test
+     */
+    public function asitTest41() {
+        foreach(
+            [ new Asit( $this->arrayLoader( 10 )), new Asmit( $this->arrayLoader( 10 )) ]
+            as $tx => $asit ) {
+
+            $asit->seek( array_rand( array_flip( range( 0, 8 ))));
+            $pKey1   = $asit->getCurrentPkey();
+            $ix1     = $asit->key();
+
+            $asit->replacePkey( $pKey1, $pKey1 ); // replace by itself - test ??
+            $orgIndex2 = array_values( $asit->getPkeyIndexes( [ $pKey1 ] ));
+            $this->assertEquals(
+                [ $ix1 ],
+                $orgIndex2,
+                'test41-1-' . $tx . ' org : ' . $ix1 . ', org2 : ' . var_export( $orgIndex2, true )
+            );
+
+            $newPkey = 'testbcdefg';
+
+            $asit->replacePkey( $pKey1, $newPkey );
+            $this->assertFalse(
+                $asit->pKeyExists( $pKey1 ),
+                'test41-2-' . $tx
+            );
+            $this->assertEquals(
+                $ix1, $asit->key(),
+                'test41-3-' . $tx
+            );
+            $this->assertEquals(
+                $newPkey,
+                $asit->getCurrentPkey(),
+                'test41-4-' . $tx
+            );
+
+            $asit->next();
+            $pKey2 = $asit->getCurrentPkey();
+            $ix2   = $asit->key();
+            $asit->replacePkey( $pKey2, $pKey1 );
+            $this->assertFalse(
+                $asit->pKeyExists( $pKey2 ),
+                'test41-5-' . $tx
+            );
+            $this->assertEquals(
+                $ix2, $asit->key(),
+                'test41-6-' . $tx
+            );
+            $this->assertEquals(
+                $pKey1,
+                $asit->getCurrentPkey(),
+                'test41-7-' . $tx
+            );
+
+            $asit = null;
+        }
     }
 
     /**
@@ -343,7 +398,7 @@ class Asit2Test extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, Asit1Test::getAttribute( $asit->key() ) );
+            $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
         $asit->seek( array_rand( array_flip( range( 40, 44 ))));
 
@@ -397,7 +452,7 @@ class Asit2Test extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, Asit1Test::getAttribute( $asit->key() ) );
+            $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
         $asit->seek( array_rand( array_flip( range( 50, 59 ))));
 
@@ -502,7 +557,7 @@ class Asit2Test extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, Asit1Test::getAttribute( $asit->key() ) );
+            $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
         $asit->seek( array_rand( array_flip( range( 61, 69 ))));
 
@@ -617,7 +672,7 @@ class Asit2Test extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, Asit1Test::getAttribute( $asit->key() ) );
+            $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
 
         $ok   = 0;
@@ -744,7 +799,7 @@ class Asit2Test extends TestCase
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, Asit1Test::getAttribute( $asit->key() ) );
+            $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
         $asit->seek( array_rand( array_flip( range( 0, 99 ))));
 

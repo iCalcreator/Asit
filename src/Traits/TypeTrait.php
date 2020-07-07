@@ -27,7 +27,6 @@ use Kigkonsult\Asit\Exceptions\TypeException;
 use Traversable;
 
 use function class_exists;
-use function get_class;
 use function gettype;
 use function in_array;
 use function interface_exists;
@@ -39,7 +38,6 @@ use function is_float;
 use function is_resource;
 use function is_string;
 use function sprintf;
-use function var_export;
 
 /**
  * Trait TypeTrait, property and methods for collection element value types
@@ -60,9 +58,11 @@ trait TypeTrait
      * Assert collection element value type, extended 'gettype'
      *
      * @param mixed $element
+     * @return void
      * @throws TypeException
      */
-    public function assertElementType( $element ) {
+    public function assertElementType( $element )
+    {
         if( ! $this->isValueTypeSet()) {
             return;
         }
@@ -70,10 +70,10 @@ trait TypeTrait
         switch( $this->valueType ) {
             case self::ARR_Y :
             case self::ARRAY2 :
-            if( ! is_array( $element )) {
-                $errType = 1;
-            }
-            break;
+                if( ! is_array( $element )) {
+                    $errType = 1;
+                }
+                break;
             case self::BOOL :
             case self::BOOLEAN :
                 if( ! is_bool( $element )) {
@@ -126,19 +126,14 @@ trait TypeTrait
                 break;
         } // end switch
         if( ! empty( $errType )) {
-            $getType = gettype( $element );
-            switch( true ) {
-                case ( self::OBJECT == $getType ) :
-                    $type = get_class( $element );
-                    break;
-                case ( self::RESOURCE == $getType ) :
-                    $type = self::RESOURCE;
-                    break;
-                default :
-                    $type = $getType;
-                    break;
-            } // end switch
-            throw new TypeException( sprintf( TypeException::$ERR1, $errType, $type, $this->valueType ));
+            throw new TypeException(
+                sprintf(
+                    TypeException::$ERR1,
+                    $errType,
+                    self::getErrType( $element ),
+                    $this->valueType
+                )
+            );
         } // end if
     }
 
@@ -147,7 +142,8 @@ trait TypeTrait
      *
      * @return string
      */
-    public function getValueType() {
+    public function getValueType()
+    {
         return $this->valueType;
     }
 
@@ -156,7 +152,8 @@ trait TypeTrait
      *
      * @return bool
      */
-    public function isValueTypeSet() {
+    public function isValueTypeSet()
+    {
         return ( null !== $this->valueType );
     }
 
@@ -167,7 +164,8 @@ trait TypeTrait
      * @return static
      * @throws TypeException
      */
-    public function setValueType( $valueType ) {
+    public function setValueType( $valueType )
+    {
         if( $valueType == self::ARRAY2 ) {
             $valueType = self::ARR_Y;
         }
@@ -182,9 +180,11 @@ trait TypeTrait
      * Accept TypeInterface constants or FQCN (for class or interface)
      *
      * @param string $valueType
+     * @return void
      * @throws TypeException
      */
-    public static function assertValueType( $valueType ) {
+    public static function assertValueType( $valueType )
+    {
         static $TYPES = [
             self::BOOL,
             self::BOOLEAN,
@@ -206,13 +206,16 @@ trait TypeTrait
             case in_array( $valueType, $TYPES ) :
                 return;
                 break;
-            case ( is_string( $valueType ) && ( class_exists( $valueType ) || interface_exists( $valueType ))) :
+            case ( is_string( $valueType ) &&
+                ( class_exists( $valueType ) || interface_exists( $valueType ))
+            ) :
                 return;
                 break;
             default :
-                throw new TypeException( sprintf( TypeException::$ERR2, var_export( $valueType, true )));
+                throw new TypeException(
+                    sprintf( TypeException::$ERR2, self::getDispVal( $valueType ))
+                );
                 break;
         } // end switch
     }
-
 }

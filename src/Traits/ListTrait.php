@@ -23,7 +23,7 @@
  */
 namespace Kigkonsult\Asit\Traits;
 
-use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\CollectionException;
 use Kigkonsult\Asit\Exceptions\TypeException;
 
 use function is_string;
@@ -37,15 +37,16 @@ trait ListTrait
 {
 
     /**
-     * Extended construct method, accepts value type as single or second argument
+     * Extended constructor, accepts value type as single or second argument
      *
      * @override
-     * @param  mixed $collection
+     * @param  mixed  $collection
      * @param  string $valueType
-     * @throws InvalidArgumentException
+     * @throws CollectionException
      * @throws TypeException
      */
-    public function __construct( $collection = null, $valueType = null ) {
+    public function __construct( $collection = null, $valueType = null )
+    {
         switch( true ) {
             case ( is_string( $collection ) && ( null == $valueType )) :
                 $this->setValueType( $collection );
@@ -62,13 +63,14 @@ trait ListTrait
      * Extended factory method, accepts value type as single or second argument
      *
      * @override
-     * @param  mixed $collection
+     * @param  mixed  $collection
      * @param  string $valueType
      * @return static
-     * @throws InvalidArgumentException
+     * @throws CollectionException
      * @throws TypeException
      */
-    public static function factory( $collection = null, $valueType = null ) {
+    public static function factory( $collection = null, $valueType = null )
+    {
         return new static( $collection, $valueType );
     }
 
@@ -76,18 +78,18 @@ trait ListTrait
      * Extended class singleton method
      *
      * @override
-     * @param  mixed $collection
+     * @param  mixed  $collection
      * @param  string $valueType
      * @return static
-     * @throws InvalidArgumentException
+     * @throws CollectionException
      * @throws TypeException
      */
-    public static function singleton( $collection = null, $valueType = null ) {
+    public static function singleton( $collection = null, $valueType = null )
+    {
         static $instance = null;
         if( null === $instance ) {
             $instance = new static( $collection, $valueType );
         }
         return $instance;
     }
-
 }

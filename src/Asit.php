@@ -25,6 +25,7 @@ namespace Kigkonsult\Asit;
 
 use ArrayIterator;
 use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\CollectionException;
 use Kigkonsult\Asit\Exceptions\PkeyException;
 use Kigkonsult\Asit\Exceptions\SortException;
 use RuntimeException;
@@ -32,20 +33,18 @@ use Traversable;
 
 use function array_key_exists;
 use function array_keys;
-use function array_search;
 use function is_int;
 use function is_string;
 use function ksort;
 use function sort;
 use function sprintf;
 use function strlen;
-use function var_export;
 
 /**
  * Class Asit extends It, allow collection element (unique) primary key
  *
- * Asit has, along with SeekableIterator, Countable and IteratorAggregate (+Traversable) methods,
- * assoc array collection element get-/set-methods.
+ * Asit has, along with SeekableIterator, Countable and IteratorAggregate
+ * (+Traversable) methods, * assoc array collection element get-/set-methods.
  * The assoc element array key is used as (unique) primary key.
  *
  * The collection element may, as for Iterator (et al.), be of any valueType.
@@ -63,27 +62,19 @@ use function var_export;
  *   Each collection element may have more than one primary key.
  *
  * Class AsitList extends Asit
- *   assure collection elements of expected valueType
+ *   assert collection elements of expected valueType
  *
  * Class Asittag extends Asit
  *   Also secondary keys, additional (non-unique) tags (aka attributes?)
  *   may be set for each element.
  *
  * Class AsittagList extends Asittag
- *   assure collection elements of expected valueType
+ *   assert collection elements of expected valueType
  *
  * @package    Kigkonsult\Asit
  */
-class Asit
-     extends It
+class Asit extends It
 {
-
-    /**
-     * Error texts
-     *
-     * @var string
-     */
-    protected static $CURRENTNOTVALID = 'Current not valid';
 
     /**
      * Primary keys for collection element
@@ -98,19 +89,20 @@ class Asit
      * @override
      * @return static
      */
-    public function init() {
+    public function init()
+    {
         $this->pKeys = [];
         return parent::init();
     }
 
     /**
-     * toString
+     * To string
      *
      * @return string
      */
-    public function toString() {
-        static $SP0   = '';
-        $string = $SP0;
+    public function toString()
+    {
+        $string = self::$SP0;
         $pLen   = strlen((string) $this->count());
         $this->rewind();
         while( $this->valid()) {
@@ -129,9 +121,10 @@ class Asit
      * @param string $pKey
      * @return string
      */
-    protected static function pKey2String( $key, $pKey ) {
-        static $ROWpk = '%s : (pKey) %s ';
-        return sprintf( $ROWpk, $key, $pKey ) . PHP_EOL;
+    protected static function pKey2String( $key, $pKey )
+    {
+        static $TMPL = "%s : (pKey) %s";
+        return sprintf( $TMPL, $key, $pKey ) . PHP_EOL;
     }
 
     /**
@@ -139,22 +132,21 @@ class Asit
      */
 
     /**
-     * Assert, int and string allowed
+     * Assert key/tag, int and string allowed
      *
-     * @param  mixed $key
-     * @param  string msg
+     * @param  mixed  $key
+     * @param  string $tmpl
      * @return void
      * @throws InvalidArgumentException
      */
-    protected static function assertKey( $key, $msg ) {
-        switch( true ) {
-            case is_int( $key ) :
-                break;
-            case ( is_string( $key ) && ! empty( $key )) :
-                break;
-            default :
-                throw new InvalidArgumentException( sprintf( $msg, var_export( $key, true )));
+    protected static function assertKey( $key, $tmpl )
+    {
+        if( is_int( $key ) || ( is_string( $key ) && ! empty( $key ))) {
+            return;
         }
+        throw new InvalidArgumentException(
+            sprintf( $tmpl, self::getErrType( $key ), self::getDispVal( $key ))
+        );
     }
 
     /**
@@ -164,10 +156,11 @@ class Asit
      * @return void
      * @throws PkeyException
      */
-    public static function assertPkey( $pKey ) {
-        static $ERR = 'Invalid primary key : %s';
+    public static function assertPkey( $pKey )
+    {
+        static $TMPL = "Invalid primary key : (%s) %s";
         try {
-            self::assertKey( $pKey, $ERR );
+            self::assertKey( $pKey, $TMPL );
         }
         catch( InvalidArgumentException $e ) {
             throw new PkeyException( $e->getMessage(), 10, $e );
@@ -180,8 +173,41 @@ class Asit
      * @param  int|string $pKey
      * @return bool
      */
-    public function pKeyExists( $pKey ) {
+    public function pKeyExists( $pKey )
+    {
         return array_key_exists( $pKey, $this->pKeys );
+    }
+
+    /**
+     * Assert pKey exists
+     *
+     * @param int|string $pKey 0 (zero) allowed
+     * @return void
+     * @throw PkeyException
+     */
+    protected function assertPkeyExists( $pKey )
+    {
+        if( ! $this->pKeyExists( $pKey )) {
+            throw new PkeyException(
+                sprintf( PkeyException::$PKEYNOTFOUND, $pKey )
+            );
+        }
+    }
+
+    /**
+     * Assert pKey not exists
+     *
+     * @param int|string $pKey 0 (zero) allowed
+     * @return void
+     * @throw PkeyException
+     */
+    protected function assertPkeyNotExists( $pKey )
+    {
+        if( $this->pKeyExists( $pKey )) {
+            throw new PkeyException(
+                sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] )
+            );
+        }
     }
 
     /**
@@ -190,7 +216,8 @@ class Asit
      * @param int $sortFlag  default SORT_REGULAR
      * @return array
      */
-    public function getPkeys( $sortFlag = SORT_REGULAR ) {
+    public function getPkeys( $sortFlag = SORT_REGULAR )
+    {
         $pKeys = array_keys( $this->pKeys );
         if( $sortFlag != SORT_REGULAR ) {
             sort( $pKeys, $sortFlag );
@@ -200,17 +227,30 @@ class Asit
     }
 
     /**
-     * Set (or reset) the unique primary key for a collection element
+     * Set (or reset) unique primary key for a collection element
      *
      * @param int|string $pKey 0 (zero) allowed
      * @param int        $index
      * @return static
      * @throws PkeyException
      */
-    protected function setPkey( $pKey, $index ) {
+    protected function setPkey( $pKey, $index )
+    {
         self::assertPkey( $pKey );
-        if( false !== ( $previousPkey = array_search( $index, $this->pKeys, true ))) {
-            unset( $this->pKeys[$previousPkey] );
+        switch( true ) {
+            case ( ! $this->pKeyExists( $pKey )) :
+                break;
+            case ( $index == $this->pKeys[$pKey] ) :
+                return $this;
+                break;
+            default :
+                throw new PkeyException(
+                    sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] )
+                );
+                break;
+        } // end switch
+        if( false !== ( $foundKey = self::search( $index, $this->pKeys ))) {
+            unset( $this->pKeys[$foundKey] );
         }
         $this->pKeys[$pKey] = $index;
         ksort( $this->pKeys, SORT_REGULAR );
@@ -225,45 +265,35 @@ class Asit
      * @return static
      * @throws PkeyException
      */
-    public function replacePkey( $oldPkey, $newPkey ) {
-        if( ! $this->pKeyExists( $oldPkey )) {
-            throw new PkeyException( sprintf( PkeyException::$PKEYNOTFOUND, $oldPkey ));
-        }
+    public function replacePkey( $oldPkey, $newPkey )
+    {
+        $this->assertPkeyExists( $oldPkey );
         self::assertPkey( $newPkey );
         if( $oldPkey == $newPkey ) {
             return $this;
         }
-        if( $this->pKeyExists( $newPkey )) {
-            throw new PkeyException( sprintf( PkeyException::$PKEYFOUND, $newPkey, $this->pKeys[$newPkey] ));
-        }
+        $this->assertPkeyNotExists( $newPkey );
         $this->setPkey( $newPkey, $this->pKeys[$oldPkey] );
-        $list = [];
-        foreach( $this->pKeys as $pKey2 => $index2 ) {
-            if( $oldPkey != $pKey2 ) {
-                $list[$pKey2] = $index2;
-            }
-        }
-        $this->pKeys = $list;
+        unset( $this->pKeys[$oldPkey] );
         return $this;
     }
 
     /**
-     * Return pKey for 'current'
+     * Return pKey for "current'
      *
      * To be used in parallel with the Iterator 'current' method, below
      *
      * @return int|string
      * @throws RuntimeException
      */
-    public function getCurrentPkey() {
-        if( ! $this->valid()) {
-            throw new RuntimeException( self::$CURRENTNOTVALID );
-        }
-        return array_search( $this->position, $this->pKeys, true );
+    public function getCurrentPkey()
+    {
+        $this->assertCurrent();
+        return self::search( $this->position, $this->pKeys );
     }
 
     /**
-     * Set (i.e. reset) primary key for 'current' element
+     * Set (reset) primary key for 'current' element
      *
      * To be used in parallel with the Iterator 'current' method, below
      *
@@ -272,27 +302,22 @@ class Asit
      * @throws PkeyException
      * @throws RuntimeException
      */
-    public function setCurrentPkey( $pKey ) {
-        if( ! $this->valid()) {
-            throw new RuntimeException( self::$CURRENTNOTVALID );
-        }
-        self::assertPkey( $pKey );
-        if( $this->pKeyExists( $pKey )) {
-            if( $this->position != $this->pKeys[$pKey] ) {
-                throw new PkeyException( sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] ) );
-            }
-            return $this;
-        }
+    public function setCurrentPkey( $pKey )
+    {
+        $this->assertCurrent();
         return $this->setPkey( $pKey, $this->position );
     }
 
     /**
-     * Return array sub-set of collection element (internal, int) indexes using primary keys, empty array on not found
+     * Return all or sub-set of collection element (internal) indexes using primary keys
+     *
+     * Return empty array on not found
      *
      * @param  array $pKeys
      * @return array
      */
-    public function getPkeyIndexes( $pKeys = [] ) {
+    public function getPkeyIndexes( $pKeys = [] )
+    {
         $result = [];
         foreach( $pKeys as $pKey ) {
             if( $this->pKeyExists( $pKey )) {
@@ -308,18 +333,21 @@ class Asit
      */
 
     /**
-     * Return (non-assoc) array of element(s) in collection, opt using primary keys and/or tag(s)
+     * Return (non-assoc) array of element(s) in collection
      *
-     * Using the opt. primary keys for selection
+     * Opt using primary keys and/or tag(s) for selection
      *
      * @param  int|string|array $pKeys
-     * @param  int|callable $sortParam    asort sort_flags or uasort callable
+     * @param  int|callable     $sortParam  asort sort_flags or uasort callable
      * @return array
      * @throws SortException
      */
-    public function get( $pKeys = null, $sortParam = null ) {
+    public function get( $pKeys = null, $sortParam = null )
+    {
         if( empty( $pKeys )) {
-            return ( null === $sortParam ) ? $this->collection : self::sort( $this->collection, $sortParam );
+            return ( null === $sortParam )
+                ? $this->collection
+                : self::sort( $this->collection, $sortParam );
         }
         $indexes = $this->getPkeyIndexes((array) $pKeys );
         if( empty( $indexes )) {
@@ -329,20 +357,23 @@ class Asit
         foreach( $indexes as $pIx ) {
             $result[$pIx] = $this->collection[$pIx];
         }
-        return ( null === $sortParam ) ? $result : self::sort( $result, $sortParam );
+        return ( null === $sortParam )
+            ? $result
+            : self::sort( $result, $sortParam );
     }
 
     /**
-     * Return (non-assoc array) sub-set of element(s) in collection using primary keys
+     * Return (non-assoc) sub-set of element(s) in collection using primary keys
      *
      * Convenient get method alias
      *
      * @param  int|string|array $pKeys
-     * @param  int|callable $sortParam    asort sort_flags or uasort callable
+     * @param  int|callable     $sortParam  asort sort_flags or uasort callable
      * @return array
      * @throws SortException
      */
-    public function pKeyGet( $pKeys, $sortParam = null ) {
+    public function pKeyGet( $pKeys, $sortParam = null )
+    {
         return $this->get( $pKeys, $sortParam );
     }
 
@@ -356,19 +387,20 @@ class Asit
      * Note, last appended element is always 'current'
      *
      * @override
-     * @param mixed $element
-     * @param int|string $pKey  MUST be unique
+     * @param mixed      $element
+     * @param int|string $pKey    MUST be unique
      * @return static
      * @throws PkeyException
      */
-    public function append( $element, $pKey = null ) {
+    public function append( $element, $pKey = null )
+    {
         $index = $this->count();
         if( null === $pKey ) {
             $pKey = $index;
         }
-        self::assertPkey( $pKey );
-        if( $this->pKeyExists( $pKey )) {
-            throw new PkeyException( sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] ));
+        else {
+            self::assertPkey( $pKey );
+            $this->assertPkeyNotExists( $pKey );
         }
         $this->setPkey( $pKey, $index );
         $this->collection[$index] = $element;
@@ -382,10 +414,11 @@ class Asit
      * @override
      * @param  array|Traversable $collection
      * @return static
-     * @throws InvalidArgumentException
+     * @throws CollectionException
      * @throws PkeyException
      */
-    public function setCollection( $collection ) {
+    public function setCollection( $collection )
+    {
         switch( true ) {
             case is_array( $collection ) :
                 foreach( array_keys( $collection ) as $cIx ) {
@@ -393,7 +426,9 @@ class Asit
                 }
                 break;
             case ( ! ( $collection instanceof Traversable )) :
-                throw new InvalidArgumentException( sprintf( self::$ERRSETTXT, gettype( $collection )));
+                throw new CollectionException(
+                    sprintf( CollectionException::$ERRTXT, self::getErrType( $collection ))
+                );
                 break;
             case ( $collection instanceof Asit ) :
                 foreach( $collection->getPkeyIterator() as $cIx => $element ) {
@@ -405,7 +440,7 @@ class Asit
                     $this->append( $element, $cIx );
                 }
                 break;
-        }
+        } // end switch
         return $this;
     }
     /**
@@ -417,7 +452,8 @@ class Asit
      *
      * @return Traversable
      */
-    public function getPkeyIterator() {
+    public function getPkeyIterator()
+    {
         $output = [];
         foreach( $this->pKeys as $pKey => $pIx ) {
             $output[$pKey] = $this->collection[$pIx];
@@ -426,18 +462,16 @@ class Asit
     }
 
     /**
-     * Seeks to a given position in the iterator using pKey
+     * Seeks to a given position in the iterator using pKey, i.e. make current
      *
      * @param  int|string $pKey
      * @return static
      * @throws PkeyException
      */
-    public function pKeySeek( $pKey ) {
-        if( ! $this->pKeyExists( $pKey )) {
-            throw new PkeyException( sprintf( PkeyException::$PKEYNOTFOUND, $pKey ));
-        }
+    public function pKeySeek( $pKey )
+    {
+        $this->assertPkeyExists( $pKey );
         $this->position = $this->pKeys[$pKey];
         return $this;
     }
-
 }

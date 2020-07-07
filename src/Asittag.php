@@ -46,10 +46,8 @@ use function strlen;
  *
  * @package    Kigkonsult\Asit
  */
-class Asittag
-     extends Asit
+class Asittag extends Asit
 {
-
     use TagTrait;
 
     use PkeyTagTrait;
@@ -59,9 +57,9 @@ class Asittag
      *
      * @return string
      */
-    public function toString() {
-        static $SP0 = '';
-        $string = $SP0;
+    public function toString()
+    {
+        $string = self::$SP0;
         $pLen   = strlen((string) $this->count());
         $this->rewind();
         while( $this->valid()) {
@@ -73,5 +71,4 @@ class Asittag
         }
         return $string;
     }
-
 }

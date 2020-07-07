@@ -31,13 +31,10 @@ use function array_filter;
 use function array_intersect;
 use function array_keys;
 use function array_merge;
-use function array_search;
 use function array_unique;
 use function array_values;
 use function in_array;
 use function sort;
-use function sprintf;
-use function var_export;
 
 /**
  * Trait PkeyTagTrait, pKey/tag methods
@@ -51,13 +48,16 @@ trait PkeyTagTrait
      */
 
     /**
-     * Return bool true if element (identified by pKey) has tag(s), not found pKey/tag return false
+     * Return bool true if element (identified by pKey) has tag(s)
      *
-     * @param  int|string $pKey
+     * Not found pKey/tag return false
+     *
+     * @param  int|string       $pKey
      * @param  int|string|array $tag
      * @return bool
      */
-    public function hasPkeyTag( $pKey, $tag ) {
+    public function hasPkeyTag( $pKey, $tag )
+    {
         if( ! $this->pKeyExists( $pKey )) {
             return false;
         }
@@ -73,14 +73,15 @@ trait PkeyTagTrait
      *
      * @param  int|string $pKey
      * @param int|string  $tag  0 (zero) allowed also duplicates
+     * @return static
      * @throws PkeyException
      * @throws TagException
      */
-    public function addPkeyTag( $pKey, $tag ) {
-        if( ! $this->pKeyExists( $pKey )) {
-            throw new PkeyException( sprintf( PkeyException::$PKEYNOTFOUND, var_export( $pKey, true )));
-        }
+    public function addPkeyTag( $pKey, $tag )
+    {
+        $this->assertPkeyExists( $pKey );
         $this->addTag( $tag, $this->pKeys[$pKey] );
+        return $this;
     }
 
     /**
@@ -95,18 +96,17 @@ trait PkeyTagTrait
      * @return static
      * @throws PkeyException
      */
-    public function removePkeyTag( $pKey, $tag ) {
+    public function removePkeyTag( $pKey, $tag )
+    {
         if( ! $this->tagExists( $tag )) {
             return $this;
         }
-        if( ! $this->pKeyExists( $pKey )) {
-            throw new PkeyException( sprintf( PkeyException::$PKEYNOTFOUND, var_export( $pKey, true )));
-        }
+        $this->assertPkeyExists( $pKey );
         $index = $this->pKeys[$pKey];
         if( ! in_array( $index, $this->tags[$tag] )) {
             return $this;
         }
-        $tIx = array_search( $index, $this->tags[$tag] );
+        $tIx = self::search( $index, $this->tags[$tag] );
         unset( $this->tags[$tag][$tIx] );
         $this->tags[$tag] = array_values( $this->tags[$tag] );
         if( empty( $this->tags[$tag] )) {
@@ -121,14 +121,17 @@ trait PkeyTagTrait
      */
 
     /**
-     * Return primary keys, primary keys for collection elements using tag or empty array on not found
+     * Return primary keys, primary keys for collection elements using tag
+     *
+     * Empty array on not found
      *
      * @override
      * @param int|string $tag  (0 (zero) allowed)
-     * @param int $sortFlag  default SORT_REGULAR
+     * @param int        $sortFlag  default SORT_REGULAR
      * @return array
      */
-    public function getPkeys( $tag = null, $sortFlag = SORT_REGULAR ) {
+    public function getPkeys( $tag = null, $sortFlag = SORT_REGULAR )
+    {
         if( null === $tag ) {
             return parent::getPkeys( $sortFlag );
         }
@@ -137,11 +140,9 @@ trait PkeyTagTrait
         }
         $pKeys = [];
         foreach( $this->tags[$tag] as $index ) {
-            $pKeys[] = array_search( $index, $this->pKeys, true );
-            if( $sortFlag != SORT_REGULAR ) {
-                sort( $pKeys, $sortFlag );
-            }
+            $pKeys[] = self::search( $index, $this->pKeys );
         }
+        sort( $pKeys, $sortFlag );
         return $pKeys;
     }
 
@@ -150,13 +151,16 @@ trait PkeyTagTrait
      */
 
     /**
-     * Return all tags, tags for one collection element using the primary key or empty array on not found
+     * Return all tags, tags for one collection element using the primary key
+     *
+     * Empty array on not found
      *
      * @param int|string $pKey
      * @param int        $sortFlag  default SORT_REGULAR
      * @return array
      */
-    public function getTags( $pKey = null, $sortFlag = SORT_REGULAR ) {
+    public function getTags( $pKey = null, $sortFlag = SORT_REGULAR )
+    {
         $tags = array_keys( $this->tags );
         if( null === $pKey ) {
             if( $sortFlag != SORT_REGULAR ) {
@@ -173,20 +177,22 @@ trait PkeyTagTrait
             if( in_array( $theIndex, $this->tags[$tag] )) {
                 $result[] = $tag;
             }
-        }
+        } // end foreach
         return $result;
     }
 
     /**
-     * Return tags for one collection element using the primary key or empty array on not found
+     * Return tags for one collection element using the primary key
      *
+     * Empty array on not found
      * Convenient getTags method alias
      *
      * @param  int|string $pKey
-     * @param int        $sortFlag  default SORT_REGULAR
+     * @param int         $sortFlag  default SORT_REGULAR
      * @return array
      */
-    public function getPkeyTags( $pKey, $sortFlag = SORT_REGULAR ) {
+    public function getPkeyTags( $pKey, $sortFlag = SORT_REGULAR )
+    {
         return $this->getTags( $pKey, $sortFlag );
     }
 
@@ -195,32 +201,38 @@ trait PkeyTagTrait
      */
 
     /**
-     * Return array sub-set of collection element (internal, int) indexes using tags or empty array on not found
+     * Return array sub-set of collection element (internal, int) indexes using tags
      *
-     * On incompatible tags, an empty array is returned
+     * Return empty array on not found or for incompatible tags
      *
      * @param  int|string|array $tags
-     * @param  bool  $union
+     * @param  bool             $union
      * @return array
      */
-    private function getTagIndexes( $tags, $union = true ) {
+    private function getTagIndexes( $tags, $union = true )
+    {
         $elementIxs = [];
         foreach((array) $tags as $tag ) {
             switch( true ) {
                 case ( ! $this->tagExists( $tag )) :
                     continue 2;
-//              case empty( $elementIxs ) :
                 case ( 0 == count( $elementIxs )) :
                     $elementIxs = $this->tags[$tag];
                     continue 2;
                 case $union :
-                    $elementIxs = array_intersect( $elementIxs, $this->tags[$tag] );
+                    $elementIxs = array_intersect(
+                        $elementIxs,
+                        $this->tags[$tag]
+                    );
                     if( 0 == count( $elementIxs )) {
                         return []; // incompatible tags
                     }
                     continue 2;
                 default :
-                    $elementIxs = array_unique( array_merge( $elementIxs, $this->tags[$tag] ), SORT_NUMERIC );
+                    $elementIxs = array_unique(
+                        array_merge( $elementIxs, $this->tags[$tag] ),
+                        SORT_NUMERIC
+                    );
                     break;
             } // end switch
         } // end foreach
@@ -228,53 +240,67 @@ trait PkeyTagTrait
     }
 
     /**
-     * Return (non-assoc) array of element(s) in collection, opt using primary keys and/or tag(s)
+     * Return (non-assoc) array of element(s) in collection
      *
-     * using the opt. primary keys for selection
+     * Using the opt. primary keys for selection and/or tags
      * If tags are given,
-     *     if union is bool true, the result collection element hits match all tags, false match any tag.
+     *     if union is bool true,
+     *     the result collection element hits match all tags,
+     * false match any tag.
      * Hits with exclTags are excluded
      *
      * @override
      * @param  int|string|array $pKeys
-     * @param  int|string|array $tags   none-used tag is skipped
+     * @param  int|string|array $tags       none-used tag is skipped
      * @param  bool             $union
      * @param  int|string|array $exclTags
-     * @param  int|callable     $sortParam    asort sort_flags or uasort callable
+     * @param  int|callable     $sortParam  asort sort_flags or uasort callable
      * @return array
      * @throws SortException
      */
-    public function get( $pKeys = null, $tags = null, $union = true, $exclTags = [], $sortParam = null ) {
-        if( empty( $pKeys ) && empty( $tags ) ) {
-            return ( null === $sortParam ) ? $this->collection : self::sort( $this->collection, $sortParam );
+    public function get(
+        $pKeys = null,
+        $tags = null,
+        $union = true,
+        $exclTags = [],
+        $sortParam = null
+    ) {
+        if( empty( $pKeys ) && empty( $tags )) {
+            return ( null === $sortParam )
+                ? $this->collection
+                : self::sort( $this->collection, $sortParam );
         }
         $indexes = [];
         if( null !== $pKeys ) {
             $indexes = $this->getPkeyIndexes((array) $pKeys );
-            if( empty( $indexes ) ) { // pKeys not found, ignore tags
+            if( empty( $indexes )) { // pKeys not found, ignore tags
                 return [];
             }
         } // end if
         $result = [];
         if( null === $tags ) { // pKeys found, no tags
             foreach( $indexes as $index ) {
-                if( ! $this->hasTag( $index, $exclTags ) ) {
+                if( ! $this->hasTag( $index, $exclTags )) {
                     $result[$index] = $this->collection[$index];
                 }
             } // end foreach
-            return ( null === $sortParam ) ? $result : self::sort( $result, $sortParam );
+            return ( null === $sortParam )
+                ? $result
+                : self::sort( $result, $sortParam );
         } // end if
         foreach( $this->getTagIndexes((array) $tags, $union ) as $tagIx ) {
-            if( ( null === $pKeys ) || in_array( $tagIx, $indexes ) ) {
+            if( ( null === $pKeys ) || in_array( $tagIx, $indexes )) {
                 $result[$tagIx] = $this->collection[$tagIx];
             }
         } // end foreach
         foreach( array_keys( $result ) as $hitIx ) {
-            if( $this->hasTag( $hitIx, $exclTags ) ) {
+            if( $this->hasTag( $hitIx, $exclTags )) {
                 unset( $result[$hitIx] );
             }
         } // end foreach
-        return ( null === $sortParam ) ? $result : self::sort( $result, $sortParam );
+        return ( null === $sortParam )
+            ? $result
+            : self::sort( $result, $sortParam );
     }
 
     /**
@@ -282,37 +308,39 @@ trait PkeyTagTrait
      */
 
     /**
-     * Append element to (array) collection, opt with primary key and/or tags (secondary keys)
+     * Append element to (array) collection
      *
+     * Opt with primary key and/or tags (secondary keys)
      * Note, last appended element is always 'current'
      *
      * @override
-     * @param mixed $element
-     * @param int|string $pKey  MUST be unique
-     * @param array $tags       only int or string allowed
+     * @param mixed            $element
+     * @param int|string       $pKey  MUST be unique
+     * @param int|string|array $tags  only int or string allowed
      * @return static
      * @throws PkeyException
      * @throws TagException
      */
-    public function append( $element, $pKey = null, $tags = null ) {
+    public function append( $element, $pKey = null, $tags = null )
+    {
         $index = $this->count();
         if( null === $pKey ) {
             $pKey = $index;
         }
-        self::assertPkey( $pKey );
-        if( $this->pKeyExists( $pKey )) {
-            throw new PkeyException( sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] ));
+        else {
+            self::assertPkey( $pKey );
+            $this->assertPkeyNotExists( $pKey );
         }
-        foreach((array) $tags as $tag ) {
+        $tags = (array) $tags;
+        foreach( $tags as $tag ) {
             self::assertTag( $tag );
         }
-        $this->collection[$index] = $element;
         $this->setPkey( $pKey, $index );
-        foreach((array) $tags as $tag ) {
+        $this->collection[$index] = $element;
+        foreach( $tags as $tag ) {
             $this->addTag( $tag, $index );
         }
         $this->position = $index;
         return $this;
     }
-
 }

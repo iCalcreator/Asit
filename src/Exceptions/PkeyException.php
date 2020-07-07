@@ -26,10 +26,20 @@ namespace Kigkonsult\Asit\Exceptions;
 
 use InvalidArgumentException;
 
+/**
+ * Class PkeyException
+ *
+ * @package Kigkonsult\Asit\Exceptions
+ */
 class PkeyException extends InvalidArgumentException
 {
-
-    public static $PKEYFOUND    = 'The new primary key : \'%s\' exists for position %d';
-    public static $PKEYNOTFOUND = 'Primary key : %s not found';
-
+    /**
+     * Error text templates
+     *
+     * @var string
+     */
+    public static $PKEYFOUND    =
+        "The new primary key : '%s' exists for position %d";
+    public static $PKEYNOTFOUND =
+        "Primary key : %s not found";
 }

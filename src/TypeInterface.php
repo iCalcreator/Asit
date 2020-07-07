@@ -33,18 +33,18 @@ namespace Kigkonsult\Asit;
 interface TypeInterface
 {
 
-    const ARR_Y       = 'array';
-    const ARRAY2      = '[]';
-    const BOOL        = 'bool';
-    const BOOLEAN     = 'boolean';
-    const DOUBLE      = 'double';
-    const INT         = 'int';
-    const INTEGER     = 'integer';
-    const FLOAT       = 'float';
-    const STRING      = 'string';
-    const OBJECT      = 'object';
-    const RESOURCE    = 'resource';
-    const CALL_BLE    = 'callable';
-    const TRAVERSABLE = 'Traversable';
-
+    /**
+     * Asit constants, OBJECT && RESOURCE in class It
+     */
+    const ARR_Y       = "array";
+    const ARRAY2      = "[]";
+    const BOOL        = "bool";
+    const BOOLEAN     = "boolean";
+    const CALL_BLE    = "callable";
+    const DOUBLE      = "double";
+    const INT         = "int";
+    const INTEGER     = "integer";
+    const FLOAT       = "float";
+    const STRING      = "string";
+    const TRAVERSABLE = "Traversable";
 }

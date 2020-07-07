@@ -26,10 +26,18 @@ namespace Kigkonsult\Asit\Exceptions;
 
 use InvalidArgumentException;
 
+/**
+ * Class SortException
+ *
+ * @package Kigkonsult\Asit\Exceptions
+ */
 class SortException extends InvalidArgumentException
 {
-
-    public static $ERR1 = "Invalid sortParam %s";
-    public static $ERR2 = "Sort error with sortParam %s";
-
+    /**
+     * Error text templates
+     *
+     * @var string
+     */
+    public static $ERRTXT1 = "Invalid sortParam %s";
+    public static $ERRTXT2 = "Sort error with sortParam %s";
 }

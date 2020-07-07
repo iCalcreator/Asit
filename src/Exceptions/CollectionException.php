@@ -21,39 +21,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
-namespace Kigkonsult\Asit;
 
-use Kigkonsult\Asit\Exceptions\PkeyException;
-use Kigkonsult\Asit\Exceptions\TypeException;
-use Kigkonsult\Asit\Traits\TypeTrait;
-use Kigkonsult\Asit\Traits\ListTrait;
+namespace Kigkonsult\Asit\Exceptions;
+
+use InvalidArgumentException;
 
 /**
- * Class AsitList extends Asit, assert collection elements of expected valueType
+ * Class CollectionException
  *
- * @package Kigkonsult\Asit
+ * @package Kigkonsult\Asit\Exceptions
  */
-class AsitList extends Asit implements TypeInterface
+class CollectionException extends InvalidArgumentException
 {
-    use TypeTrait;
-
-    use ListTrait;
-
     /**
-     * Append typed element to (array) collection, opt with primary key
+     * Error text template
      *
-     * @override
-     * @param mixed      $element
-     * @param int|string $pKey  MUST be unique
-     * @return static
-     * @throws PkeyException
-     * @throws TypeException
+     * @var string
      */
-    public function append( $element, $pKey = null )
-    {
-        if( $this->isValueTypeSet()) {
-            $this->assertElementType( $element );
-        }
-        return parent::append( $element, $pKey );
-    }
+    public static $ERRTXT = "Invalid input, no array or Traversable :  %s";
 }

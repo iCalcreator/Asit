@@ -55,6 +55,7 @@
             <file>./src/AsmitList.php</file>
             <file>./src/Asmittag.php</file>
             <file>./src/AsmittagList.php</file>
+            <file>./src/Exceptions/CollectionException.php</file>
             <file>./src/Exceptions/PkeyException.php</file>
             <file>./src/Exceptions/SortException.php</file>
             <file>./src/Exceptions/TagException.php</file>

@@ -26,9 +26,18 @@ namespace Kigkonsult\Asit\Exceptions;
 
 use InvalidArgumentException;
 
+/**
+ * Class TypeException
+ *
+ * @package Kigkonsult\Asit\Exceptions
+ */
 class TypeException extends InvalidArgumentException
 {
-    public static $ERR1 = 'Invalid value type (#%d) : %s, expects %s';
-    public static $ERR2 = 'Invalid value type : %s';
-
+    /**
+     * Error text templates
+     *
+     * @var string
+     */
+    public static $ERR1 = "Invalid value type (#%d) : %s, expects %s";
+    public static $ERR2 = "Invalid value type : %s";
 }

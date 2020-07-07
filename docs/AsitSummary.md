@@ -21,11 +21,11 @@ For non-assoc arrays,
 
 Asit class extends :
 * [Asittag], secondary keys, additional (non-unique) tags (aka attributes?) may be set for each element
-* [AsitList], assure collection elements of expected valueType
+* [AsitList], assert collection elements of expected valueType
 
 Asmit class extends :
 * [Asmittag], secondary keys, additional (non-unique) tags (aka attributes?) may be set for each element
-* [AsmitList], assure collection elements of expected valueType
+* [AsmitList], assert collection elements of expected valueType
 
 #### Inherited methods
 
@@ -45,7 +45,7 @@ Inherited methods from [It]
 * Return _bool_ true if primary key is set
 
 ```Asmit::countPkeys( pKey )```
-* Return count of primary keys for collection element, not found return 0
+* Return count of primary keys for collection element
 * ```Asmit``` only
 * ```pKey``` _int_|_string_
 * Throws PkeyException
@@ -101,7 +101,7 @@ Inherited methods from [It]
   * note, unique primary keys
 * ```collection``` _array_ / _Traversable_
 * Return _static_
-* Throws InvalidArgumentException, PkeyException
+* Throws CollectionException, PkeyException
 
 ```Asit::replacePkey( oldPkey, newPkey )```
 * Replace (set) primary key for collection element
@@ -123,7 +123,7 @@ Inherited methods from [It]
 * To be used in parallel with the Iterator ```current``` method, below
 * ```pKey``` _int_|_string_
 * Return _static_
-* Throws InvalidArgumentException, RuntimeException
+* Throws RuntimeException, PkeyException
 
 #### Current element primary key methods summary
 

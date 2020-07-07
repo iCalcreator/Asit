@@ -46,10 +46,8 @@ use function strlen;
  *
  * @package    Kigkonsult\Asit
  */
-class Asmittag
-     extends Asmit
+class Asmittag extends Asmit
 {
-
     use TagTrait;
 
     use PkeyTagTrait;
@@ -59,13 +57,13 @@ class Asmittag
      *
      * @return string
      */
-    public function toString() {
-        static $SP0     = '';
-        $string = $SP0;
+    public function toString()
+    {
+        $string = self::$SP0;
         $pLen   = strlen((string) $this->count());
         $this->rewind();
         while( $this->valid()) {
-            $key     = self::prepKeyString( $this->key(), $pLen );
+            $key = self::prepKeyString( $this->key(), $pLen );
             foreach( $this->getCurrentPkey( false ) as $pKey ) {
                 $string .= self::pKey2String($key, $pKey );
             }
@@ -75,5 +73,4 @@ class Asmittag
         }
         return $string;
     }
-
 }

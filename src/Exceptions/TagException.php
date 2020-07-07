@@ -26,6 +26,11 @@ namespace Kigkonsult\Asit\Exceptions;
 
 use InvalidArgumentException;
 
+/**
+ * Class TagException
+ *
+ * @package Kigkonsult\Asit\Exceptions
+ */
 class TagException extends InvalidArgumentException
 {
 

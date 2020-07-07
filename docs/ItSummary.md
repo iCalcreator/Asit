@@ -10,7 +10,7 @@ Collection elements are searchable using
 * Iterator etc methods, below
 
 It class extends :
-* [ItList], assure collection elements of expected valueType
+* [ItList], assert collection elements of expected valueType
 * [Asit], implements assoc array collection element get-/set-methods
 
 ---
@@ -18,20 +18,20 @@ It class extends :
 ```It::__construct( [ collection ] )```
 * Class It construct method
 * ```collection``` _array_ / _Traversable_
-* Throws InvalidArgumentException
+* Throws CollectionException
 
 ```It::factory( [ collection ] )```
 * Class It factory method
 * ```collection``` _array_ / _Traversable_
 * Return _static_
-* Throws InvalidArgumentException
+* Throws CollectionException
 * Static
     
 ```It::singleton( [ collection ] )```
 * Class It singleton method
 * ```collection``` _array_ / _Traversable_
 * Return _static_
-* Throws InvalidArgumentException
+* Throws CollectionException
 * Static
     
 #### Get method
@@ -56,7 +56,7 @@ It class extends :
 * Multiple setCollections allowed, i.e. batch appends
 * ```collection``` _array_ / _Traversable_
 * Return _static_
-* Throws InvalidArgumentException
+* Throws CollectionException
     
 ```It::init()```
 * Clear (remove) collection
@@ -93,7 +93,7 @@ It class extends :
 * Return int
 
 ```It::last()```
-* Move position to last element
+* Move position to last element, if empty 0
 * Return _static_
 
 ```It::next()```
@@ -106,7 +106,7 @@ It class extends :
 * Return _static_
 
 ```It::rewind()```
-* Rewind the Iterator to the first element
+* Rewind the Iterator to the first element, if empty 0
 * Required method implementing the Iterator interface
 * Return _static_
 

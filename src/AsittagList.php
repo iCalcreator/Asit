@@ -30,36 +30,33 @@ use Kigkonsult\Asit\Traits\TypeTrait;
 use Kigkonsult\Asit\Traits\ListTrait;
 
 /**
- * Class AsittagList extends Asittag, assure collection elements of preset valueType
+ * Class AsittagList extends Asittag, assert collection elements of preset valueType
  *
  * @package Kigkonsult\Asit
  */
-class AsittagList
-    extends Asittag
-    implements TypeInterface
+class AsittagList extends Asittag implements TypeInterface
 {
-
     use TypeTrait;
 
     use ListTrait;
 
     /**
-     * Append assured element to (array) collection, opt with primary key
+     * Append typed element to (array) collection, opt with primary key
      *
      * @override
-     * @param mixed $element
-     * @param int|string $pKey  MUST be unique
-     * @param array $tags       only int or string allowed
+     * @param mixed      $element
+     * @param int|string $pKey        MUST be unique
+     * @param int|string|array $tags  only int or string allowed
      * @return static
      * @throws PkeyException
      * @throws TagException
      * @throws TypeException
      */
-    public function append( $element, $pKey = null, $tags = null ) {
+    public function append( $element, $pKey = null, $tags = null )
+    {
         if( $this->isValueTypeSet()) {
             $this->assertElementType( $element );
         }
         return parent::append( $element, $pKey, $tags );
     }
-
 }
