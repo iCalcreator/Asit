@@ -2,6 +2,8 @@
 
 ## Asit
 
+Asit manages collections of elements.
+
 > Class It manages array collections
 * Implement _SeekableIterator_, _Countable_ and _IteratorAggregate_ methods
 * Collection elements are searchable using
