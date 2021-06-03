@@ -30,38 +30,27 @@
  */
 namespace Kigkonsult\Asit;
 
-use Kigkonsult\Asit\Exceptions\PkeyException;
-use Kigkonsult\Asit\Exceptions\TypeException;
-use Kigkonsult\Asit\Traits\TypeTrait;
-use Kigkonsult\Asit\Traits\ListTrait;
-
 /**
- * Class AsitList extends Asit, assert collection elements of expected valueType
+ * Interface ListTypeInterface
+ *
+ * Type constants
  *
  * @package Kigkonsult\Asit
  */
-class AsitList extends Asit implements ListTypeInterface
+interface ListTypeInterface
 {
-    use TypeTrait;
-
-    use ListTrait;
-
     /**
-     * Append typed element to (array) collection, opt with primary key
-     *
-     * @override
-     * @param mixed      $element
-     * @param int|string $pKey  MUST be unique
-     * @return static
-     * @throws PkeyException
-     * @throws TypeException
+     * Asit constants, OBJECT && RESOURCE in class It
      */
-    public function append( $element, $pKey = null ) : BaseInterface
-    {
-        if( $this->isValueTypeSet()) {
-            $this->assertElementType( $element );
-        }
-        parent::append( $element, $pKey );
-        return $this;
-    }
+    const ARR_Y       = "array";
+    const ARRAY2      = "[]";
+    const BOOL        = "bool";
+    const BOOLEAN     = "boolean";
+    const CALL_BLE    = "callable";
+    const DOUBLE      = "double";
+    const INT         = "int";
+    const INTEGER     = "integer";
+    const FLOAT       = "float";
+    const STRING      = "string";
+    const TRAVERSABLE = "Traversable";
 }

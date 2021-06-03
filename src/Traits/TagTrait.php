@@ -2,28 +2,36 @@
 /**
  * Asit package manages array collections
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/Asit>
- *
  * This file is part of Asit.
  *
- * Asit is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * Support <https://github.com/iCalcreator/Asit>
  *
- * Asit is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @version   1.6
+ * @license   Subject matter of licence is the software Asit.
+ *            The above copyright, link, package and version notices,
+ *            this licence notice shall be included in all copies or substantial
+ *            portions of the Asit.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Asit. If not, see <https://www.gnu.org/licenses/>.
+ *            Asit is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
+ *
+ *            Asit is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
 namespace Kigkonsult\Asit\Traits;
 
 use InvalidArgumentException;
+use Kigkonsult\Asit\BaseInterface;
 use Kigkonsult\Asit\Exceptions\SortException;
 use Kigkonsult\Asit\Exceptions\TagException;
 use RuntimeException;
@@ -58,7 +66,7 @@ trait TagTrait
      * @override
      * @return static
      */
-    public function init()
+    public function init() : BaseInterface
     {
         $this->tags = [];
         return parent::init();
@@ -89,7 +97,7 @@ trait TagTrait
      * @param array  $tags
      * @return string
      */
-    protected static function tags2String( $key, array $tags )
+    protected static function tags2String( string $key, array $tags ) : string
     {
         static $TMPL  = "%s : (tags) %s ";
         static $COMMA = ", ";
@@ -106,7 +114,7 @@ trait TagTrait
      * @param  int|string|array $tag
      * @return bool
      */
-    public function tagExists( $tag )
+    public function tagExists( $tag ) : bool
     {
         $found = false;
         foreach((array) $tag as $theTag ) {
@@ -126,7 +134,7 @@ trait TagTrait
      * @return array
      * @throws RuntimeException
      */
-    public function getCurrentTags()
+    public function getCurrentTags() : array
     {
         $this->assertCurrent();
         return $this->getTags( self::search( $this->position, $this->pKeys ));
@@ -141,7 +149,7 @@ trait TagTrait
      * @param  int|string|array $tag
      * @return bool
      */
-    private function hasTag( $index, $tag )
+    private function hasTag( int $index, $tag ) : bool
     {
         if( empty( $tag ) || ! isset( $this->collection[$index] )) {
             return false;
@@ -164,7 +172,7 @@ trait TagTrait
      * @return bool
      * @throws RuntimeException
      */
-    public function hasCurrentTag( $tag )
+    public function hasCurrentTag( $tag ) : bool
     {
         $this->assertCurrent();
         return $this->hasTag( $this->position, $tag );
@@ -174,9 +182,9 @@ trait TagTrait
      * Return count of collection element using the tag, not found return 0
      *
      * @param  int|string $tag
-     * @return bool
+     * @return int
      */
-    public function tagCount( $tag )
+    public function tagCount( $tag ) : int
     {
         return $this->tagExists( $tag ) ? count( $this->tags[$tag] ) : 0;
     }
@@ -193,7 +201,7 @@ trait TagTrait
      * @return void
      * @throws TagException
      */
-    private function addTag( $tag, $index )
+    private function addTag( $tag, int $index )
     {
         self::assertTag( $tag );
         if( ! $this->tagExists( $tag )) {
@@ -216,7 +224,7 @@ trait TagTrait
      * @throws RuntimeException
      * @throws TagException
      */
-    public function addCurrentTag( $tag )
+    public function addCurrentTag( $tag ) : BaseInterface
     {
         $this->assertCurrent();
         $this->addTag( $tag, $this->position );
@@ -236,7 +244,7 @@ trait TagTrait
      * @return static
      * @throws RuntimeException
      */
-    public function removeCurrentTag( $tag )
+    public function removeCurrentTag( $tag ) : BaseInterface
     {
         $this->assertCurrent();
         return $this->removePkeyTag( $this->getCurrentPkey(), $tag );
@@ -266,7 +274,8 @@ trait TagTrait
         $union = true,
         $exclTags = [],
         $sortParam = null
-    ) {
+    ) : array
+    {
         return $this->get( null, $tags, $union, $exclTags, $sortParam );
     }
 }

@@ -2,27 +2,35 @@
 /**
  * Asit package manages array collections
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/Asit>
- *
  * This file is part of Asit.
  *
- * Asit is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * Support <https://github.com/iCalcreator/Asit>
  *
- * Asit is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @version   1.6
+ * @license   Subject matter of licence is the software Asit.
+ *            The above copyright, link, package and version notices,
+ *            this licence notice shall be included in all copies or substantial
+ *            portions of the Asit.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Asit. If not, see <https://www.gnu.org/licenses/>.
+ *            Asit is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
+ *
+ *            Asit is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
 namespace Kigkonsult\Asit\Traits;
 
+use Kigkonsult\Asit\BaseInterface;
 use Kigkonsult\Asit\Exceptions\PkeyException;
 use Kigkonsult\Asit\Exceptions\SortException;
 use Kigkonsult\Asit\Exceptions\TagException;
@@ -56,7 +64,7 @@ trait PkeyTagTrait
      * @param  int|string|array $tag
      * @return bool
      */
-    public function hasPkeyTag( $pKey, $tag )
+    public function hasPkeyTag( $pKey, $tag ) : bool
     {
         if( ! $this->pKeyExists( $pKey )) {
             return false;
@@ -77,7 +85,7 @@ trait PkeyTagTrait
      * @throws PkeyException
      * @throws TagException
      */
-    public function addPkeyTag( $pKey, $tag )
+    public function addPkeyTag( $pKey, $tag ) : BaseInterface
     {
         $this->assertPkeyExists( $pKey );
         $this->addTag( $tag, $this->pKeys[$pKey] );
@@ -96,7 +104,7 @@ trait PkeyTagTrait
      * @return static
      * @throws PkeyException
      */
-    public function removePkeyTag( $pKey, $tag )
+    public function removePkeyTag( $pKey, $tag ) : BaseInterface
     {
         if( ! $this->tagExists( $tag )) {
             return $this;
@@ -125,12 +133,12 @@ trait PkeyTagTrait
      *
      * Empty array on not found
      *
-     * @override
+     * @override  Asit::getPkeys()
      * @param int|string $tag  (0 (zero) allowed)
      * @param int        $sortFlag  default SORT_REGULAR
      * @return array
      */
-    public function getPkeys( $tag = null, $sortFlag = SORT_REGULAR )
+    public function getPkeys( $tag = null, $sortFlag = SORT_REGULAR ) : array
     {
         if( null === $tag ) {
             return parent::getPkeys( $sortFlag );
@@ -159,7 +167,7 @@ trait PkeyTagTrait
      * @param int        $sortFlag  default SORT_REGULAR
      * @return array
      */
-    public function getTags( $pKey = null, $sortFlag = SORT_REGULAR )
+    public function getTags( $pKey = null, int $sortFlag = SORT_REGULAR ) : array
     {
         $tags = array_keys( $this->tags );
         if( null === $pKey ) {
@@ -187,11 +195,11 @@ trait PkeyTagTrait
      * Empty array on not found
      * Convenient getTags method alias
      *
-     * @param  int|string $pKey
+     * @param int|string $pKey
      * @param int         $sortFlag  default SORT_REGULAR
      * @return array
      */
-    public function getPkeyTags( $pKey, $sortFlag = SORT_REGULAR )
+    public function getPkeyTags( $pKey, int $sortFlag = SORT_REGULAR ) : array
     {
         return $this->getTags( $pKey, $sortFlag );
     }
@@ -209,7 +217,7 @@ trait PkeyTagTrait
      * @param  bool             $union
      * @return array
      */
-    private function getTagIndexes( $tags, $union = true )
+    private function getTagIndexes( $tags, $union = true ) : array
     {
         $elementIxs = [];
         foreach((array) $tags as $tag ) {
@@ -264,7 +272,8 @@ trait PkeyTagTrait
         $union = true,
         $exclTags = [],
         $sortParam = null
-    ) {
+    ) : array
+    {
         if( empty( $pKeys ) && empty( $tags )) {
             return ( null === $sortParam )
                 ? $this->collection
@@ -321,7 +330,7 @@ trait PkeyTagTrait
      * @throws PkeyException
      * @throws TagException
      */
-    public function append( $element, $pKey = null, $tags = null )
+    public function append( $element, $pKey = null, $tags = null ) : BaseInterface
     {
         $index = $this->count();
         if( null === $pKey ) {

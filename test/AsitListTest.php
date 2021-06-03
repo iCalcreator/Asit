@@ -2,24 +2,31 @@
 /**
  * Asit package manages assoc arrays
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/Asit>
- *
  * This file is part of Asit.
  *
- * Asit is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * Support <https://github.com/iCalcreator/Asit>
  *
- * Asit is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @version   1.6
+ * @license   Subject matter of licence is the software Asit.
+ *            The above copyright, link, package and version notices,
+ *            this licence notice shall be included in all copies or substantial
+ *            portions of the Asit.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Asit. If not, see <https://www.gnu.org/licenses/>.
+ *            Asit is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
+ *
+ *            Asit is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
 namespace Kigkonsult\Asit;
 
@@ -34,14 +41,16 @@ interface testIfc
 class testClass1
     implements testIfc
 {
-    public function __invoke() {
+    public function __invoke()
+    {
         return self::HALLO_WORLD;
     }
 }
 
 class testClass2
 {
-    public function __invoke() {
+    public function __invoke()
+    {
         return 'Hallo world';
     }
 }
@@ -52,12 +61,14 @@ class AsitListTest extends TestCase
     public static $file1 = 'file1';
     public static $file2 = 'file1';
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass()
+    {
         touch( self::$file1 );
         touch( self::$file2 );
     }
 
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass()
+    {
         if( is_file( self::$file1 )) {
             unlink( self::$file1 );
         }
@@ -72,7 +83,8 @@ class AsitListTest extends TestCase
      * @test
      *
      */
-    public function ListTest11() {
+    public function ListTest11()
+    {
         $data1  = [ 'key1' => 'value1' ];
         $data24 = [ 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', ];
         $list1 = new AsmitList( $data1, AsmitList::STRING);
@@ -119,7 +131,8 @@ class AsitListTest extends TestCase
      * @test *List singleton
      *
      */
-    public function ListTest2() {
+    public function ListTest2()
+    {
         $list1  = AsmittagList::singleton(
             $this->arrayLoader( AsmittagList::STRING ),
             AsmittagList::STRING
@@ -145,7 +158,8 @@ class AsitListTest extends TestCase
      *
      * @return array
      */
-    public function listLoader() {
+    public function listLoader()
+    {
         $testData = [];
 
         $testData[] = [
@@ -185,7 +199,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest12( $case, $list ) {
+    public function ListTest12( int $case, $list )
+    {
         $case += 10;
         $ok    = 0;
         try {
@@ -199,7 +214,10 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test12-1-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test12-1-' . $case . ', exp 2, got ' . $ok
+        );
     }
 
     /**
@@ -211,7 +229,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest20( $case, $list ) {
+    public function ListTest20( int $case, $list )
+    {
         $case += 200;
         $ok    = 0;
         try {
@@ -221,7 +240,10 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 2;
         }
-        $this->assertTrue( $ok == 1, 'test20-' . $case . ', exp 1, got ' . $ok );
+        $this->assertTrue(
+            $ok == 1,
+            'test20-' . $case . ', exp 1, got ' . $ok
+        );
     }
 
     /**
@@ -233,7 +255,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest21( $case, $list ) {
+    public function ListTest21( int $case, $list )
+    {
         $case += 210;
         $ok   = 0;
         try {
@@ -270,7 +293,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest22( $case, $list ) {
+    public function ListTest22( int $case, $list )
+    {
         $case += 220;
         $ok   = 0;
         try {
@@ -307,7 +331,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest23( $case, $list ) {
+    public function ListTest23( int $case, $list )
+    {
         $case += 230;
         $ok   = 0;
         try {
@@ -344,7 +369,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest24( $case, $list ) {
+    public function ListTest24( int $case, $list )
+    {
         $case += 240;
         $ok   = 0;
         try {
@@ -381,7 +407,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest25( $case, $list ) {
+    public function ListTest25( int $case, $list )
+    {
         $case += 250;
         $ok   = 0;
         try {
@@ -406,7 +433,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest26( $case, $list ) {
+    public function ListTest26( int $case, $list )
+    {
         $case += 260;
         $ok   = 0;
         try {
@@ -431,7 +459,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest27( $case, $list ) {
+    public function ListTest27( int $case, $list )
+    {
         $case += 270;
         $ok   = 0;
         try {
@@ -456,7 +485,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest28( $case, $list ) {
+    public function ListTest28( int $case, $list )
+    {
         $case += 280;
         $ok   = 0;
         try {
@@ -481,7 +511,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest29( $case, $list ) {
+    public function ListTest29( int $case, $list )
+    {
         $case += 290;
         $ok   = 0;
         try {
@@ -553,7 +584,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest3( $case, $list ) {
+    public function ListTest3( int $case, $list )
+    {
         $case += 300;
         foreach(
             [
@@ -592,7 +624,6 @@ class AsitListTest extends TestCase
             );
 
         } // end foreach
-
     }
 
     /**
@@ -604,7 +635,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest4( $case, $list ) {
+    public function ListTest4( int $case, $list )
+    {
         $case += 400;
         $list->setValueType( testClass1::class );
 
@@ -618,7 +650,6 @@ class AsitListTest extends TestCase
                 'test4-1-' . $case . '-' . $ix
             );
         }
-
     }
 
     /**
@@ -628,7 +659,8 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest5( $case, $list ) {
+    public function ListTest5( int $case, $list )
+    {
         $case  += 500;
         $string = '';
         $class  = get_class( $list );
@@ -680,7 +712,8 @@ class AsitListTest extends TestCase
         */
     }
 
-    public static function getElement( $valueType ) {
+    public static function getElement( $valueType )
+    {
         $ix = array_rand( [ 0, 1 ] );
         switch( $valueType ) {
             case AsitList::ARR_Y :
@@ -744,7 +777,8 @@ class AsitListTest extends TestCase
         } // end switch
 
     }
-    public function arrayLoader( $valueType ) {
+    public function arrayLoader( $valueType )
+    {
 
         $output = [];
         for( $ix=0; $ix < 2; $ix++ ) {
@@ -767,9 +801,9 @@ class AsitListTest extends TestCase
         9 => 'Purple'
     ];
 
-    public static function getAttribute( $index ) {
+    public static function getAttribute( int $index )
+    {
         $cIx = $index % 10;
         return self::$COLORS[$cIx];
     }
-
 }

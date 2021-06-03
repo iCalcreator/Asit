@@ -2,24 +2,31 @@
 /**
  * Asit package manages assoc arrays
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/Asit>
- *
  * This file is part of Asit.
  *
- * Asit is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * Support <https://github.com/iCalcreator/Asit>
  *
- * Asit is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @version   1.6
+ * @license   Subject matter of licence is the software Asit.
+ *            The above copyright, link, package and version notices,
+ *            this licence notice shall be included in all copies or substantial
+ *            portions of the Asit.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Asit. If not, see <https://www.gnu.org/licenses/>.
+ *            Asit is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
+ *
+ *            Asit is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
 namespace Kigkonsult\Asit;
 
@@ -33,8 +40,8 @@ use Traversable;
 
 class ItTest extends TestCase
 {
-
-    public function arrayLoader( $max = 100 ) {
+    public function arrayLoader( int $max = 100 )
+    {
         $output = [];
         for( $ix=0; $ix < $max; $ix++ ) {
             $output['key' . $ix] = 'element' . $ix;
@@ -55,7 +62,8 @@ class ItTest extends TestCase
         9 => 'Purple'
     ];
 
-    public function getAttribute( $index ) {
+    public function getAttribute( int $index )
+    {
         $cIx = $index % 10;
         return self::$COLORS[$cIx];
     }
@@ -64,7 +72,8 @@ class ItTest extends TestCase
      * @test It isCollectionSet, exists, count,
      *
      */
-    public function itTest1() {
+    public function itTest1()
+    {
         $it = new It();
 
         $this->assertFalse(
@@ -116,7 +125,8 @@ class ItTest extends TestCase
      * @test It singleton
      *
      */
-    public function itTest2() {
+    public function itTest2()
+    {
         $it1  = It::singleton( $this->arrayLoader());
         $cnt1 = $it1->count();
 
@@ -134,7 +144,8 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function itTest21() {
+    public function itTest21()
+    {
 
         $it1 = new It();
         foreach( $this->arrayLoader() as $value ) {
@@ -167,7 +178,8 @@ class ItTest extends TestCase
      * @param int $case
      * @param Traversable $it
      */
-    public function itTest21test( $case, Traversable $it ) {
+    public function itTest21test( int $case, Traversable $it )
+    {
         $case += 1;
 
         $this->assertTrue(
@@ -264,7 +276,8 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function ItTest21exception() {
+    public function ItTest21exception()
+    {
         $invalid = new stdClass;
         foreach( [ It::factory(), Asit::factory() ] as $it ) {
             $ok = 0;
@@ -287,7 +300,8 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function ItTest22() {
+    public function ItTest22()
+    {
         $payLoad1 = array_values( $this->arrayLoader());
         $payLoad2 = array_combine( range( 100, 199 ), $this->arrayLoader());
         foreach( [ It::factory( $payLoad1 ) , Asit::factory( $payLoad1 ) ] as $it ) {
@@ -316,7 +330,8 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function itTest25() {
+    public function itTest25()
+    {
 
         $it = new It();
         foreach( $this->arrayLoader() as $value ) {
@@ -354,7 +369,8 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function itTest26() {
+    public function itTest26()
+    {
         $it = It::factory( [ 1 => 'value' ] );
         $ok = 0;
         try {
@@ -377,7 +393,8 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function itTest31() {
+    public function itTest31()
+    {
         $it = new It( self::$collection );
         $ok = 0;
         try {
@@ -411,7 +428,8 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function itTest32() {
+    public function itTest32()
+    {
         $it = It::factory( self::$collection );
 
         $result  = $it->get(); // ignore keys
@@ -439,7 +457,8 @@ class ItTest extends TestCase
         );
     }
 
-    public static function cmp( $a, $b ) {
+    public static function cmp( $a, $b )
+    {
         $aLast = substr( $a, -1 );
         $bLast = substr( $b, -1 );
         if( $aLast == $bLast ) {
@@ -447,5 +466,4 @@ class ItTest extends TestCase
         }
         return ( $aLast < $bLast ) ? -1 : +1;
     }
-
 }

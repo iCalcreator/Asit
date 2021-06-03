@@ -2,24 +2,31 @@
 /**
  * Asit package manages array collections
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/Asit>
- *
  * This file is part of Asit.
  *
- * Asit is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * Support <https://github.com/iCalcreator/Asit>
  *
- * Asit is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @version   1.6
+ * @license   Subject matter of licence is the software Asit.
+ *            The above copyright, link, package and version notices,
+ *            this licence notice shall be included in all copies or substantial
+ *            portions of the Asit.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Asit. If not, see <https://www.gnu.org/licenses/>.
+ *            Asit is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
+ *
+ *            Asit is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
 namespace Kigkonsult\Asit;
 
@@ -54,15 +61,8 @@ use function var_export;
  *
  * @package Kigkonsult\Asit
  */
-class It implements SeekableIterator, Countable
+class It implements BaseInterface, SeekableIterator, Countable
 {
-
-    /**
-     * Class constants
-     */
-    const OBJECT   = "object";
-    const RESOURCE = "resource";
-
     /**
      * @var string
      */
@@ -98,11 +98,12 @@ class It implements SeekableIterator, Countable
     /**
      * Class factory method
      *
-     * @param  mixed $collection
+     * @param  mixed  $collection
+     * @param  mixed  $dummy
      * @return static
      * @throws CollectionException
      */
-    public static function factory( $collection = null )
+    public static function factory( $collection = null, $dummy = null ) : BaseInterface
     {
         return new static( $collection );
     }
@@ -111,10 +112,11 @@ class It implements SeekableIterator, Countable
      * Class singleton method
      *
      * @param  mixed $collection
+     * @param  mixed  $dummy
      * @return static
      * @throws CollectionException
      */
-    public static function singleton( $collection = null )
+    public static function singleton( $collection = null, $dummy = null ) : BaseInterface
     {
         static $instance = null;
         if( null === $instance ) {
@@ -128,7 +130,7 @@ class It implements SeekableIterator, Countable
      *
      * @return static
      */
-    public function init()
+    public function init() : BaseInterface
     {
         $this->collection = [];
         return $this;
@@ -139,7 +141,7 @@ class It implements SeekableIterator, Countable
      *
      * @return string
      */
-    public function toString()
+    public function toString() : string
     {
         $string = self::$SP0;
         $pLen   = strlen((string) $this->count());
@@ -161,9 +163,9 @@ class It implements SeekableIterator, Countable
      * @param int $len
      * @return string
      */
-    protected static function prepKeyString( $key, $len )
+    protected static function prepKeyString( int $key, int $len ) : string
     {
-        static $PAD = " ";
+        static $PAD = ' ';
         return str_pad((string) $key, $len, $PAD, STR_PAD_LEFT );
     }
 
@@ -174,7 +176,7 @@ class It implements SeekableIterator, Countable
      * @param mixed  $element
      * @return string
      */
-    protected static function element2String( $key, $element )
+    protected static function element2String( string $key, $element ) : string
     {
         static $TMPL = "%s : (%s) ";
         $type        = gettype( $element );
@@ -205,10 +207,10 @@ class It implements SeekableIterator, Countable
 
     /**
      * Return value rendered for display
-     * @param $value
+     * @param mixed $value
      * @return string
      */
-    protected static function getDispVal( $value )
+    protected static function getDispVal( $value ) : string
     {
         return var_export( $value, true );
     }
@@ -227,7 +229,8 @@ class It implements SeekableIterator, Countable
     protected static function sort(
         array $collection,
         $sortParam = SORT_REGULAR
-    ) {
+    ) : array
+    {
         $sortOk = false;
         switch( true ) {
             case is_int( $sortParam ) :
@@ -240,7 +243,6 @@ class It implements SeekableIterator, Countable
                 throw new SortException(
                     sprintf( SortException::$ERRTXT1, self::getDispVal( $sortParam ))
                 );
-                break;
         } // end switch
         if( ! $sortOk ) {
             throw new SortException(
@@ -261,7 +263,7 @@ class It implements SeekableIterator, Countable
      * @return array
      * @throws SortException
      */
-    public function get( $sortParam = null )
+    public function get( $sortParam = null ) : array
     {
         if( null !== $sortParam ) {
             $result = $this->collection;
@@ -279,10 +281,11 @@ class It implements SeekableIterator, Countable
      *
      * Note, last appended element is always 'current'
      *
+     * @override
      * @param mixed $element
      * @return static
      */
-    public function append( $element )
+    public function append( $element ) : BaseInterface
     {
         $index = $this->count();
         $this->collection[$index] = $element;
@@ -297,7 +300,7 @@ class It implements SeekableIterator, Countable
      * @return static
      * @throws CollectionException
      */
-    public function setCollection( $collection )
+    public function setCollection( $collection ) : BaseInterface
     {
         switch( true ) {
             case is_array( $collection ) :
@@ -314,7 +317,6 @@ class It implements SeekableIterator, Countable
                 throw new CollectionException(
                     sprintf( CollectionException::$ERRTXT, self::getErrType( $collection ))
                 );
-                break;
         } // end switch
         return $this;
     }
@@ -322,10 +324,10 @@ class It implements SeekableIterator, Countable
     /**
      * Return value type rendered for display
      *
-     * @param $value
+     * @param mixed $value
      * @return string
      */
-    protected static function getErrType( $value )
+    protected static function getErrType( $value ) : string
     {
         $getType = gettype( $value );
         switch( true ) {
@@ -353,7 +355,7 @@ class It implements SeekableIterator, Countable
      *
      * @return int
      */
-    public function count()
+    public function count() : int
     {
         return count( $this->collection );
     }
@@ -375,7 +377,7 @@ class It implements SeekableIterator, Countable
      *
      * @return bool
      */
-    public function isCollectionSet()
+    public function isCollectionSet() : bool
     {
         return ( 0 != $this->count());
     }
@@ -386,7 +388,7 @@ class It implements SeekableIterator, Countable
      * @param  int $position
      * @return bool
      */
-    public function exists( $position )
+    public function exists( int $position ) : bool
     {
         return array_key_exists( $position, $this->collection );
     }
@@ -400,7 +402,7 @@ class It implements SeekableIterator, Countable
      *
      * @return Traversable
      */
-    public function getIterator()
+    public function getIterator() : Traversable
     {
         return new ArrayIterator( $this->collection );
     }
@@ -412,7 +414,7 @@ class It implements SeekableIterator, Countable
      *
      * @return int
      */
-    public function key()
+    public function key() : int
     {
         return $this->position;
     }
@@ -422,7 +424,7 @@ class It implements SeekableIterator, Countable
      *
      * @return static
      */
-    public function last()
+    public function last() : self
     {
         $count          = count( $this->collection );
         $this->position = empty( $count ) ? 0 : ( $count - 1 );
@@ -436,7 +438,7 @@ class It implements SeekableIterator, Countable
      *
      * @return static
      */
-    public function next()
+    public function next() : self
     {
         $this->position += 1;
         return $this;
@@ -447,7 +449,7 @@ class It implements SeekableIterator, Countable
      *
      * @return static
      */
-    public function previous()
+    public function previous() : self
     {
         $this->position -= 1;
         return $this;
@@ -460,7 +462,7 @@ class It implements SeekableIterator, Countable
      *
      * @return static
      */
-    public function rewind()
+    public function rewind() : self
     {
         $this->position = 0;
         return $this;
@@ -491,7 +493,7 @@ class It implements SeekableIterator, Countable
      *
      * @return bool
      */
-    public function valid()
+    public function valid() : bool
     {
         return $this->exists( $this->position );
     }
@@ -505,7 +507,8 @@ class It implements SeekableIterator, Countable
      *
      * @throws RuntimeException
      */
-    protected function assertCurrent() {
+    protected function assertCurrent()
+    {
         static $CURRENTNOTVALID = "Invalid current position";
         if( ! $this->valid()) {
             throw new RuntimeException( $CURRENTNOTVALID );

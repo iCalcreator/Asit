@@ -2,24 +2,31 @@
 /**
  * Asit package manages array collections
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/Asit>
- *
  * This file is part of Asit.
  *
- * Asit is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * Support <https://github.com/iCalcreator/Asit>
  *
- * Asit is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @version   1.6
+ * @license   Subject matter of licence is the software Asit.
+ *            The above copyright, link, package and version notices,
+ *            this licence notice shall be included in all copies or substantial
+ *            portions of the Asit.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Asit. If not, see <https://www.gnu.org/licenses/>.
+ *            Asit is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
+ *
+ *            Asit is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
 namespace Kigkonsult\Asit;
 
@@ -89,7 +96,7 @@ class Asit extends It
      * @override
      * @return static
      */
-    public function init()
+    public function init() : BaseInterface
     {
         $this->pKeys = [];
         return parent::init();
@@ -100,14 +107,17 @@ class Asit extends It
      *
      * @return string
      */
-    public function toString()
+    public function toString() : string
     {
         $string = self::$SP0;
         $pLen   = strlen((string) $this->count());
         $this->rewind();
         while( $this->valid()) {
             $key     = self::prepKeyString( $this->key(), $pLen );
-            $string .= self::pKey2String( $key, $this->getCurrentPkey());
+            $string .= self::pKey2String(
+                $key,
+                (string) ( $this->getCurrentPkey() ?: self::$SP0 )
+            );
             $string .= self::element2String( $key, $this->current());
             $this->next();
         }
@@ -118,10 +128,10 @@ class Asit extends It
      * Return key and pKey as string
      *
      * @param string $key
-     * @param string $pKey
+     * @param int|string $pKey
      * @return string
      */
-    protected static function pKey2String( $key, $pKey )
+    protected static function pKey2String( string $key, $pKey ) : string
     {
         static $TMPL = "%s : (pKey) %s";
         return sprintf( $TMPL, $key, $pKey ) . PHP_EOL;
@@ -139,7 +149,7 @@ class Asit extends It
      * @return void
      * @throws InvalidArgumentException
      */
-    protected static function assertKey( $key, $tmpl )
+    protected static function assertKey( $key, string $tmpl )
     {
         if( is_int( $key ) || ( is_string( $key ) && ! empty( $key ))) {
             return;
@@ -173,7 +183,7 @@ class Asit extends It
      * @param  int|string $pKey
      * @return bool
      */
-    public function pKeyExists( $pKey )
+    public function pKeyExists( $pKey ) : bool
     {
         return array_key_exists( $pKey, $this->pKeys );
     }
@@ -214,14 +224,14 @@ class Asit extends It
      * Return all primary keys
      *
      * @param int $sortFlag  default SORT_REGULAR
+     * @param mixed $dummy
      * @return array
      */
-    public function getPkeys( $sortFlag = SORT_REGULAR )
+    public function getPkeys( $sortFlag = SORT_REGULAR, $dummy = null ) : array
     {
         $pKeys = array_keys( $this->pKeys );
         if( $sortFlag != SORT_REGULAR ) {
             sort( $pKeys, $sortFlag );
-            return $pKeys;
         }
         return $pKeys;
     }
@@ -234,7 +244,7 @@ class Asit extends It
      * @return static
      * @throws PkeyException
      */
-    protected function setPkey( $pKey, $index )
+    protected function setPkey( $pKey, int $index ) : BaseInterface
     {
         self::assertPkey( $pKey );
         switch( true ) {
@@ -242,12 +252,10 @@ class Asit extends It
                 break;
             case ( $index == $this->pKeys[$pKey] ) :
                 return $this;
-                break;
             default :
                 throw new PkeyException(
                     sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] )
                 );
-                break;
         } // end switch
         if( false !== ( $foundKey = self::search( $index, $this->pKeys ))) {
             unset( $this->pKeys[$foundKey] );
@@ -265,7 +273,7 @@ class Asit extends It
      * @return static
      * @throws PkeyException
      */
-    public function replacePkey( $oldPkey, $newPkey )
+    public function replacePkey( $oldPkey, $newPkey ) : self
     {
         $this->assertPkeyExists( $oldPkey );
         self::assertPkey( $newPkey );
@@ -283,7 +291,7 @@ class Asit extends It
      *
      * To be used in parallel with the Iterator 'current' method, below
      *
-     * @return int|string
+     * @return bool|int|string
      * @throws RuntimeException
      */
     public function getCurrentPkey()
@@ -302,7 +310,7 @@ class Asit extends It
      * @throws PkeyException
      * @throws RuntimeException
      */
-    public function setCurrentPkey( $pKey )
+    public function setCurrentPkey( $pKey ) : self
     {
         $this->assertCurrent();
         return $this->setPkey( $pKey, $this->position );
@@ -316,7 +324,7 @@ class Asit extends It
      * @param  array $pKeys
      * @return array
      */
-    public function getPkeyIndexes( $pKeys = [] )
+    public function getPkeyIndexes( array $pKeys = [] ) : array
     {
         $result = [];
         foreach( $pKeys as $pKey ) {
@@ -342,7 +350,7 @@ class Asit extends It
      * @return array
      * @throws SortException
      */
-    public function get( $pKeys = null, $sortParam = null )
+    public function get( $pKeys = null, $sortParam = null ) : array
     {
         if( empty( $pKeys )) {
             return ( null === $sortParam )
@@ -372,7 +380,7 @@ class Asit extends It
      * @return array
      * @throws SortException
      */
-    public function pKeyGet( $pKeys, $sortParam = null )
+    public function pKeyGet( $pKeys, $sortParam = null ) : array
     {
         return $this->get( $pKeys, $sortParam );
     }
@@ -392,7 +400,7 @@ class Asit extends It
      * @return static
      * @throws PkeyException
      */
-    public function append( $element, $pKey = null )
+    public function append( $element, $pKey = null ) : BaseInterface
     {
         $index = $this->count();
         if( null === $pKey ) {
@@ -417,7 +425,7 @@ class Asit extends It
      * @throws CollectionException
      * @throws PkeyException
      */
-    public function setCollection( $collection )
+    public function setCollection( $collection ) : BaseInterface
     {
         switch( true ) {
             case is_array( $collection ) :
@@ -429,7 +437,6 @@ class Asit extends It
                 throw new CollectionException(
                     sprintf( CollectionException::$ERRTXT, self::getErrType( $collection ))
                 );
-                break;
             case ( $collection instanceof Asit ) :
                 foreach( $collection->getPkeyIterator() as $cIx => $element ) {
                     $this->append( $element, $cIx );
@@ -452,7 +459,7 @@ class Asit extends It
      *
      * @return Traversable
      */
-    public function getPkeyIterator()
+    public function getPkeyIterator() : Traversable
     {
         $output = [];
         foreach( $this->pKeys as $pKey => $pIx ) {
@@ -468,7 +475,7 @@ class Asit extends It
      * @return static
      * @throws PkeyException
      */
-    public function pKeySeek( $pKey )
+    public function pKeySeek( $pKey ) : self
     {
         $this->assertPkeyExists( $pKey );
         $this->position = $this->pKeys[$pKey];

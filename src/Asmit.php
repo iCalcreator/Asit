@@ -2,24 +2,31 @@
 /**
  * Asit package manages array collections
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/Asit>
- *
  * This file is part of Asit.
  *
- * Asit is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * Support <https://github.com/iCalcreator/Asit>
  *
- * Asit is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @version   1.6
+ * @license   Subject matter of licence is the software Asit.
+ *            The above copyright, link, package and version notices,
+ *            this licence notice shall be included in all copies or substantial
+ *            portions of the Asit.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Asit. If not, see <https://www.gnu.org/licenses/>.
+ *            Asit is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
+ *
+ *            Asit is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
 namespace Kigkonsult\Asit;
 
@@ -67,20 +74,19 @@ use function strlen;
  */
 class Asmit extends Asit
 {
-
     /**
      * toString
      *
      * @return string
      */
-    public function toString()
+    public function toString() : string
     {
         $string = self::$SP0;
         $pLen   = strlen((string) $this->count());
         $this->rewind();
         while( $this->valid()) {
             $key = self::prepKeyString( $this->key(), $pLen );
-            foreach( $this->getCurrentPkey( false ) as $pKey ) {
+            foreach((array) $this->getCurrentPkey( false ) as $pKey ) {
                 $string .= self::pKey2String($key, $pKey );
             }
             $string .= self::element2String( $key, $this->current());
@@ -102,7 +108,7 @@ class Asmit extends Asit
      * @return static
      * @throws PkeyException
      */
-    protected function setPkey( $pKey, $index )
+    protected function setPkey( $pKey, int $index ) : BaseInterface
     {
         self::assertPkey( $pKey );
         switch( true ) {
@@ -110,12 +116,10 @@ class Asmit extends Asit
                 break;
             case ( $index == $this->pKeys[$pKey] ) :
                 return $this;
-                break;
             default :
                 throw new PkeyException(
                     sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] )
                 );
-                break;
         } // end switch
         $this->pKeys[$pKey] = $index;
         ksort( $this->pKeys, SORT_REGULAR );
@@ -129,7 +133,7 @@ class Asmit extends Asit
      * @return int
      * @throws PkeyException
      */
-    public function countPkey( $pKey )
+    public function countPkey( $pKey ) : int
     {
         $this->assertPkeyExists( $pKey );
         return count(
@@ -144,7 +148,7 @@ class Asmit extends Asit
      * @return static
      * @throws PkeyException
      */
-    public function removePkey( $pKey )
+    public function removePkey( $pKey ) : self
     {
         $this->assertPkeyExists( $pKey );
         if( 1 < $this->countPkey( $pKey )) {
@@ -179,7 +183,7 @@ class Asmit extends Asit
      * @throws PkeyException
      * @throws RuntimeException
      */
-    public function addCurrentPkey( $pKey )
+    public function addCurrentPkey( $pKey ) : self
     {
         return $this->setCurrentPkey( $pKey );
     }
@@ -196,7 +200,7 @@ class Asmit extends Asit
      * @override
      * @return Traversable
      */
-    public function getPkeyIterator()
+    public function getPkeyIterator() : Traversable
     {
         $output = $ixList = [];
         foreach( $this->pKeys as $pKey => $pIx ) {

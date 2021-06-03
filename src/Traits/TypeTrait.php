@@ -2,27 +2,35 @@
 /**
  * Asit package manages array collections
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/Asit>
- *
  * This file is part of Asit.
  *
- * Asit is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * Support <https://github.com/iCalcreator/Asit>
  *
- * Asit is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @version   1.6
+ * @license   Subject matter of licence is the software Asit.
+ *            The above copyright, link, package and version notices,
+ *            this licence notice shall be included in all copies or substantial
+ *            portions of the Asit.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Asit. If not, see <https://www.gnu.org/licenses/>.
+ *            Asit is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
+ *
+ *            Asit is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
 namespace Kigkonsult\Asit\Traits;
 
+use Kigkonsult\Asit\BaseInterface;
 use Kigkonsult\Asit\Exceptions\TypeException;
 use Traversable;
 
@@ -46,7 +54,6 @@ use function sprintf;
  */
 trait TypeTrait
 {
-
     /**
      * The collection element value type
      *
@@ -142,7 +149,7 @@ trait TypeTrait
      *
      * @return string
      */
-    public function getValueType()
+    public function getValueType() : string
     {
         return $this->valueType;
     }
@@ -152,7 +159,7 @@ trait TypeTrait
      *
      * @return bool
      */
-    public function isValueTypeSet()
+    public function isValueTypeSet() : bool
     {
         return ( null !== $this->valueType );
     }
@@ -164,7 +171,7 @@ trait TypeTrait
      * @return static
      * @throws TypeException
      */
-    public function setValueType( $valueType )
+    public function setValueType( string $valueType ) : BaseInterface
     {
         if( $valueType == self::ARRAY2 ) {
             $valueType = self::ARR_Y;
@@ -177,13 +184,13 @@ trait TypeTrait
     /**
      * Assert value type, extended 'gettype'
      *
-     * Accept TypeInterface constants or FQCN (for class or interface)
+     * Accept ListTypeInterface constants or FQCN (for class or interface)
      *
      * @param string $valueType
      * @return void
      * @throws TypeException
      */
-    public static function assertValueType( $valueType )
+    public static function assertValueType( string $valueType )
     {
         static $TYPES = [
             self::BOOL,
@@ -202,20 +209,16 @@ trait TypeTrait
         switch( true ) {
             case ( $valueType == self::ARRAY2 ) :
                 return;
-                break;
             case in_array( $valueType, $TYPES ) :
                 return;
-                break;
             case ( is_string( $valueType ) &&
                 ( class_exists( $valueType ) || interface_exists( $valueType ))
             ) :
                 return;
-                break;
             default :
                 throw new TypeException(
                     sprintf( TypeException::$ERR2, self::getDispVal( $valueType ))
                 );
-                break;
         } // end switch
     }
 }

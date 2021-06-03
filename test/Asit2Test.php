@@ -2,24 +2,31 @@
 /**
  * Asit package manages assoc arrays
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/Asit>
- *
  * This file is part of Asit.
  *
- * Asit is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * Support <https://github.com/iCalcreator/Asit>
  *
- * Asit is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @version   1.6
+ * @license   Subject matter of licence is the software Asit.
+ *            The above copyright, link, package and version notices,
+ *            this licence notice shall be included in all copies or substantial
+ *            portions of the Asit.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Asit. If not, see <https://www.gnu.org/licenses/>.
+ *            Asit is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
+ *
+ *            Asit is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
 namespace Kigkonsult\Asit;
 
@@ -30,9 +37,8 @@ use RuntimeException;
 
 class Asit2Test extends TestCase
 {
-
-    public function arrayLoader( $max = 1000 ) {
-
+    public function arrayLoader( $max = 1000 )
+    {
         $output = [];
         for( $ix=0; $ix < $max; $ix++ ) {
             $output['key' . $ix] = 'element' . $ix;
@@ -54,7 +60,8 @@ class Asit2Test extends TestCase
         9 => 'Purple'
     ];
 
-    public static function getAttribute( $index ) {
+    public static function getAttribute( $index )
+    {
         $cIx = $index % 10;
         return self::$COLORS[$cIx];
     }
@@ -65,13 +72,14 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest32() {
+    public function asitTest32()
+    {
 
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
             $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
-        } // end for
+        } // end foreach
         $asit->rewind()->previous(); // no valid current
 
         $ok = 0;
@@ -150,8 +158,8 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest37() {
-
+    public function asitTest37()
+    {
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
@@ -261,7 +269,8 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest41() {
+    public function asitTest41()
+    {
         foreach(
             [ new Asit( $this->arrayLoader( 10 )), new Asmit( $this->arrayLoader( 10 )) ]
             as $tx => $asit ) {
@@ -322,7 +331,8 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest52() {
+    public function asitTest52()
+    {
         $asit = new Asittag();
 
         $ok = 0;
@@ -346,7 +356,8 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest53() {
+    public function asitTest53()
+    {
         $asit = new Asittag();
 
         $ok = 0;
@@ -370,7 +381,8 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest54() {
+    public function asitTest54()
+    {
         $asit = new Asittag();
 
         $ok = 0;
@@ -394,12 +406,13 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest55() {
+    public function asitTest55()
+    {
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
             $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
-        } // end for
+        } // end foreach
         $asit->seek( array_rand( array_flip( range( 40, 44 ))));
 
         $ok = 0;
@@ -447,7 +460,8 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest62() {
+    public function asitTest62()
+    {
 
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
@@ -513,8 +527,8 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest65() {
-
+    public function asitTest65()
+    {
         $asit = new Asittag();
         for( $pIx = 0; $pIx < 10; $pIx++ ) {
             $asit->append(
@@ -553,7 +567,8 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest71() {
+    public function asitTest71()
+    {
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
@@ -667,8 +682,8 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest72() {
-
+    public function asitTest72()
+    {
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
@@ -795,7 +810,8 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest75() {
+    public function asitTest75()
+    {
         $asit = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
@@ -888,7 +904,8 @@ class Asit2Test extends TestCase
      *
      * @test
      */
-    public function asitTest82() {
+    public function asitTest82()
+    {
         $asit = Asittag::factory( [ 'key' => 'value' ] );
 
         $pKey = 'key2';
@@ -911,5 +928,4 @@ class Asit2Test extends TestCase
 
         $asit = null;
     }
-
 }
