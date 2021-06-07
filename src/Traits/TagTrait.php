@@ -4,12 +4,9 @@
  *
  * This file is part of Asit.
  *
- * Support <https://github.com/iCalcreator/Asit>
- *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
- * @version   1.6
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -262,10 +259,10 @@ trait TagTrait
      *     false match any tag.
      * Convenient get method alias
      *
-     * @param  int|string|array $tags
-     * @param  bool             $union
-     * @param  int|string|array $exclTags
-     * @param  int|callable     $sortParam    asort sort_flags or uasort callable
+     * @param  int|string|array  $tags
+     * @param  null|bool         $union
+     * @param  int|string|array  $exclTags
+     * @param  int|callable      $sortParam    asort sort_flags or uasort callable
      * @return array
      * @throws SortException
      */
@@ -276,6 +273,6 @@ trait TagTrait
         $sortParam = null
     ) : array
     {
-        return $this->get( null, $tags, $union, $exclTags, $sortParam );
+        return $this->pKeyTagGet( null, $tags, $union, $exclTags, $sortParam );
     }
 }

@@ -4,12 +4,9 @@
  *
  * This file is part of Asit.
  *
- * Support <https://github.com/iCalcreator/Asit>
- *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
- * @version   1.6
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -134,11 +131,11 @@ trait PkeyTagTrait
      * Empty array on not found
      *
      * @override  Asit::getPkeys()
-     * @param int|string $tag  (0 (zero) allowed)
-     * @param int        $sortFlag  default SORT_REGULAR
+     * @param null|int    $sortFlag   default SORT_REGULAR
+     * @param null|string $tag
      * @return array
      */
-    public function getPkeys( $tag = null, $sortFlag = SORT_REGULAR ) : array
+    public function getPkeys( $sortFlag = SORT_REGULAR, $tag = null ) : array
     {
         if( null === $tag ) {
             return parent::getPkeys( $sortFlag );
@@ -214,7 +211,7 @@ trait PkeyTagTrait
      * Return empty array on not found or for incompatible tags
      *
      * @param  int|string|array $tags
-     * @param  bool             $union
+     * @param  null|bool        $union
      * @return array
      */
     private function getTagIndexes( $tags, $union = true ) : array
@@ -260,13 +257,13 @@ trait PkeyTagTrait
      * @override
      * @param  int|string|array $pKeys
      * @param  int|string|array $tags       none-used tag is skipped
-     * @param  bool             $union
+     * @param  null|bool        $union
      * @param  int|string|array $exclTags
      * @param  int|callable     $sortParam  asort sort_flags or uasort callable
      * @return array
      * @throws SortException
      */
-    public function get(
+    public function pKeyTagGet(
         $pKeys = null,
         $tags = null,
         $union = true,

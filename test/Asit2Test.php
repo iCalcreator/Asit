@@ -4,12 +4,9 @@
  *
  * This file is part of Asit.
  *
- * Support <https://github.com/iCalcreator/Asit>
- *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
- * @version   1.6
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -28,6 +25,7 @@
  *            You should have received a copy of the GNU Lesser General Public License
  *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
+declare( strict_types = 1 );
 namespace Kigkonsult\Asit;
 
 use Exception;
@@ -179,14 +177,14 @@ class Asit2Test extends TestCase
         $tags1 = $asit->getTags( $pKey1 );
         $this->assertEquals(
             [ $ix1 => 'element' . $ix1 ],
-            $asit->get( $search, $tags1 ),  // get( pKeys, tags )
+            $asit->pKeyTagGet( $search, $tags1 ),  // get( pKeys, tags )
             'test37-10 search : ' .
             implode( ',', $search ) . ' tags : ' . implode( ',', $tags1 ) .
-            ' got : ' . implode( ',', $asit->get( $search, $tags1 ))
+            ' got : ' . implode( ',', $asit->pKeyTagGet( $search, $tags1 ))
         );
 
         $this->assertEquals(
-            [ $ix2 => 'element' . $ix2 ], $asit->get( $search, $asit->getTags( $pKey2 ) ),  // get( pKeys, tags )
+            [ $ix2 => 'element' . $ix2 ], $asit->pKeyTagGet( $search, $asit->getTags( $pKey2 ) ),  // get( pKeys, tags )
             'test37-11'
         );
         $tags = array_merge(
@@ -194,12 +192,12 @@ class Asit2Test extends TestCase
             $asit->getTags( $pKey2 )
         );
         $this->assertEquals(
-            [], $asit->get( $search, $tags, true ),  // get( pKeys, tags )
+            [], $asit->pKeyTagGet( $search, $tags, true ),  // get( pKeys, tags )
             'test37-12'
         );
         $this->assertEquals(
             [  $ix1 => 'element' . $ix1, $ix2 => 'element' . $ix2 ],
-            $asit->get( $search, $tags, false ),  // get( pKeys, tags )
+            $asit->pKeyTagGet( $search, $tags, false ),  // get( pKeys, tags )
             'test37-13'
         );
 
@@ -241,7 +239,7 @@ class Asit2Test extends TestCase
         );
         $this->assertEquals(
             [ $orgIndex => $current ],
-            $asit->get( $newPkey ),
+            $asit->pKeyTagGet( $newPkey ),
             'test37-21'
         );
         $this->assertEquals(
@@ -493,7 +491,7 @@ class Asit2Test extends TestCase
             'test62-5'
         );
         $this->assertTrue(
-            [] == $asit->getPkeys( 'fakeTag' ),
+            [] == $asit->getPkeys( null, 'fakeTag' ),
             'test62-6'
         );
 
@@ -509,7 +507,7 @@ class Asit2Test extends TestCase
                 'test62-8 - tag : ' . $attribute . ', count: ' . $attrCnt
             );
         }
-        $elements1 = $asit->get( null, $currentags ); // test get( null, $tags1 ) : all with currentags
+        $elements1 = $asit->pKeyTagGet( null, $currentags ); // test get( null, $tags1 ) : all with currentags
         $this->assertTrue(
             in_array( $currentValue, $elements1 ),
             'test62-9 exp : ' . $currentValue . ', got ' . var_export( $elements1, true )

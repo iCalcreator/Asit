@@ -4,12 +4,9 @@
  *
  * This file is part of Asit.
  *
- * Support <https://github.com/iCalcreator/Asit>
- *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
- * @version   1.6
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -28,6 +25,7 @@
  *            You should have received a copy of the GNU Lesser General Public License
  *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
+declare( strict_types = 1 );
 namespace Kigkonsult\Asit;
 
 use ArrayIterator;
@@ -424,7 +422,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * @return static
      */
-    public function last() : self
+    public function last() : BaseInterface
     {
         $count          = count( $this->collection );
         $this->position = empty( $count ) ? 0 : ( $count - 1 );
@@ -438,7 +436,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * @return static
      */
-    public function next() : self
+    public function next() : BaseInterface
     {
         $this->position += 1;
         return $this;
@@ -449,7 +447,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * @return static
      */
-    public function previous() : self
+    public function previous() : BaseInterface
     {
         $this->position -= 1;
         return $this;
@@ -462,7 +460,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * @return static
      */
-    public function rewind() : self
+    public function rewind() : BaseInterface
     {
         $this->position = 0;
         return $this;
@@ -473,17 +471,17 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * Required method implementing the SeekableIterator interface
      *
-     * @param  int $position
+     * @param  int $offset   position (due to inherit rules, NO typed arg)
      * @return void
      * @throws OutOfBoundsException
      */
-    public function seek( $position )
+    public function seek( $offset )
     {
         static $TMPL = "Position %d not found!";
-        if( ! $this->exists( $position )) {
-            throw new OutOfBoundsException( sprintf( $TMPL, $position ));
+        if( ! $this->exists( $offset )) {
+            throw new OutOfBoundsException( sprintf( $TMPL, $offset ));
         }
-        $this->position = $position;
+        $this->position = $offset;
     }
 
     /**

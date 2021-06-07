@@ -4,12 +4,9 @@
  *
  * This file is part of Asit.
  *
- * Support <https://github.com/iCalcreator/Asit>
- *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
- * @version   1.6
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -28,6 +25,7 @@
  *            You should have received a copy of the GNU Lesser General Public License
  *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
+declare( strict_types = 1 );
 namespace Kigkonsult\Asit;
 
 use Exception;
@@ -470,7 +468,7 @@ class Asit1Test extends TestCase
 
         $asmit->seek( array_rand( array_flip( range( 1, 99 )))); // set current
         $resultC = $asmit->current();
-        $resultP = $asmit->get( $asmit->getCurrentPkey());
+        $resultP = $asmit->pKeyGet( $asmit->getCurrentPkey());
         $this->assertEquals(
             [ $asmit->key() => $resultC ],
             $resultP,
@@ -480,7 +478,7 @@ class Asit1Test extends TestCase
         $key = 'TEST';
         for( $x = 1; $x <= 5; $x++ ) {
             $asmit->setCurrentPkey( $key . $x );
-            $resultX = $asmit->get( $key . $x );
+            $resultX = $asmit->pKeyGet( $key . $x );
             $this->assertEquals(
                 $resultP,
                 $resultX,
@@ -652,32 +650,20 @@ class Asit1Test extends TestCase
         $ix1   = $asit->key();
 
         $this->assertEquals(
-            [ $ix1 => $element . $ix1 ], $asit->get( $pKey1 ),  // test get( $pKey )
+            [ $ix1 => $element . $ix1 ], $asit->pKeyGet( $pKey1 ),  // test get( $pKey )
             'test33-1'
         );
         $this->assertEquals(
-            [ $ix1 => $element . $ix1 ], $asit->pkeyGet( $pKey1 ),  // pkeyGet, alias of get()
-            'test33-2'
-        );
-        $this->assertEquals(
-            [ $ix1 => $element . $ix1 ], $asit->get( [ $pKey1 ] ),  // test get( [ $pKey ] )
+            [ $ix1 => $element . $ix1 ], $asit->pKeyGet( [ $pKey1 ] ),  // test get( [ $pKey ] )
             'test33-3'
         );
         $this->assertEquals(
-            [ $ix1 => $element . $ix1 ], $asit->pKeyGet( [ $pKey1 ] ),  // pkeyGet, alias of get()
-            'test33-4'
-        );
-        $this->assertEquals(
-            [ $ix1 => $element . $ix1 ], $asit->get( [ $pKey1, 'noExists' ] ),  // test get( [ $pKey, 'noExists' ] )
+            [ $ix1 => $element . $ix1 ], $asit->pKeyGet( [ $pKey1, 'noExists' ] ),  // test get( [ $pKey, 'noExists' ] )
             'test33-5'
         );
         $this->assertEquals(
-            [], $asit->get( [ 'noExists1', 'noExists2' ] ),  // test get( [ 'noExists1', 'noExists2' ] ) i.e. pKey not found
+            [], $asit->pKeyGet( [ 'noExists1', 'noExists2' ] ),  // test get( [ 'noExists1', 'noExists2' ] ) i.e. pKey not found
             'test33-6'
-        );
-        $this->assertEquals(
-            [], $asit->pKeyGet( [ 'noExists1', 'noExists2' ] ),  // alias of above
-            'test33-7'
         );
 
         $asit->seek( array_rand( array_flip( range( 35, 39 ))));
@@ -956,12 +942,12 @@ class Asit1Test extends TestCase
         }
         $this->assertEquals(
             [],
-            $asit->get( 'fakePkey' ),
+            $asit->pKeyTagGet( 'fakePkey' ),
             'test73-1'
         );
         $this->assertEquals(
             array_values( $data ),
-            $asit->get(),
+            $asit->pKeyTagGet(),
             'test73-2'
         );
 
@@ -1067,7 +1053,7 @@ class Asit1Test extends TestCase
     public function asitTest11()
     {
         $asit    = new AsitList( $this->arrayLoader( 10 ), AsitList::STRING );
-        $result  = $asit->get( null, [ self::class, 'cmp' ] );
+        $result  = $asit->pKeyGet( null, [ self::class, 'cmp' ] );
         $result1 = reset( $result );
         $this->assertEquals(
             'element9',
@@ -1086,7 +1072,7 @@ class Asit1Test extends TestCase
     public function asittagTest12()
     {
         $asit    = new AsittagList( $this->arrayLoader( 10 ), AsitList::STRING );
-        $result  = $asit->get( null, null, null, null, [ self::class, 'cmp' ] );
+        $result  = $asit->pKeyTagGet( null, null, null, null, [ self::class, 'cmp' ] );
         $result1 = reset( $result );
         $this->assertEquals(
             'element9',

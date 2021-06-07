@@ -1,12 +1,17 @@
 
-1.6    PHP7 (PHPStan checks)
+1.8    Rewrites due to strict type and inheritance issues
+         method Asit::get() renamed to Asit::pKeyGet()
+         method Asmit::get() renamed to Asmit::pKeyGet()
+         method Asittag::get() renamed to Asittag::pKeyTagGet()
+         method Asmittag::get() renamed to Asmittag::pKeyTagGet()
+       It::seek() altered arg name
 
+1.6    PHP7 (PHPStan checks)
 
 1.4.10 Minor method split and rework
 1.4.9  Error mgnt
 1.4.8  PHP version compability
 1.4.7  Upd tests
-
 
 1.4.6  Singleton support
 1.4.5  *::init() upd

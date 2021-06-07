@@ -1,4 +1,4 @@
-[comment]: # (This file is part of Asit, manages array collections. Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
+[comment]: # (This file is part of Asit, manages array collections. Copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 ## Asittag/Asmittag Summary
 
 > Class Asittag 
@@ -94,7 +94,7 @@ Inherited methods from [It] - [Asit]
 
 #### Get methods
 
-```Asittag::get( [ pKeys [, tags [, union [, exclTags [, sortParam ]]]]] )```
+```Asittag::pKeyTagGet( [ pKeys [, tags [, union [, exclTags [, sortParam ]]]]] )```
 * Return (non-assoc) array of element(s) in collection, opt using primary keys and/or tag(s)
 * If primary keys are given, the return collection element includes only these matching the primary keys.
 * Then, and if tags are given and if union is bool true, the result collection element hits match all tags, false match any tag.

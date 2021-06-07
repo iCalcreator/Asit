@@ -4,12 +4,9 @@
  *
  * This file is part of Asit.
  *
- * Support <https://github.com/iCalcreator/Asit>
- *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
- * @version   1.6
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -28,6 +25,7 @@
  *            You should have received a copy of the GNU Lesser General Public License
  *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
+declare( strict_types = 1 );
 namespace Kigkonsult\Asit;
 
 use ArrayIterator;
@@ -223,11 +221,11 @@ class Asit extends It
     /**
      * Return all primary keys
      *
-     * @param int $sortFlag  default SORT_REGULAR
-     * @param mixed $dummy
+     * @param null|int $sortFlag default SORT_REGULAR
+     * @param mixed    $tag  null due to inherit rules
      * @return array
      */
-    public function getPkeys( $sortFlag = SORT_REGULAR, $dummy = null ) : array
+    public function getPkeys( $sortFlag = SORT_REGULAR, $tag = null ) : array
     {
         $pKeys = array_keys( $this->pKeys );
         if( $sortFlag != SORT_REGULAR ) {
@@ -273,7 +271,7 @@ class Asit extends It
      * @return static
      * @throws PkeyException
      */
-    public function replacePkey( $oldPkey, $newPkey ) : self
+    public function replacePkey( $oldPkey, $newPkey ) : BaseInterface
     {
         $this->assertPkeyExists( $oldPkey );
         self::assertPkey( $newPkey );
@@ -310,7 +308,7 @@ class Asit extends It
      * @throws PkeyException
      * @throws RuntimeException
      */
-    public function setCurrentPkey( $pKey ) : self
+    public function setCurrentPkey( $pKey ) : BaseInterface
     {
         $this->assertCurrent();
         return $this->setPkey( $pKey, $this->position );
@@ -350,7 +348,7 @@ class Asit extends It
      * @return array
      * @throws SortException
      */
-    public function get( $pKeys = null, $sortParam = null ) : array
+    public function pKeyGet( $pKeys = null, $sortParam = null ) : array
     {
         if( empty( $pKeys )) {
             return ( null === $sortParam )
@@ -368,21 +366,6 @@ class Asit extends It
         return ( null === $sortParam )
             ? $result
             : self::sort( $result, $sortParam );
-    }
-
-    /**
-     * Return (non-assoc) sub-set of element(s) in collection using primary keys
-     *
-     * Convenient get method alias
-     *
-     * @param  int|string|array $pKeys
-     * @param  int|callable     $sortParam  asort sort_flags or uasort callable
-     * @return array
-     * @throws SortException
-     */
-    public function pKeyGet( $pKeys, $sortParam = null ) : array
-    {
-        return $this->get( $pKeys, $sortParam );
     }
 
     /**
@@ -475,7 +458,7 @@ class Asit extends It
      * @return static
      * @throws PkeyException
      */
-    public function pKeySeek( $pKey ) : self
+    public function pKeySeek( $pKey ) : BaseInterface
     {
         $this->assertPkeyExists( $pKey );
         $this->position = $this->pKeys[$pKey];

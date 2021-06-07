@@ -4,12 +4,9 @@
  *
  * This file is part of Asit.
  *
- * Support <https://github.com/iCalcreator/Asit>
- *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
- * @version   1.6
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -28,6 +25,7 @@
  *            You should have received a copy of the GNU Lesser General Public License
  *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
+declare( strict_types = 1 );
 namespace Kigkonsult\Asit;
 
 use Exception;
@@ -109,8 +107,8 @@ class AsitListTest extends TestCase
         );
 
         $this->assertEquals(
-            $list1->get(),
-            $list3->get(),
+            $list1->pKeyGet(),
+            $list3->pKeyGet(),
             'test11-1-13'
         );
 
@@ -205,7 +203,7 @@ class AsitListTest extends TestCase
         $ok    = 0;
         try {
             $list->assertValueType( AsitList::ARRAY2 );
-            $list->assertValueType( 12345 );
+            $list->assertValueType( '12345' );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -234,7 +232,7 @@ class AsitListTest extends TestCase
         $case += 200;
         $ok    = 0;
         try {
-            $list->assertElementType( 'string' );
+            $list->assertElementType( ItList::STRING );
             $ok = 1;
         }
         catch( Exception $e ) {
@@ -260,7 +258,8 @@ class AsitListTest extends TestCase
         $case += 210;
         $ok   = 0;
         try {
-            $list->setValueType( AsitList::ARR_Y )->assertElementType( 'string' );
+            $list->setValueType( AsitList::ARR_Y )
+                 ->assertElementType( ItList::STRING );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -269,10 +268,14 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test21-1-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test21-1-' . $case . ', exp 2, got ' . $ok
+        );
         $ok = 0;
         try {
-            $list->setValueType( AsitList::ARRAY2 )->assertElementType( 'string' );
+            $list->setValueType( AsitList::ARRAY2 )
+                 ->assertElementType( ItList::STRING );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -281,7 +284,10 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test21-2-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test21-2-' . $case . ', exp 2, got ' . $ok
+        );
     }
 
     /**
@@ -298,7 +304,8 @@ class AsitListTest extends TestCase
         $case += 220;
         $ok   = 0;
         try {
-            $list->setValueType( AsitList::BOOL )->assertElementType( 'string' );
+            $list->setValueType( AsitList::BOOL )
+                 ->assertElementType( ItList::STRING );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -307,10 +314,14 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test22-1-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test22-1-' . $case . ', exp 2, got ' . $ok
+        );
         $ok = 0;
         try {
-            $list->setValueType( AsitList::BOOLEAN )->assertElementType( 'string' );
+            $list->setValueType( AsitList::BOOLEAN )
+                 ->assertElementType( ItList::STRING );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -319,7 +330,10 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test22-2-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test22-2-' . $case . ', exp 2, got ' . $ok
+        );
     }
 
     /**
@@ -336,7 +350,8 @@ class AsitListTest extends TestCase
         $case += 230;
         $ok   = 0;
         try {
-            $list->setValueType( AsitList::INT )->assertElementType( 'string' );
+            $list->setValueType( ItList::INT )
+                 ->assertElementType( ItList::STRING );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -345,10 +360,14 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test23-1-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test23-1-' . $case . ', exp 2, got ' . $ok
+        );
         $ok = 0;
         try {
-            $list->setValueType( AsitList::INTEGER )->assertElementType( 'string' );
+            $list->setValueType( ItList::INTEGER )
+                 ->assertElementType( ItList::STRING );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -357,7 +376,10 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test23-2-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test23-2-' . $case . ', exp 2, got ' . $ok
+        );
     }
 
     /**
@@ -374,7 +396,8 @@ class AsitListTest extends TestCase
         $case += 240;
         $ok   = 0;
         try {
-            $list->setValueType( AsitList::DOUBLE )->assertElementType( 'string' );
+            $list->setValueType( ItList::DOUBLE )
+                 ->assertElementType( ItList::STRING );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -383,10 +406,14 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test24-1-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test24-1-' . $case . ', exp 2, got ' . $ok
+        );
         $ok = 0;
         try {
-            $list->setValueType( AsitList::FLOAT )->assertElementType( 'string' );
+            $list->setValueType( ItList::FLOAT )
+                 ->assertElementType( ItList::STRING );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -395,7 +422,10 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test24-2-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test24-2-' . $case . ', exp 2, got ' . $ok
+        );
     }
 
     /**
@@ -412,7 +442,8 @@ class AsitListTest extends TestCase
         $case += 250;
         $ok   = 0;
         try {
-            $list->setValueType( AsitList::STRING )->assertElementType( 12345 );
+            $list->setValueType( AsitList::STRING )
+                 ->assertElementType( 12345 );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -421,7 +452,10 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test25-1-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test25-1-' . $case . ', exp 2, got ' . $ok
+        );
     }
 
     /**
@@ -438,7 +472,8 @@ class AsitListTest extends TestCase
         $case += 260;
         $ok   = 0;
         try {
-            $list->setValueType( AsitList::OBJECT )->assertElementType( 'string' );
+            $list->setValueType( ItList::OBJECT )
+                 ->assertElementType( ItList::STRING );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -447,7 +482,10 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test26-1-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test26-1-' . $case . ', exp 2, got ' . $ok
+        );
     }
 
     /**
@@ -464,7 +502,8 @@ class AsitListTest extends TestCase
         $case += 270;
         $ok   = 0;
         try {
-            $list->setValueType( AsitList::RESOURCE )->assertElementType( 'string' );
+            $list->setValueType( ItList::RESOURCE )
+                 ->assertElementType( ItList::STRING );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -473,7 +512,10 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test27-1-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test27-1-' . $case . ', exp 2, got ' . $ok
+        );
     }
 
     /**
@@ -490,7 +532,8 @@ class AsitListTest extends TestCase
         $case += 280;
         $ok   = 0;
         try {
-            $list->setValueType( AsitList::CALL_BLE )->assertElementType( 12345 );
+            $list->setValueType( AsitList::CALL_BLE )
+                 ->assertElementType( 12345 );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -499,7 +542,10 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test28-1-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test28-1-' . $case . ', exp 2, got ' . $ok
+        );
     }
 
     /**
@@ -516,17 +562,22 @@ class AsitListTest extends TestCase
         $case += 290;
         $ok   = 0;
         try {
-            $list->setValueType( testIfc::class )->assertElementType( new testClass1() );
+            $list->setValueType( testIfc::class )
+                 ->assertElementType( new testClass1() );
             $ok = 1;
         }
         catch( Exception $e ) {
             $ok = 2;
         }
-        $this->assertTrue( $ok == 1, 'test29-1-' . $case . ', exp 1, got ' . $ok );
+        $this->assertTrue(
+            $ok == 1,
+            'test29-1-' . $case . ', exp 1, got ' . $ok
+        );
 
         $ok = 0;
         try {
-            $list->setValueType( testIfc::class )->assertElementType( new testClass2() );
+            $list->setValueType( testIfc::class )
+                 ->assertElementType( new testClass2());
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -535,11 +586,15 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test29-2-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test29-2-' . $case . ', exp 2, got ' . $ok
+        );
 
         $ok = 0;
         try {
-            $list->setValueType( AsitList::class )->assertElementType( 12345 );
+            $list->setValueType( AsitList::class )
+                 ->assertElementType( 12345 );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -548,11 +603,15 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test29-3-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test29-3-' . $case . ', exp 2, got ' . $ok
+        );
 
         $ok = 0;
         try {
-            $list->setValueType( AsittagList::class )->assertElementType( new testClass1() );
+            $list->setValueType( AsittagList::class )
+                 ->assertElementType( new testClass1() );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -561,11 +620,15 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test29-4-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test29-4-' . $case . ', exp 2, got ' . $ok
+        );
 
         $ok = 0;
         try {
-            $list->setValueType( AsittagList::class )->assertElementType( fopen( self::$file1, 'r' ) );
+            $list->setValueType( AsittagList::class )
+                 ->assertElementType( fopen( self::$file1, 'r' ));
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -574,7 +637,10 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test29-5-' . $case . ', exp 2, got ' . $ok );
+        $this->assertTrue(
+            $ok == 2,
+            'test29-5-' . $case . ', exp 2, got ' . $ok
+        );
     }
 
     /**
@@ -723,33 +789,27 @@ class AsitListTest extends TestCase
                     [ 'one', 'two' ]
                 ];
                 return $arrays[$ix];
-                break;
             case AsitList::BOOL :
             case AsitList::BOOLEAN :
                 static $bools = [ true, false ];
                 return $bools[$ix];
-                break;
             case AsitList::INT :
             case AsitList::INTEGER :
                 static $ints = [ 1, 2 ];
                 return $ints[$ix];
-                break;
             case AsitList::DOUBLE :
             case AsitList::FLOAT :
                 static $floats = [ 1.1, 2.2 ];
                 return $floats[$ix];
-                break;
             case AsitList::STRING :
                 static $strings = [ 'test1', 'test2' ];
                 return $strings[$ix];
-                break;
             case AsitList::OBJECT :
                 $objects =  [
                     new testClass1(),
                     new testClass2()
                 ];
                 return $objects[$ix];
-                break;
             case AsitList::RESOURCE :
                 static $files = [];
                 if( empty( $files )) {
@@ -759,7 +819,6 @@ class AsitListTest extends TestCase
                     ];
                 }
                 return $files[$ix];
-                break;
             case AsitList::CALL_BLE :
                 static $callables = [];
                 if( empty( $callables )) {
@@ -769,11 +828,9 @@ class AsitListTest extends TestCase
                     ];
                 }
                 return $callables[$ix];
-                break;
             default :
                 $fqcns = [ testClass1::class, testClass2::class ];
                 return $fqcns[$ix];
-                break;
         } // end switch
 
     }
