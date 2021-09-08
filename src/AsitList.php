@@ -50,7 +50,7 @@ class AsitList extends Asit implements ListTypeInterface
      * @override
      * @param mixed      $element
      * @param int|string $pKey  MUST be unique
-     * @return static
+     * @return self
      * @throws PkeyException
      * @throws TypeException
      */

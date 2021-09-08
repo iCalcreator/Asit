@@ -27,7 +27,6 @@
  */
 namespace Kigkonsult\Asit\Traits;
 
-use Kigkonsult\Asit\BaseInterface;
 use Kigkonsult\Asit\Exceptions\TypeException;
 use Traversable;
 
@@ -165,10 +164,10 @@ trait TypeTrait
      * Set collection element value type
      *
      * @param string $valueType
-     * @return static
+     * @return self
      * @throws TypeException
      */
-    public function setValueType( string $valueType ) : BaseInterface
+    public function setValueType( string $valueType ) : self
     {
         if( $valueType == self::ARRAY2 ) {
             $valueType = self::ARR_Y;

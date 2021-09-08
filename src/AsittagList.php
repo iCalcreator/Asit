@@ -52,7 +52,7 @@ class AsittagList extends Asittag implements ListTypeInterface
      * @param mixed      $element
      * @param int|string $pKey        MUST be unique
      * @param int|string|array $tags  only int or string allowed
-     * @return static
+     * @return self
      * @throws PkeyException
      * @throws TagException
      * @throws TypeException

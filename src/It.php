@@ -41,6 +41,7 @@ use function array_key_exists;
 use function array_keys;
 use function asort;
 use function count;
+use function get_called_class;
 use function get_class;
 use function gettype;
 use function is_array;
@@ -98,12 +99,13 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * @param  mixed  $collection
      * @param  mixed  $dummy
-     * @return static
+     * @return self
      * @throws CollectionException
      */
     public static function factory( $collection = null, $dummy = null ) : BaseInterface
     {
-        return new static( $collection );
+        $class = get_called_class();
+        return new $class( $collection );
     }
 
     /**
@@ -111,22 +113,23 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * @param  mixed $collection
      * @param  mixed  $dummy
-     * @return static
+     * @return self
      * @throws CollectionException
      */
     public static function singleton( $collection = null, $dummy = null ) : BaseInterface
     {
-        static $instance = null;
-        if( null === $instance ) {
-            $instance = new static( $collection );
+        static $instance = [];
+        $class           = get_called_class();
+        if( ! isset( $instance[$class] )) {
+            $instance[$class] = new $class( $collection );
         }
-        return $instance;
+        return $instance[$class];
     }
 
     /**
      * Clear (remove) collection
      *
-     * @return static
+     * @return self
      */
     public function init() : BaseInterface
     {
@@ -281,7 +284,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * @override
      * @param mixed $element
-     * @return static
+     * @return self
      */
     public function append( $element ) : BaseInterface
     {
@@ -295,7 +298,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      * Set (array) collection
      *
      * @param  array|Traversable $collection
-     * @return static
+     * @return self
      * @throws CollectionException
      */
     public function setCollection( $collection ) : BaseInterface
@@ -420,9 +423,9 @@ class It implements BaseInterface, SeekableIterator, Countable
     /**
      * Move position to last element, if empty set to 0
      *
-     * @return static
+     * @return self
      */
-    public function last() : BaseInterface
+    public function last() : self
     {
         $count          = count( $this->collection );
         $this->position = empty( $count ) ? 0 : ( $count - 1 );
@@ -434,9 +437,9 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * Required method implementing the Iterator interface
      *
-     * @return static
+     * @return self
      */
-    public function next() : BaseInterface
+    public function next() : self
     {
         $this->position += 1;
         return $this;
@@ -445,9 +448,9 @@ class It implements BaseInterface, SeekableIterator, Countable
     /**
      * Move position backward to previous element
      *
-     * @return static
+     * @return self
      */
-    public function previous() : BaseInterface
+    public function previous() : self
     {
         $this->position -= 1;
         return $this;
@@ -458,9 +461,9 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * Required method implementing the Iterator interface
      *
-     * @return static
+     * @return self
      */
-    public function rewind() : BaseInterface
+    public function rewind() : self
     {
         $this->position = 0;
         return $this;

@@ -61,7 +61,7 @@ trait TagTrait
      * Clear (remove) collection
      *
      * @override
-     * @return static
+     * @return BaseInterface
      */
     public function init() : BaseInterface
     {
@@ -217,11 +217,11 @@ trait TagTrait
      * To be used in parallel with the Iterator 'current' method
      *
      * @param int|string  $tag  0 (zero) allowed also duplicates
-     * @return static
+     * @return self
      * @throws RuntimeException
      * @throws TagException
      */
-    public function addCurrentTag( $tag ) : BaseInterface
+    public function addCurrentTag( $tag ) : self
     {
         $this->assertCurrent();
         $this->addTag( $tag, $this->position );
@@ -238,10 +238,10 @@ trait TagTrait
      * To be used in parallel with the Iterator 'current' method
      *
      * @param int|string  $tag  0 (zero) allowed also duplicates
-     * @return static
+     * @return self
      * @throws RuntimeException
      */
-    public function removeCurrentTag( $tag ) : BaseInterface
+    public function removeCurrentTag( $tag ) : self
     {
         $this->assertCurrent();
         return $this->removePkeyTag( $this->getCurrentPkey(), $tag );

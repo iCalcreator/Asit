@@ -92,7 +92,7 @@ class Asit extends It
      * Clear (remove) collection
      *
      * @override
-     * @return static
+     * @return BaseInterface
      */
     public function init() : BaseInterface
     {
@@ -239,7 +239,7 @@ class Asit extends It
      *
      * @param int|string $pKey 0 (zero) allowed
      * @param int        $index
-     * @return static
+     * @return self
      * @throws PkeyException
      */
     protected function setPkey( $pKey, int $index ) : BaseInterface
@@ -268,10 +268,10 @@ class Asit extends It
      *
      * @param int|string $oldPkey   0 (zero) allowed
      * @param int|string $newPkey   0 (zero) allowed
-     * @return static
+     * @return self
      * @throws PkeyException
      */
-    public function replacePkey( $oldPkey, $newPkey ) : BaseInterface
+    public function replacePkey( $oldPkey, $newPkey ) : self
     {
         $this->assertPkeyExists( $oldPkey );
         self::assertPkey( $newPkey );
@@ -304,11 +304,11 @@ class Asit extends It
      * To be used in parallel with the Iterator 'current' method, below
      *
      * @param int|string $pKey   0 (zero) allowed
-     * @return static
+     * @return self
      * @throws PkeyException
      * @throws RuntimeException
      */
-    public function setCurrentPkey( $pKey ) : BaseInterface
+    public function setCurrentPkey( $pKey ) : self
     {
         $this->assertCurrent();
         return $this->setPkey( $pKey, $this->position );
@@ -380,7 +380,7 @@ class Asit extends It
      * @override
      * @param mixed      $element
      * @param int|string $pKey    MUST be unique
-     * @return static
+     * @return self
      * @throws PkeyException
      */
     public function append( $element, $pKey = null ) : BaseInterface
@@ -404,7 +404,7 @@ class Asit extends It
      *
      * @override
      * @param  array|Traversable $collection
-     * @return static
+     * @return self
      * @throws CollectionException
      * @throws PkeyException
      */
@@ -455,10 +455,10 @@ class Asit extends It
      * Seeks to a given position in the iterator using pKey, i.e. make current
      *
      * @param  int|string $pKey
-     * @return static
+     * @return self
      * @throws PkeyException
      */
-    public function pKeySeek( $pKey ) : BaseInterface
+    public function pKeySeek( $pKey ) : self
     {
         $this->assertPkeyExists( $pKey );
         $this->position = $this->pKeys[$pKey];

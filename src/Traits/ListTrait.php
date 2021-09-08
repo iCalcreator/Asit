@@ -31,6 +31,7 @@ use Kigkonsult\Asit\BaseInterface;
 use Kigkonsult\Asit\Exceptions\CollectionException;
 use Kigkonsult\Asit\Exceptions\TypeException;
 
+use function get_called_class;
 use function is_string;
 
 /**
@@ -69,11 +70,12 @@ trait ListTrait
      * @override
      * @param mixed  $collection
      * @param string $valueType
-     * @return static
+     * @return BaseInterface
      */
     public static function factory( $collection = null, $valueType = null ) : BaseInterface
     {
-        return new self( $collection, $valueType );
+        $class = get_called_class();
+        return new $class( $collection, $valueType );
     }
 
     /**
@@ -82,16 +84,17 @@ trait ListTrait
      * @override
      * @param  mixed  $collection
      * @param  string $valueType
-     * @return static
+     * @return BaseInterface
      * @throws CollectionException
      * @throws TypeException
      */
     public static function singleton( $collection = null, $valueType = null ) : BaseInterface
     {
-        static $instance = null;
-        if( null === $instance ) {
-            $instance = new self( $collection, $valueType );
+        static $instance = [];
+        $class           = get_called_class();
+        if( ! isset( $instance[$class] )) {
+            $instance[$class] = new $class( $collection, $valueType );
         }
-        return $instance;
+        return $instance[$class];
     }
 }

@@ -78,11 +78,11 @@ trait PkeyTagTrait
      *
      * @param  int|string $pKey
      * @param int|string  $tag  0 (zero) allowed also duplicates
-     * @return static
+     * @return self
      * @throws PkeyException
      * @throws TagException
      */
-    public function addPkeyTag( $pKey, $tag ) : BaseInterface
+    public function addPkeyTag( $pKey, $tag ) : self
     {
         $this->assertPkeyExists( $pKey );
         $this->addTag( $tag, $this->pKeys[$pKey] );
@@ -98,10 +98,10 @@ trait PkeyTagTrait
      *
      * @param  int|string $pKey
      * @param int|string  $tag  0 (zero) allowed also duplicates
-     * @return static
+     * @return self
      * @throws PkeyException
      */
-    public function removePkeyTag( $pKey, $tag ) : BaseInterface
+    public function removePkeyTag( $pKey, $tag ) : self
     {
         if( ! $this->tagExists( $tag )) {
             return $this;
@@ -323,7 +323,7 @@ trait PkeyTagTrait
      * @param mixed            $element
      * @param int|string       $pKey  MUST be unique
      * @param int|string|array $tags  only int or string allowed
-     * @return static
+     * @return BaseInterface
      * @throws PkeyException
      * @throws TagException
      */

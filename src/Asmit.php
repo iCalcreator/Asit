@@ -103,7 +103,7 @@ class Asmit extends Asit
      * @override
      * @param int|string $pKey 0 (zero) allowed
      * @param int        $index
-     * @return static
+     * @return self
      * @throws PkeyException
      */
     protected function setPkey( $pKey, int $index ) : BaseInterface
@@ -143,10 +143,10 @@ class Asmit extends Asit
      * Remove primary key for collection element but not last
      *
      * @param int|string $pKey
-     * @return static
+     * @return self
      * @throws PkeyException
      */
-    public function removePkey( $pKey ) : BaseInterface
+    public function removePkey( $pKey ) : self
     {
         $this->assertPkeyExists( $pKey );
         if( 1 < $this->countPkey( $pKey )) {
@@ -177,13 +177,14 @@ class Asmit extends Asit
      * setCurrentPkey() alias
      *
      * @param int|string $pKey
-     * @return static
+     * @return self
      * @throws PkeyException
      * @throws RuntimeException
      */
-    public function addCurrentPkey( $pKey ) : BaseInterface
+    public function addCurrentPkey( $pKey ) : self
     {
-        return $this->setCurrentPkey( $pKey );
+        $this->setCurrentPkey( $pKey );
+        return $this;
     }
 
     /**

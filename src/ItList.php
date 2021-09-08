@@ -48,7 +48,7 @@ class ItList extends It implements ListTypeInterface
      *
      * @override
      * @param mixed $element
-     * @return static
+     * @return self
      * @throws TypeException
      */
     public function append( $element ) : BaseInterface

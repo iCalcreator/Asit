@@ -202,8 +202,8 @@ class AsitListTest extends TestCase
         $case += 10;
         $ok    = 0;
         try {
-            $list->assertValueType( AsitList::ARRAY2 );
-            $list->assertValueType( '12345' );
+            $list->assertValueType( AsitList::ARRAY2 ); // ok
+            $list->assertValueType( '12345' );          // invalid
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -215,6 +215,74 @@ class AsitListTest extends TestCase
         $this->assertTrue(
             $ok == 2,
             'test12-1-' . $case . ', exp 2, got ' . $ok
+        );
+
+        $list->setValueType( ItList::class );
+        $ok    = 0;
+        try {
+            $list->assertElementType( new ItList( [] )); // ok
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue(
+            $ok == 1,
+            'test12-2-' . $case . ', exp 1, got ' . $ok
+        );
+
+        $list->setValueType( ItList::ARRAY2 );
+        $ok    = 0;
+        try {
+            $list->assertElementType( new ItList( [] )); // invalid
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue(
+            $ok == 2,
+            'test12-3-' . $case . ', exp 2, got ' . $ok
+        );
+
+        $list->setValueType( ItList::class );
+        $ok    = 0;
+        try {
+            $list->assertElementType( ItList::ARRAY2 ); // invalid
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue(
+            $ok == 2,
+            'test12-3-' . $case . ', exp 2, got ' . $ok
+        );
+
+        // $list->setValueType( ItList::class ); // same as above
+        $ok    = 0;
+        try {
+            $list->append( new \stdClass() ); // invalid
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertTrue(
+            $ok == 2,
+            'test12-4-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -863,4 +931,71 @@ class AsitListTest extends TestCase
         $cIx = $index % 10;
         return self::$COLORS[$cIx];
     }
+
+   /**
+     * dataProvider
+     *
+     * @return array
+     */
+    public function subClassLoader()
+    {
+        $testData = [];
+
+        $testData[] = [
+            1,
+            ItListSub::factory(),
+            'ItListSub'
+        ];
+
+        $testData[] = [
+            2,
+            AsitListSub::factory(),
+            'AsitListSub'
+        ];
+
+        $testData[] = [
+            3,
+            AsmitListSub::factory(),
+            'AsmitListSub'
+        ];
+
+        $testData[] = [
+            4,
+            AsittagListSub::factory(),
+            'AsittagListSub'
+        ];
+
+        $testData[] = [
+            5,
+            AsmittagListSub::factory(),
+            'AsmittagListSub'
+        ];
+
+        return $testData;
+    }
+
+    /**
+     * Test factory methods
+     *
+     * @test
+     * @dataProvider subClassLoader
+     *
+     * @param int $case
+     * @param BaseInterface $instance
+     * @param string $expClassName
+     */
+    public function ListTest9( int $case, BaseInterface $instance, string $expClassName )
+    {
+        $case += 900;
+        $actClassName = get_class( $instance );
+        $this->assertNotFalse(
+            strpos( $actClassName, $expClassName ),
+            'test' . $case . ' exp: ' . $expClassName . ', got ' . $actClassName
+        );
+    }
 }
+class ItListSub extends ItList{};
+class AsitListSub extends AsitList{};
+class AsmitListSub extends AsmitList{};
+class AsittagListSub extends AsittagList{};
+class AsmittagListSub extends AsmittagList{};
