@@ -42,5 +42,5 @@ class CollectionException extends InvalidArgumentException
      *
      * @var string
      */
-    public static $ERRTXT = "Invalid input, no array or Traversable :  %s";
+    public static string $ERRTXT = "Invalid input, no array or Traversable :  %s";
 }

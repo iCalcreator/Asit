@@ -40,15 +40,15 @@ interface ListTypeInterface
     /**
      * Asit constants, OBJECT && RESOURCE in class It
      */
-    const ARR_Y       = "array";
-    const ARRAY2      = "[]";
-    const BOOL        = "bool";
-    const BOOLEAN     = "boolean";
-    const CALL_BLE    = "callable";
-    const DOUBLE      = "double";
-    const INT         = "int";
-    const INTEGER     = "integer";
-    const FLOAT       = "float";
-    const STRING      = "string";
-    const TRAVERSABLE = "Traversable";
+    public const ARR_Y       = "array";
+    public const ARRAY2      = "[]";
+    public const BOOL        = "bool";
+    public const BOOLEAN     = "boolean";
+    public const CALL_BLE    = "callable";
+    public const DOUBLE      = "double";
+    public const INT         = "int";
+    public const INTEGER     = "integer";
+    public const FLOAT       = "float";
+    public const STRING      = "string";
+    public const TRAVERSABLE = "Traversable";
 }

@@ -112,7 +112,7 @@ class Asmit extends Asit
         switch( true ) {
             case ( ! $this->pKeyExists( $pKey )) :
                 break;
-            case ( $index == $this->pKeys[$pKey] ) :
+            case ( $index === $this->pKeys[$pKey] ) :
                 return $this;
             default :
                 throw new PkeyException(
@@ -146,7 +146,7 @@ class Asmit extends Asit
      * @return self
      * @throws PkeyException
      */
-    public function removePkey( $pKey ) : self
+    public function removePkey( $pKey ) : BaseInterface
     {
         $this->assertPkeyExists( $pKey );
         if( 1 < $this->countPkey( $pKey )) {
@@ -181,7 +181,7 @@ class Asmit extends Asit
      * @throws PkeyException
      * @throws RuntimeException
      */
-    public function addCurrentPkey( $pKey ) : self
+    public function addCurrentPkey( $pKey ) : BaseInterface
     {
         $this->setCurrentPkey( $pKey );
         return $this;

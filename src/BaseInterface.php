@@ -33,6 +33,6 @@ interface BaseInterface
     /**
      * Class constants
      */
-    const OBJECT   = "object";
-    const RESOURCE = "resource";
+    public const OBJECT   = "object";
+    public const RESOURCE = "resource";
 }

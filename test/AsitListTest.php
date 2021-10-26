@@ -34,12 +34,12 @@ use PHPUnit\Framework\TestCase;
 
 interface testIfc
 {
-    const HALLO_WORLD = 'Hallo world';
+    public const HALLO_WORLD = 'Hallo world';
 }
 class testClass1
     implements testIfc
 {
-    public function __invoke()
+    public function __invoke() : string
     {
         return self::HALLO_WORLD;
     }
@@ -47,7 +47,7 @@ class testClass1
 
 class testClass2
 {
-    public function __invoke()
+    public function __invoke() : string
     {
         return 'Hallo world';
     }
@@ -56,16 +56,16 @@ class testClass2
 
 class AsitListTest extends TestCase
 {
-    public static $file1 = 'file1';
-    public static $file2 = 'file1';
+    public static string $file1 = 'file1';
+    public static string $file2 = 'file1';
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass() : void
     {
         touch( self::$file1 );
         touch( self::$file2 );
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         if( is_file( self::$file1 )) {
             unlink( self::$file1 );
@@ -81,7 +81,7 @@ class AsitListTest extends TestCase
      * @test
      *
      */
-    public function ListTest11()
+    public function ListTest11() : void
     {
         $data1  = [ 'key1' => 'value1' ];
         $data24 = [ 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', ];
@@ -129,7 +129,7 @@ class AsitListTest extends TestCase
      * @test *List singleton
      *
      */
-    public function ListTest2()
+    public function ListTest2() : void
     {
         $list1  = AsmittagList::singleton(
             $this->arrayLoader( AsmittagList::STRING ),
@@ -156,7 +156,7 @@ class AsitListTest extends TestCase
      *
      * @return array
      */
-    public function listLoader()
+    public function listLoader() : array
     {
         $testData = [];
 
@@ -197,13 +197,13 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest12( int $case, $list )
+    public function ListTest12( int $case, $list ) : void
     {
         $case += 10;
         $ok    = 0;
         try {
-            $list->assertValueType( AsitList::ARRAY2 ); // ok
-            $list->assertValueType( '12345' );          // invalid
+            $list->assertValueType( AsitList::ARRAY2 );
+            $list->assertValueType( '12345' );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -212,77 +212,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test12-1-' . $case . ', exp 2, got ' . $ok
-        );
-
-        $list->setValueType( ItList::class );
-        $ok    = 0;
-        try {
-            $list->assertElementType( new ItList( [] )); // ok
-            $ok = 1;
-        }
-        catch( InvalidArgumentException $e ) {
-            $ok = 2;
-        }
-        catch( Exception $e ) {
-            $ok = 3;
-        }
-        $this->assertTrue(
-            $ok == 1,
-            'test12-2-' . $case . ', exp 1, got ' . $ok
-        );
-
-        $list->setValueType( ItList::ARRAY2 );
-        $ok    = 0;
-        try {
-            $list->assertElementType( new ItList( [] )); // invalid
-            $ok = 1;
-        }
-        catch( InvalidArgumentException $e ) {
-            $ok = 2;
-        }
-        catch( Exception $e ) {
-            $ok = 3;
-        }
-        $this->assertTrue(
-            $ok == 2,
-            'test12-3-' . $case . ', exp 2, got ' . $ok
-        );
-
-        $list->setValueType( ItList::class );
-        $ok    = 0;
-        try {
-            $list->assertElementType( ItList::ARRAY2 ); // invalid
-            $ok = 1;
-        }
-        catch( InvalidArgumentException $e ) {
-            $ok = 2;
-        }
-        catch( Exception $e ) {
-            $ok = 3;
-        }
-        $this->assertTrue(
-            $ok == 2,
-            'test12-3-' . $case . ', exp 2, got ' . $ok
-        );
-
-        // $list->setValueType( ItList::class ); // same as above
-        $ok    = 0;
-        try {
-            $list->append( new \stdClass() ); // invalid
-            $ok = 1;
-        }
-        catch( InvalidArgumentException $e ) {
-            $ok = 2;
-        }
-        catch( Exception $e ) {
-            $ok = 3;
-        }
-        $this->assertTrue(
-            $ok == 2,
-            'test12-4-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test12-1-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -295,7 +226,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest20( int $case, $list )
+    public function ListTest20( int $case, $list ) : void
     {
         $case += 200;
         $ok    = 0;
@@ -306,9 +237,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 2;
         }
-        $this->assertTrue(
-            $ok == 1,
-            'test20-' . $case . ', exp 1, got ' . $ok
+        $this->assertEquals(
+            1, $ok, 'test20-' . $case . ', exp 1, got ' . $ok
         );
     }
 
@@ -321,7 +251,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest21( int $case, $list )
+    public function ListTest21( int $case, $list ) : void
     {
         $case += 210;
         $ok   = 0;
@@ -336,9 +266,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test21-1-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test21-1-' . $case . ', exp 2, got ' . $ok
         );
         $ok = 0;
         try {
@@ -352,9 +281,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test21-2-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test21-2-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -367,7 +295,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest22( int $case, $list )
+    public function ListTest22( int $case, $list ) : void
     {
         $case += 220;
         $ok   = 0;
@@ -382,9 +310,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test22-1-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test22-1-' . $case . ', exp 2, got ' . $ok
         );
         $ok = 0;
         try {
@@ -398,9 +325,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test22-2-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test22-2-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -413,7 +339,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest23( int $case, $list )
+    public function ListTest23( int $case, $list ) : void
     {
         $case += 230;
         $ok   = 0;
@@ -428,9 +354,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test23-1-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test23-1-' . $case . ', exp 2, got ' . $ok
         );
         $ok = 0;
         try {
@@ -444,9 +369,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test23-2-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test23-2-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -459,7 +383,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest24( int $case, $list )
+    public function ListTest24( int $case, $list ) : void
     {
         $case += 240;
         $ok   = 0;
@@ -474,9 +398,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test24-1-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test24-1-' . $case . ', exp 2, got ' . $ok
         );
         $ok = 0;
         try {
@@ -490,9 +413,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test24-2-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test24-2-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -505,7 +427,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest25( int $case, $list )
+    public function ListTest25( int $case, $list ) : void
     {
         $case += 250;
         $ok   = 0;
@@ -520,9 +442,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test25-1-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test25-1-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -535,7 +456,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest26( int $case, $list )
+    public function ListTest26( int $case, $list ) : void
     {
         $case += 260;
         $ok   = 0;
@@ -550,9 +471,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test26-1-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test26-1-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -565,7 +485,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest27( int $case, $list )
+    public function ListTest27( int $case, $list ) : void
     {
         $case += 270;
         $ok   = 0;
@@ -580,9 +500,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test27-1-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test27-1-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -595,7 +514,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest28( int $case, $list )
+    public function ListTest28( int $case, $list ) : void
     {
         $case += 280;
         $ok   = 0;
@@ -610,9 +529,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test28-1-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test28-1-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -625,7 +543,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest29( int $case, $list )
+    public function ListTest29( int $case, $list ) : void
     {
         $case += 290;
         $ok   = 0;
@@ -637,9 +555,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 2;
         }
-        $this->assertTrue(
-            $ok == 1,
-            'test29-1-' . $case . ', exp 1, got ' . $ok
+        $this->assertEquals(
+            1, $ok, 'test29-1-' . $case . ', exp 1, got ' . $ok
         );
 
         $ok = 0;
@@ -654,9 +571,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test29-2-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test29-2-' . $case . ', exp 2, got ' . $ok
         );
 
         $ok = 0;
@@ -671,9 +587,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test29-3-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test29-3-' . $case . ', exp 2, got ' . $ok
         );
 
         $ok = 0;
@@ -688,15 +603,14 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test29-4-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test29-4-' . $case . ', exp 2, got ' . $ok
         );
 
         $ok = 0;
         try {
             $list->setValueType( AsittagList::class )
-                 ->assertElementType( fopen( self::$file1, 'r' ));
+                 ->assertElementType( fopen( self::$file1, 'rb' ));
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -705,9 +619,8 @@ class AsitListTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue(
-            $ok == 2,
-            'test29-5-' . $case . ', exp 2, got ' . $ok
+        $this->assertEquals(
+            2, $ok, 'test29-5-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -718,7 +631,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest3( int $case, $list )
+    public function ListTest3( int $case, $list ) : void
     {
         $case += 300;
         foreach(
@@ -752,9 +665,8 @@ class AsitListTest extends TestCase
             catch( Exception $e ) {
                 $ok = $e->getMessage();
             }
-            $this->assertTrue(
-                ( $ok == 1 ),
-                'test' . $case . '-2-' . $vIx . ' - ' . get_class( $list ) . ' - ' . $valueType . ', exp 1, got ' . $ok
+            $this->assertEquals(
+                1, $ok, 'test' . $case . '-2-' . $vIx . ' - ' . get_class( $list ) . ' - ' . $valueType . ', exp 1, got ' . $ok
             );
 
         } // end foreach
@@ -769,7 +681,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest4( int $case, $list )
+    public function ListTest4( int $case, $list ) : void
     {
         $case += 400;
         $list->setValueType( testClass1::class );
@@ -793,7 +705,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest5( int $case, $list )
+    public function ListTest5( int $case, $list ) : void
     {
         $case  += 500;
         $string = '';
@@ -819,11 +731,11 @@ class AsitListTest extends TestCase
             for( $x = 0; $x < 99; $x++  ) {
                 foreach( $this->arrayLoader( $valueType ) as $pKey => $element ) {
                     $list->append( $element, $x . $pKey );
-                    if( $class == ItList::class ) {
+                    if( $class === ItList::class ) {
                         continue;
                     }
                     if(( in_array( $class, [ AsmitList::class, AsmittagList::class ] )) &&
-                        ( 0 == ( $list->key() % 3 ))) {
+                        ( 0 === ( $list->key() % 3 ))) {
                         $list->addCurrentPkey( 'test' . $x );
                     }
                     if( in_array( $class, [ AsittagList::class, AsmittagList::class ] )) {
@@ -834,9 +746,8 @@ class AsitListTest extends TestCase
             } // end for
             $string = $list->toString();
             $list->seek( array_rand( array_flip( range( 2, 192 )))); // set current
-            $this->assertTrue(
-                ( false !== strpos( $string, (string) $list->key())),
-                'test' . $case . '-' . 1 . ' key:' . $list->key() . ' ' .  get_class( $list ) . PHP_EOL . $string
+            $this->assertNotFalse(
+                strpos( $string, (string)$list->key() ), 'test' . $case . '-' . 1 . ' key:' . $list->key() . ' ' . get_class( $list ) . PHP_EOL . $string
             );
         } // end foreach
         /*
@@ -882,8 +793,8 @@ class AsitListTest extends TestCase
                 static $files = [];
                 if( empty( $files )) {
                     $files = [
-                        fopen( self::$file1, 'r' ),
-                        fopen( self::$file2, 'r' )
+                        fopen( self::$file1, 'rb' ),
+                        fopen( self::$file2, 'rb' )
                     ];
                 }
                 return $files[$ix];
@@ -902,7 +813,7 @@ class AsitListTest extends TestCase
         } // end switch
 
     }
-    public function arrayLoader( $valueType )
+    public function arrayLoader( $valueType ) : array
     {
 
         $output = [];
@@ -913,7 +824,7 @@ class AsitListTest extends TestCase
         return $output;
     }
 
-    public static $COLORS = [
+    public static array $COLORS = [
         0 => 'Black',
         1 => 'Gray',
         2 => 'Blue',
@@ -926,76 +837,9 @@ class AsitListTest extends TestCase
         9 => 'Purple'
     ];
 
-    public static function getAttribute( int $index )
+    public static function getAttribute( int $index ) : string
     {
         $cIx = $index % 10;
         return self::$COLORS[$cIx];
     }
-
-   /**
-     * dataProvider
-     *
-     * @return array
-     */
-    public function subClassLoader()
-    {
-        $testData = [];
-
-        $testData[] = [
-            1,
-            ItListSub::factory(),
-            'ItListSub'
-        ];
-
-        $testData[] = [
-            2,
-            AsitListSub::factory(),
-            'AsitListSub'
-        ];
-
-        $testData[] = [
-            3,
-            AsmitListSub::factory(),
-            'AsmitListSub'
-        ];
-
-        $testData[] = [
-            4,
-            AsittagListSub::factory(),
-            'AsittagListSub'
-        ];
-
-        $testData[] = [
-            5,
-            AsmittagListSub::factory(),
-            'AsmittagListSub'
-        ];
-
-        return $testData;
-    }
-
-    /**
-     * Test factory methods
-     *
-     * @test
-     * @dataProvider subClassLoader
-     *
-     * @param int $case
-     * @param BaseInterface $instance
-     * @param string $expClassName
-     */
-    public function ListTest9( int $case, BaseInterface $instance, string $expClassName )
-    {
-        $case += 900;
-        $actClassName = get_class( $instance );
-        $this->assertNotFalse(
-            strpos( $actClassName, $expClassName ),
-            'test' . $case . ' exp: ' . $expClassName . ', got ' . $actClassName
-        );
-    }
 }
-class ItListSub extends ItList{};
-class AsitListSub extends AsitList{};
-class AsmitListSub extends AsmitList{};
-class AsittagListSub extends AsittagList{};
-class AsmittagListSub extends AsmittagList{};

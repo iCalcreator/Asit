@@ -38,7 +38,7 @@ use Traversable;
 class Asit1Test extends TestCase
 {
 
-    public function arrayLoader( $max = 1000 )
+    public function arrayLoader( $max = 1000 ) : array
     {
 
         $output = [];
@@ -49,7 +49,7 @@ class Asit1Test extends TestCase
         return $output;
     }
 
-    public static $COLORS = [
+    public static array $COLORS = [
         0 => 'Black',
         1 => 'Gray',
         2 => 'Blue',
@@ -62,7 +62,7 @@ class Asit1Test extends TestCase
         9 => 'Purple'
     ];
 
-    public static function getAttribute( $index )
+    public static function getAttribute( $index ) : string
     {
         $cIx = $index % 10;
         return self::$COLORS[$cIx];
@@ -72,16 +72,15 @@ class Asit1Test extends TestCase
      * @test Asit exists, count,
      *
      */
-    public function asitTest1()
+    public function asitTest1() : void
     {
         $asit = new Asit();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
         } // end for
 
-        $this->assertTrue(
-            ( 100 == $asit->count()),
-            'test11'
+        $this->assertEquals(
+            100, $asit->count(), 'test11'
         );
 
         $this->assertTrue(
@@ -116,7 +115,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest21()
+    public function asitTest21() : void
     {
 
         $asit = new Asit();
@@ -125,67 +124,54 @@ class Asit1Test extends TestCase
         } // end for
 
         $asit->rewind();               // test rewind
-        $this->assertTrue(
-            0 == $asit->key(),
-            'test21-1'
+        $this->assertEquals(
+            0, $asit->key(), 'test21-1'
         );
-        $this->assertTrue(
-            'element0' == $asit->current(),
-            'test21-2'
+        $this->assertEquals(
+            'element0', $asit->current(), 'test21-2'
         );
         $pKey = $asit->getCurrentPkey();
-        $this->assertTrue(
-            'key0' == $pKey,
-            'test21-3'
+        $this->assertEquals(
+            'key0', $pKey, 'test21-3'
         );
 
         $asit->next();             // test next
-        $this->assertTrue(
-            1 == $asit->key(),
-            'test21-4'
+        $this->assertEquals(
+            1, $asit->key(), 'test21-4'
         );
-        $this->assertTrue(
-            'element1' == $asit->current(),
-            'test21-5'
+        $this->assertEquals(
+            'element1', $asit->current(), 'test21-5'
         );
-        $this->assertTrue(
-            'key1' == $asit->getCurrentPkey(),
-            'test21-6'
+        $this->assertEquals(
+            'key1', $asit->getCurrentPkey(), 'test21-6'
         );
 
         $asit->last();           // test last
-        $this->assertTrue(
-            99 == $asit->key(),
-            'test21-7'
+        $this->assertEquals(
+            99, $asit->key(), 'test21-7'
         );
-        $this->assertTrue(
-            'element99' == $asit->current(),
-            'test21-8'
+        $this->assertEquals(
+            'element99', $asit->current(), 'test21-8'
         );
-        $this->assertTrue(
-            'key99' == $asit->getCurrentPkey(),
-            'test21-9'
+        $this->assertEquals(
+            'key99', $asit->getCurrentPkey(), 'test21-9'
         );
 
         $asit->previous();    // test previous
-        $this->assertTrue(
-            98 == $asit->key(),
-            'test21-10'
+        $this->assertEquals(
+            98, $asit->key(), 'test21-10'
         );
-        $this->assertTrue(
-            'element98' == $asit->current(),
-            'test21-11'
+        $this->assertEquals(
+            'element98', $asit->current(), 'test21-11'
         );
-        $this->assertTrue(
-            'key98' == $asit->getCurrentPkey(),
-            'test21-12'
+        $this->assertEquals(
+            'key98', $asit->getCurrentPkey(), 'test21-12'
         );
 
         $asit->last();
         $asit->next();
-        $this->assertTrue(
-            100 == $asit->key(),
-            'test21-13'
+        $this->assertEquals(
+            100, $asit->key(), 'test21-13'
         );
         $this->assertFalse(
             $asit->valid(),
@@ -194,9 +180,8 @@ class Asit1Test extends TestCase
 
         $asit->rewind();
         $asit->previous();
-        $this->assertTrue(
-            -1 == $asit->key(),
-            'test21-15'
+        $this->assertEquals(
+            -1, $asit->key(), 'test21-15'
         );
         $this->assertFalse(
             $asit->valid(),
@@ -204,31 +189,25 @@ class Asit1Test extends TestCase
         );
 
         $asit->seek( 0 );   // test seek
-        $this->assertTrue(
-            0 == $asit->key(),
-            'test21-17'
+        $this->assertEquals(
+            0, $asit->key(), 'test21-17'
         );
-        $this->assertTrue(
-            'element0' == $asit->current(),
-            'test21-18'
+        $this->assertEquals(
+            'element0', $asit->current(), 'test21-18'
         );
-        $this->assertTrue(
-            'key0' == $asit->getCurrentPkey(),
-            'test21-19'
+        $this->assertEquals(
+            'key0', $asit->getCurrentPkey(), 'test21-19'
         );
 
         $asit->seek( 50 );
-        $this->assertTrue(
-            50 == $asit->key(),
-            'test21-20'
+        $this->assertEquals(
+            50, $asit->key(), 'test21-20'
         );
-        $this->assertTrue(
-            'element50' == $asit->current(),
-            'test21-21'
+        $this->assertEquals(
+            'element50', $asit->current(), 'test21-21'
         );
-        $this->assertTrue(
-            'key50' == $asit->getCurrentPkey(),
-            'test21-22'
+        $this->assertEquals(
+            'key50', $asit->getCurrentPkey(), 'test21-22'
         );
 
         $asit = null;
@@ -241,7 +220,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest22()
+    public function asitTest22() : void
     {
 
         foreach( [ new Asit(), new Asmit() ] as $asit ) {
@@ -262,24 +241,20 @@ class Asit1Test extends TestCase
             // testing Traversable, i.e. makes the class traversable using foreach
             $cnt = 0;
             foreach( $asit as $key => $value ) { // 'internal key', NOT pKey
-                $cnt += 1;
+                ++$cnt;
             }
-            $this->assertTrue(
-                ( 100 == $cnt ),
-                'test92-3'
+            $this->assertEquals(
+                100, $cnt, 'test92-3'
             );
-            $this->assertTrue(
-                99 == $key,
-                'test22-4'
+            $this->assertEquals(
+                99, $key, 'test22-4'
             );
-            $this->assertTrue(
-                ( 'element99' == $value ),
-                'test22-5'
+            $this->assertEquals(
+                'element99', $value, 'test22-5'
             );
             $asit->seek( $key ); // position iterator last
-            $this->assertTrue(
-                ( 'key99' == $asit->getCurrentPkey() ),
-                'test22-6, exp: key99, got: ' . $asit->getCurrentPkey()
+            $this->assertEquals(
+                'key99', $asit->getCurrentPkey(), 'test22-6, exp: key99, got: ' . $asit->getCurrentPkey()
             );
 
             $this->assertTrue(
@@ -288,8 +263,8 @@ class Asit1Test extends TestCase
             );
             $cnt = 0;
             foreach( $asit->GetPkeyIterator() as $pKey => $element ) {
-                $cnt += 1;
-                if( 0 == ( $cnt % 50 ) ) {
+                ++$cnt;
+                if( 0 === ( $cnt % 50 ) ) {
                     $this->assertEquals(
                         $element,
                         $asit->pKeySeek( $pKey )
@@ -308,7 +283,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asmitTest23()
+    public function asmitTest23() : void
     {
         try {
             Asmit::factory()->pKeySeek( 'key23' ); // don't exist
@@ -320,7 +295,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test23-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test23-1, exp 2, got ' . $ok );
 
         try {
             Asmit::factory()->countPkey( 'key23' ); // don't exist
@@ -332,10 +307,10 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test23-2, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test23-2, exp 2, got ' . $ok );
 
         try {
-            Asmit::factory( self::arrayLoader( 10 ))->removePkey( 'test23-3' ); // remove but don't exist
+            Asmit::factory( $this->arrayLoader( 10 ))->removePkey( 'test23-3' ); // remove but don't exist
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -344,7 +319,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test23-3, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test23-3, exp 2, got ' . $ok );
 
         try {
             Asmit::factory()->getCurrentPkey(); // no current
@@ -356,7 +331,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test23-4, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test23-4, exp 2, got ' . $ok );
 
         $asmit = Asmit::factory()->append( 'value', 'key' );
         $pKey  = $asmit->getCurrentPkey();
@@ -370,7 +345,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 1, 'test23-4, exp 1, got ' . $ok );
+        $this->assertEquals( 1, $ok, 'test23-4, exp 1, got ' . $ok );
 
     }
 
@@ -379,7 +354,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asmitTest24()
+    public function asmitTest24() : void
     {
         $asmit = new Asmit();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
@@ -446,9 +421,8 @@ class Asit1Test extends TestCase
         foreach( $iterator as $key => $value ) {
             $pKeys[] = $key;
         }
-        $this->assertTrue(
-            in_array( $pKey2, $pKeys ),
-            'test24-8'
+        $this->assertContains(
+            $pKey2, $pKeys, 'test24-8'
         );
 
         $asmit = null;
@@ -459,7 +433,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asmitTest25()
+    public function asmitTest25() : void
     {
         $asmit = new Asmit();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
@@ -493,7 +467,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest28()
+    public function asitTest28() : void
     {
         $asit = Asit::factory( [ 'key1' => 'value' ] );
         $ok = 0;
@@ -507,7 +481,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test28, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test28, exp 2, got ' . $ok );
     }
 
     /**
@@ -516,7 +490,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest30()
+    public function asitTest30() : void
     {
 
         foreach( [ new Asit(), new Asittag() ] as $aIx => $asit ) {
@@ -547,7 +521,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest31()
+    public function asitTest31() : void
     {
 
         $asit = new Asit();
@@ -567,7 +541,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test311, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test311, exp 2, got ' . $ok );
 
         $ok = 0;
         try {
@@ -580,7 +554,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test312, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test312, exp 2, got ' . $ok );
 
         $asit->seek( array_rand( array_flip( range( 31, 39 )))); // set current
 
@@ -608,7 +582,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 4;
         }
-        $this->assertTrue( $ok == 3, 'test314, exp 3, got ' . $ok );
+        $this->assertEquals( 3, $ok, 'test314, exp 3, got ' . $ok );
 
         $index1  = $asit->key();
         $newPkey = 'newPkey';
@@ -636,7 +610,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest33()
+    public function asitTest33() : void
     {
 
         $element = 'element';
@@ -688,25 +662,24 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest34()
+    public function asitTest34() : void
     {
 
         $asit = new Asit();
         for( $pIx = 0; $pIx < 10; $pIx++ ) {
             $asit->append(
                 'element',
-                (( 0 == ( $pIx % 2 )) ? 'KEY' : 'key' ) . $pIx
+                (( 0 === ( $pIx % 2 )) ? 'KEY' : 'key' ) . $pIx
             );
         } // end for
 
-        $this->assertTrue(
-            $asit->count() == count( $asit->getPkeys()),
-            'test34-1'
+        $this->assertCount(
+            $asit->count(), $asit->getPkeys(), 'test34-1'
         );
 
         foreach( $asit->getPkeys( SORT_FLAG_CASE | SORT_STRING ) as $pIx => $pKey ) {
             // case-insensitively sort
-            $exp = ( 0 == ( $pIx % 2 )) ? 'KEY' :  'key';
+            $exp = ( 0 === ( $pIx % 2 )) ? 'KEY' :  'key';
 //          echo ' 1 got : ' . $pKey . PHP_EOL;
             $this->assertEquals(
                 $exp,
@@ -732,13 +705,13 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest35()
+    public function asitTest35() : void
     {
 
         $asit = new AsittagList();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, Asit1Test::getAttribute( $asit->key() ) );
+            $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
 
         $asit->seek( array_rand( array_flip( range( 30, 39 ))));
@@ -762,13 +735,13 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest36()
+    public function asitTest36() : void
     {
 
         $asit = new AsmittagList();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, Asit1Test::getAttribute( $asit->key() ) );
+            $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
 
         $asit->seek( array_rand( array_flip( range( 0, 99 ))));
@@ -782,12 +755,12 @@ class Asit1Test extends TestCase
         $this->assertTrue( $asit->pKeyExists( $newKey1 ),'test36-2' );
         $asit->setCurrentPkey( $newKey1 );
         $this->assertTrue( $asit->pKeyExists( $newKey1 ),'test36-3' );
-        $this->assertTrue( ( 2 == $asit->countPkey( $newKey1 )),'test36-4' );
+        $this->assertEquals( 2, $asit->countPkey( $newKey1 ), 'test36-4' );
 
         $newKey2 = 'otherKey2';
         $asit->setCurrentPkey( $newKey2 );
         $this->assertTrue( $asit->pKeyExists( $newKey2 ),'test36-5' );
-        $this->assertTrue( ( 3 == $asit->countPkey( $newKey2 )),'test36-6' );
+        $this->assertEquals( 3, $asit->countPkey( $newKey2 ), 'test36-6' );
 
         $asit->rewind()->previous()->previous()->previous(); // make current invalid
         $asit->pKeySeek( $newKey2 );
@@ -805,7 +778,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest38()
+    public function asitTest38() : void
     {
         $asit    = new Asittag( $this->arrayLoader( 10));
         $newPkey = 'testbcdefg';
@@ -820,7 +793,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test38-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test38-1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -830,7 +803,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest39()
+    public function asitTest39() : void
     {
         $asit      = new Asittag( $this->arrayLoader( 10));
         $otherPkey = 'testbcdefg';
@@ -845,7 +818,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test39-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test39-1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -855,7 +828,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest40()
+    public function asitTest40() : void
     {
         $asit      = new Asittag( $this->arrayLoader( 10));
         $asit->rewind();
@@ -873,7 +846,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test40-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test40-1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -883,7 +856,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest41()
+    public function asitTest41() : void
     {
         $asit     = new Asittag( $this->arrayLoader( 10));
         $duplPkey = $asit->last()->previous()->previous()->previous()->getCurrentPkey();
@@ -899,7 +872,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test37-26, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test37-26, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -909,20 +882,19 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest61()
+    public function asitTest61() : void
     {
 
         $asit = new Asittag();
         for( $pIx = 0; $pIx < 10; $pIx++ ) {
             $asit->append(
                 'element',
-                (( 0 == ( $pIx % 2 )) ? 'KEY' : 'key' ) . $pIx
+                (( 0 === ( $pIx % 2 )) ? 'KEY' : 'key' ) . $pIx
             );
         } // end for
 
-        $this->assertTrue(
-            $asit->count() == count( $asit->getPkeys()),
-            'test61-1'
+        $this->assertCount(
+            $asit->count(), $asit->getPkeys(), 'test61-1'
         );
 
         $asit = null;
@@ -933,7 +905,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest73()
+    public function asitTest73() : void
     {
         $data = $this->arrayLoader( 100 );
         $asit = new Asittag();
@@ -959,7 +931,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest81()
+    public function asitTest81() : void
     {
         $data = [ 'key' => 'value' ];
         foreach( [ Asit::factory( $data ), Asittag::factory( $data ) ] as $aIx => $asit ) {
@@ -974,9 +946,8 @@ class Asit1Test extends TestCase
             catch( Exception $e ) {
                 $ok = 3;
             }
-            $this->assertTrue(
-                ( $ok == 2 ),
-                'test81-1-' . $aIx . ', exp 2, got ' . $ok  . ' ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString()
+            $this->assertEquals(
+                2, $ok, 'test81-1-' . $aIx . ', exp 2, got ' . $ok  . ' ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString()
             );
 
             $ok = 0;
@@ -990,9 +961,8 @@ class Asit1Test extends TestCase
             catch( Exception $e ) {
                 $ok = 3;
             }
-            $this->assertTrue(
-                ( $ok == 2 ),
-                'test81-2-' . $aIx . ', exp 2, got ' . $ok  . ' ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString()
+            $this->assertEquals(
+                2, $ok, 'test81-2-' . $aIx . ', exp 2, got ' . $ok  . ' ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString()
             );
 
             $asit = null;
@@ -1005,7 +975,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest9()
+    public function asitTest9() : void
     {
         $asit = Asit::factory( [ 1 => 'value' ] );
         $asit->next();
@@ -1020,7 +990,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test9-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test9-1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -1030,7 +1000,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest10()
+    public function asitTest10() : void
     {
         $asit = new Asit();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
@@ -1050,7 +1020,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asitTest11()
+    public function asitTest11() : void
     {
         $asit    = new AsitList( $this->arrayLoader( 10 ), AsitList::STRING );
         $result  = $asit->pKeyGet( null, [ self::class, 'cmp' ] );
@@ -1069,7 +1039,7 @@ class Asit1Test extends TestCase
      *
      * @test
      */
-    public function asittagTest12()
+    public function asittagTest12() : void
     {
         $asit    = new AsittagList( $this->arrayLoader( 10 ), AsitList::STRING );
         $result  = $asit->pKeyTagGet( null, null, null, null, [ self::class, 'cmp' ] );
@@ -1083,9 +1053,9 @@ class Asit1Test extends TestCase
         $asit = null;
     }
 
-    public static function cmp( $a, $b )
+    public static function cmp( $a, $b ) : int
     {
-        if( $a == $b ) {
+        if( $a === $b ) {
             return 0;
         }
         return ( $a > $b ) ? -1 : +1;

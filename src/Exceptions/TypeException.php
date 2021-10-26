@@ -42,6 +42,6 @@ class TypeException extends InvalidArgumentException
      *
      * @var string
      */
-    public static $ERR1 = "Invalid value type (#%d) : %s, expects %s";
-    public static $ERR2 = "Invalid value type : %s";
+    public static string $ERR1 = "Invalid value type (#%d) : %s, expects %s";
+    public static string $ERR2 = "Invalid value type : %s";
 }

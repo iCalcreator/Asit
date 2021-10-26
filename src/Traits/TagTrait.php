@@ -55,18 +55,19 @@ trait TagTrait
      *
      * @var array
      */
-    protected $tags = [];
+    protected array $tags = [];
 
     /**
      * Clear (remove) collection
      *
      * @override
-     * @return BaseInterface
+     * @return self
      */
-    public function init() : BaseInterface
+    public function init() : self
     {
         $this->tags = [];
-        return parent::init();
+        parent::init();
+        return $this;
     }
 
     /**
@@ -76,7 +77,7 @@ trait TagTrait
      * @return void
      * @throws TagException
      */
-    public static function assertTag( $tag )
+    public static function assertTag( $tag ) : void
     {
         static $TMPL = "Invalid tag : (%s) %s";
         try {
@@ -153,7 +154,7 @@ trait TagTrait
         }
         foreach((array) $tag as $theTag ) {
             if( $this->tagExists( $theTag ) &&
-                in_array( $index, $this->tags[$theTag] )) {
+                in_array( $index, $this->tags[$theTag], true ) ) {
                 return true;
             }
         } // end foreach
@@ -198,14 +199,14 @@ trait TagTrait
      * @return void
      * @throws TagException
      */
-    private function addTag( $tag, int $index )
+    private function addTag( $tag, int $index ) : void
     {
         self::assertTag( $tag );
         if( ! $this->tagExists( $tag )) {
             $this->tags[$tag] = [];
             ksort( $this->tags, SORT_REGULAR );
         }
-        if( ! in_array( $index, $this->tags[$tag] )) {
+        if( ! in_array( $index, $this->tags[$tag], true ) ) {
             $this->tags[$tag][] = $index;
             ksort( $this->tags[$tag], SORT_REGULAR );
         }
@@ -221,7 +222,7 @@ trait TagTrait
      * @throws RuntimeException
      * @throws TagException
      */
-    public function addCurrentTag( $tag ) : self
+    public function addCurrentTag( $tag ) : BaseInterface
     {
         $this->assertCurrent();
         $this->addTag( $tag, $this->position );
@@ -241,10 +242,11 @@ trait TagTrait
      * @return self
      * @throws RuntimeException
      */
-    public function removeCurrentTag( $tag ) : self
+    public function removeCurrentTag( $tag ) : BaseInterface
     {
         $this->assertCurrent();
-        return $this->removePkeyTag( $this->getCurrentPkey(), $tag );
+        $this->removePkeyTag( $this->getCurrentPkey(), $tag );
+        return $this;
     }
 
     /**
@@ -260,7 +262,7 @@ trait TagTrait
      * Convenient get method alias
      *
      * @param  int|string|array  $tags
-     * @param  null|bool         $union
+     * @param bool|null $union
      * @param  int|string|array  $exclTags
      * @param  int|callable      $sortParam    asort sort_flags or uasort callable
      * @return array
@@ -268,7 +270,7 @@ trait TagTrait
      */
     public function tagGet(
         $tags,
-        $union = true,
+        ?bool $union = true,
         $exclTags = [],
         $sortParam = null
     ) : array

@@ -4,9 +4,12 @@
  *
  * This file is part of Asit.
  *
+ * Support <https://github.com/iCalcreator/Asit>
+ *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
+ * @version   2.0
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -25,23 +28,30 @@
  *            You should have received a copy of the GNU Lesser General Public License
  *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
-declare( strict_types = 1 );
-namespace Kigkonsult\Asit\Exceptions;
-
-use InvalidArgumentException;
+namespace Kigkonsult\Asit;
 
 /**
- * Class SortException
+ * Interface TypeInterface
  *
- * @package Kigkonsult\Asit\Exceptions
+ * Type constants
+ *
+ * @package Kigkonsult\Asit
  */
-class SortException extends InvalidArgumentException
+interface TypeInterface
 {
+
     /**
-     * Error text templates
-     *
-     * @var string
+     * Asit constants, OBJECT && RESOURCE in class It
      */
-    public static string $ERRTXT1 = "Invalid sortParam %s";
-    public static string $ERRTXT2 = "Sort error with sortParam %s";
+    public const ARR_Y       = "array";
+    public const ARRAY2      = "[]";
+    public const BOOL        = "bool";
+    public const BOOLEAN     = "boolean";
+    public const CALL_BLE    = "callable";
+    public const DOUBLE      = "double";
+    public const INT         = "int";
+    public const INTEGER     = "integer";
+    public const FLOAT       = "float";
+    public const STRING      = "string";
+    public const TRAVERSABLE = "Traversable";
 }

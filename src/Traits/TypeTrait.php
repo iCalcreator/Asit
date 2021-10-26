@@ -27,11 +27,11 @@
  */
 namespace Kigkonsult\Asit\Traits;
 
+use Kigkonsult\Asit\BaseInterface;
 use Kigkonsult\Asit\Exceptions\TypeException;
 use Traversable;
 
 use function class_exists;
-use function gettype;
 use function in_array;
 use function interface_exists;
 use function is_array;
@@ -53,9 +53,9 @@ trait TypeTrait
     /**
      * The collection element value type
      *
-     * @var string
+     * @var string|null
      */
-    protected $valueType = null;
+    protected ?string $valueType = null;
 
     /**
      * Assert collection element value type, extended 'gettype'
@@ -64,7 +64,7 @@ trait TypeTrait
      * @return void
      * @throws TypeException
      */
-    public function assertElementType( $element )
+    public function assertElementType( $element ) : void
     {
         if( ! $this->isValueTypeSet()) {
             return;
@@ -101,7 +101,7 @@ trait TypeTrait
                 }
                 break;
             case self::OBJECT :
-                if( self::OBJECT != gettype( $element )) {
+                if( ! is_object( $element ) ) {
                     $errType = 6;
                 }
                 break;
@@ -121,7 +121,7 @@ trait TypeTrait
                 }
                 break;
             default :
-                if(( self::OBJECT != gettype( $element )) ||
+                if( ! is_object( $element ) ||
                     ! ( $element instanceof $this->valueType )) {
                     $errType = 9;
                     break;
@@ -167,9 +167,9 @@ trait TypeTrait
      * @return self
      * @throws TypeException
      */
-    public function setValueType( string $valueType ) : self
+    public function setValueType( string $valueType ) : BaseInterface
     {
-        if( $valueType == self::ARRAY2 ) {
+        if( $valueType === self::ARRAY2 ) {
             $valueType = self::ARR_Y;
         }
         self::assertValueType( $valueType );
@@ -186,7 +186,7 @@ trait TypeTrait
      * @return void
      * @throws TypeException
      */
-    public static function assertValueType( string $valueType )
+    public static function assertValueType( string $valueType ) : void
     {
         static $TYPES = [
             self::BOOL,
@@ -203,13 +203,11 @@ trait TypeTrait
             self::TRAVERSABLE,
         ];
         switch( true ) {
-            case ( $valueType == self::ARRAY2 ) :
+            case ( $valueType === self::ARRAY2 ) :
                 return;
-            case in_array( $valueType, $TYPES ) :
+            case in_array( $valueType, $TYPES, true ) :
                 return;
-            case ( is_string( $valueType ) &&
-                ( class_exists( $valueType ) || interface_exists( $valueType ))
-            ) :
+            case ( class_exists( $valueType ) || interface_exists( $valueType )) :
                 return;
             default :
                 throw new TypeException(

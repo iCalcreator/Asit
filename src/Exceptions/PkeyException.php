@@ -42,8 +42,8 @@ class PkeyException extends InvalidArgumentException
      *
      * @var string
      */
-    public static $PKEYFOUND    =
+    public static string $PKEYFOUND    =
         "The new primary key : '%s' exists for position %d";
-    public static $PKEYNOTFOUND =
+    public static string $PKEYNOTFOUND =
         "Primary key : %s not found";
 }

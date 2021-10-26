@@ -86,18 +86,19 @@ class Asit extends It
      *
      * @var array
      */
-    protected $pKeys = [];
+    protected array $pKeys = [];
 
     /**
      * Clear (remove) collection
      *
      * @override
-     * @return BaseInterface
+     * @return self
      */
-    public function init() : BaseInterface
+    public function init() : self
     {
         $this->pKeys = [];
-        return parent::init();
+        parent::init();
+        return $this;
     }
 
     /**
@@ -147,7 +148,7 @@ class Asit extends It
      * @return void
      * @throws InvalidArgumentException
      */
-    protected static function assertKey( $key, string $tmpl )
+    protected static function assertKey( $key, string $tmpl ) : void
     {
         if( is_int( $key ) || ( is_string( $key ) && ! empty( $key ))) {
             return;
@@ -164,7 +165,7 @@ class Asit extends It
      * @return void
      * @throws PkeyException
      */
-    public static function assertPkey( $pKey )
+    public static function assertPkey( $pKey ) : void
     {
         static $TMPL = "Invalid primary key : (%s) %s";
         try {
@@ -193,7 +194,7 @@ class Asit extends It
      * @return void
      * @throw PkeyException
      */
-    protected function assertPkeyExists( $pKey )
+    protected function assertPkeyExists( $pKey ) : void
     {
         if( ! $this->pKeyExists( $pKey )) {
             throw new PkeyException(
@@ -209,7 +210,7 @@ class Asit extends It
      * @return void
      * @throw PkeyException
      */
-    protected function assertPkeyNotExists( $pKey )
+    protected function assertPkeyNotExists( $pKey ) : void
     {
         if( $this->pKeyExists( $pKey )) {
             throw new PkeyException(
@@ -221,16 +222,15 @@ class Asit extends It
     /**
      * Return all primary keys
      *
-     * @param null|int $sortFlag default SORT_REGULAR
-     * @param mixed    $tag  null due to inherit rules
+     * @param mixed  $sortFlag default SORT_REGULAR
+     * @param null|int  $dummy
      * @return array
      */
-    public function getPkeys( $sortFlag = SORT_REGULAR, $tag = null ) : array
+//    public function getPkeys( ? string $tag = null, ?int $sortFlag = SORT_REGULAR ) : array
+    public function getPkeys( $sortFlag = SORT_REGULAR, ? int $dummy = null ) : array
     {
         $pKeys = array_keys( $this->pKeys );
-        if( $sortFlag != SORT_REGULAR ) {
-            sort( $pKeys, $sortFlag );
-        }
+        sort( $pKeys, (int) ( $sortFlag ?? SORT_REGULAR ));
         return $pKeys;
     }
 
@@ -248,7 +248,7 @@ class Asit extends It
         switch( true ) {
             case ( ! $this->pKeyExists( $pKey )) :
                 break;
-            case ( $index == $this->pKeys[$pKey] ) :
+            case ( $index === $this->pKeys[$pKey] ) :
                 return $this;
             default :
                 throw new PkeyException(
@@ -271,11 +271,11 @@ class Asit extends It
      * @return self
      * @throws PkeyException
      */
-    public function replacePkey( $oldPkey, $newPkey ) : self
+    public function replacePkey( $oldPkey, $newPkey ) : BaseInterface
     {
         $this->assertPkeyExists( $oldPkey );
         self::assertPkey( $newPkey );
-        if( $oldPkey == $newPkey ) {
+        if( $oldPkey === $newPkey ) {
             return $this;
         }
         $this->assertPkeyNotExists( $newPkey );
@@ -308,7 +308,7 @@ class Asit extends It
      * @throws PkeyException
      * @throws RuntimeException
      */
-    public function setCurrentPkey( $pKey ) : self
+    public function setCurrentPkey( $pKey ) : BaseInterface
     {
         $this->assertCurrent();
         return $this->setPkey( $pKey, $this->position );
@@ -420,7 +420,7 @@ class Asit extends It
                 throw new CollectionException(
                     sprintf( CollectionException::$ERRTXT, self::getErrType( $collection ))
                 );
-            case ( $collection instanceof Asit ) :
+            case ( $collection instanceof self ) :
                 foreach( $collection->getPkeyIterator() as $cIx => $element ) {
                     $this->append( $element, $cIx );
                 }
@@ -458,7 +458,7 @@ class Asit extends It
      * @return self
      * @throws PkeyException
      */
-    public function pKeySeek( $pKey ) : self
+    public function pKeySeek( $pKey ) : BaseInterface
     {
         $this->assertPkeyExists( $pKey );
         $this->position = $this->pKeys[$pKey];

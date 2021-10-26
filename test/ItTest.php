@@ -38,7 +38,7 @@ use Traversable;
 
 class ItTest extends TestCase
 {
-    public function arrayLoader( int $max = 100 )
+    public function arrayLoader( int $max = 100 ) : array
     {
         $output = [];
         for( $ix=0; $ix < $max; $ix++ ) {
@@ -47,7 +47,7 @@ class ItTest extends TestCase
         return $output;
     }
 
-    public static $COLORS = [
+    public static array $COLORS = [
         0 => 'Black',
         1 => 'Gray',
         2 => 'Blue',
@@ -60,7 +60,7 @@ class ItTest extends TestCase
         9 => 'Purple'
     ];
 
-    public function getAttribute( int $index )
+    public function getAttribute( int $index ) : string
     {
         $cIx = $index % 10;
         return self::$COLORS[$cIx];
@@ -70,7 +70,7 @@ class ItTest extends TestCase
      * @test It isCollectionSet, exists, count,
      *
      */
-    public function itTest1()
+    public function itTest1() : void
     {
         $it = new It();
 
@@ -88,9 +88,8 @@ class ItTest extends TestCase
             'test11'
         );
 
-        $this->assertTrue(
-            ( 100 == $it->count()),
-            'test12'
+        $this->assertEquals(
+            100, $it->count(), 'test12'
         );
 
         $this->assertTrue(
@@ -123,7 +122,7 @@ class ItTest extends TestCase
      * @test It singleton
      *
      */
-    public function itTest2()
+    public function itTest2() : void
     {
         $it1  = It::singleton( $this->arrayLoader());
         $cnt1 = $it1->count();
@@ -142,7 +141,7 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function itTest21()
+    public function itTest21() : void
     {
 
         $it1 = new It();
@@ -176,60 +175,50 @@ class ItTest extends TestCase
      * @param int $case
      * @param Traversable $it
      */
-    public function itTest21test( int $case, Traversable $it )
+    public function itTest21test( int $case, Traversable $it ) : void
     {
-        $case += 1;
+        ++$case;
 
-        $this->assertTrue(
-            ( 100 == $it->count()),
-            'test21-0-' . $case . ' exp: 100, got: ' . $it->count()
+        $this->assertEquals(
+            100, $it->count(), 'test21-0-' . $case . ' exp: 100, got: ' . $it->count()
         );
 
         $it->rewind();               // test rewind
-        $this->assertTrue(
-            0 == $it->key(),
-            'test21-1-' . $case
+        $this->assertEquals(
+            0, $it->key(), 'test21-1-' . $case
         );
-        $this->assertTrue(
-            'element0' == $it->current(),
-            'test21-2-' . $case
+        $this->assertEquals(
+            'element0', $it->current(), 'test21-2-' . $case
         );
 
         $it->next();             // test next
-        $this->assertTrue(
-            1 == $it->key(),
-            'test21-4-' . $case . ' exp: 1. got: ' . $it->key()
+        $this->assertEquals(
+            1, $it->key(), 'test21-4-' . $case . ' exp: 1. got: ' . $it->key()
         );
-        $this->assertTrue(
-            'element1' == $it->current(),
-            'test21-5-' . $case
+        $this->assertEquals(
+            'element1', $it->current(), 'test21-5-' . $case
         );
 
         $it->last();           // test last
-        $this->assertTrue(
-            99 == $it->key(),
-            'test21-7-' . $case . ' exp: 999, got: ' . $it->key()
+        $this->assertEquals(
+            99, $it->key(), 'test21-7-' . $case . ' exp: 999, got: ' . $it->key()
         );
-        $this->assertTrue(
-            'element99' == $it->current(),
-            'test21-8-' . $case
+        $this->assertEquals(
+            'element99', $it->current(), 'test21-8-' . $case
         );
 
         $it->previous();    // test previous
-        $this->assertTrue(
-            98 == $it->key(),
-            'test21-10-' . $case
+        $this->assertEquals(
+            98, $it->key(), 'test21-10-' . $case
         );
-        $this->assertTrue(
-            'element98' == $it->current(),
-            'test21-11-' . $case
+        $this->assertEquals(
+            'element98', $it->current(), 'test21-11-' . $case
         );
 
         $it->last();
         $it->next();
-        $this->assertTrue(
-            100 == $it->key(),
-            'test21-13-' . $case
+        $this->assertEquals(
+            100, $it->key(), 'test21-13-' . $case
         );
         $this->assertFalse(
             $it->valid(),
@@ -238,9 +227,8 @@ class ItTest extends TestCase
 
         $it->rewind();
         $it->previous();
-        $this->assertTrue(
-            -1 == $it->key(),
-            'test21-15-' . $case
+        $this->assertEquals(
+            -1, $it->key(), 'test21-15-' . $case
         );
         $this->assertFalse(
             $it->valid(),
@@ -248,23 +236,19 @@ class ItTest extends TestCase
         );
 
         $it->seek( 0 );   // test seek
-        $this->assertTrue(
-            0 == $it->key(),
-            'test21-17-' . $case
+        $this->assertEquals(
+            0, $it->key(), 'test21-17-' . $case
         );
-        $this->assertTrue(
-            'element0' == $it->current(),
-            'test21-18-' . $case
+        $this->assertEquals(
+            'element0', $it->current(), 'test21-18-' . $case
         );
 
         $it->seek( 50 );
-        $this->assertTrue(
-            50 == $it->key(),
-            'test21-20-' . $case
+        $this->assertEquals(
+            50, $it->key(), 'test21-20-' . $case
         );
-        $this->assertTrue(
-            'element50' == $it->current(),
-            'test21-21-' . $case
+        $this->assertEquals(
+            'element50', $it->current(), 'test21-21-' . $case
         );
 
     }
@@ -274,7 +258,7 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function ItTest21exception()
+    public function ItTest21exception() : void
     {
         $invalid = new stdClass;
         foreach( [ It::factory(), Asit::factory() ] as $it ) {
@@ -289,7 +273,7 @@ class ItTest extends TestCase
             catch( Exception $e ) {
                 $ok = 3;
             }
-            $this->assertTrue( $ok == 2, 'test21 exception, exp 2, got ' . $ok );
+            $this->assertEquals( 2, $ok, 'test21 exception, exp 2, got ' . $ok );
         } // end foreach
     }
 
@@ -298,25 +282,22 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function ItTest22()
+    public function ItTest22() : void
     {
         $payLoad1 = array_values( $this->arrayLoader());
         $payLoad2 = array_combine( range( 100, 199 ), $this->arrayLoader());
         foreach( [ It::factory( $payLoad1 ) , Asit::factory( $payLoad1 ) ] as $it ) {
             $it->setCollection( $payLoad2 );
-            $this->assertTrue(     // test count
-                200 == $it->count(),
-                'test22-1 exp: 200, got: ' . $it->count()
+            $this->assertEquals(     // test count
+                200, $it->count(), 'test22-1 exp: 200, got: ' . $it->count()
             );
             $it->rewind();         // test rewind
-            $this->assertTrue(
-                0 == $it->key(),
-                'test22-2'
+            $this->assertEquals(
+                0, $it->key(), 'test22-2'
             );
             $it->last();           // test last
-            $this->assertTrue(
-                199 == $it->key(),
-                'test22-3'
+            $this->assertEquals(
+                199, $it->key(), 'test22-3'
             );
         }
     }
@@ -328,7 +309,7 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function itTest25()
+    public function itTest25() : void
     {
 
         $it = new It();
@@ -348,16 +329,14 @@ class ItTest extends TestCase
         // testing Traversable, i.e. makes the class traversable using foreach
         $cnt = 0;
         foreach(   $it   as $key => $value ) { // 'internal key', NOT pKey
-            $cnt += 1;
+            ++$cnt;
         }
-        $this->assertTrue( ( 100 == $cnt ), 'test92-3' );
-        $this->assertTrue(
-            99 == $key,
-            'test25-4'
+        $this->assertEquals( 100, $cnt, 'test92-3' );
+        $this->assertEquals(
+            99, $key, 'test25-4'
         );
-        $this->assertTrue(
-            ( 'element99' == $value ),
-            'test25-5'
+        $this->assertEquals(
+            'element99', $value, 'test25-5'
         );
 
     }
@@ -367,7 +346,7 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function itTest26()
+    public function itTest26() : void
     {
         $it = It::factory( [ 1 => 'value' ] );
         $ok = 0;
@@ -381,17 +360,17 @@ class ItTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test26, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test26, exp 2, got ' . $ok );
     }
 
-    protected static  $collection = [ 'value9-2', 'value1-3', 'Value3-1' ];
+    protected static array $collection = [ 'value9-2', 'value1-3', 'Value3-1' ];
 
     /**
      * Test It sort - InvalidArgumentException
      *
      * @test
      */
-    public function itTest31()
+    public function itTest31() : void
     {
         $it = new It( self::$collection );
         $ok = 0;
@@ -405,7 +384,7 @@ class ItTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test31-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test31-1, exp 2, got ' . $ok );
 
         $ok = 0;
         try {
@@ -418,7 +397,7 @@ class ItTest extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertTrue( $ok == 2, 'test31-2, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, 'test31-2, exp 2, got ' . $ok );
     }
 
     /**
@@ -426,7 +405,7 @@ class ItTest extends TestCase
      *
      * @test
      */
-    public function itTest32()
+    public function itTest32() : void
     {
         $it = It::factory( self::$collection );
 
@@ -455,7 +434,7 @@ class ItTest extends TestCase
         );
     }
 
-    public static function cmp( $a, $b )
+    public static function cmp( $a, $b ) : int
     {
         $aLast = substr( $a, -1 );
         $bLast = substr( $b, -1 );
