@@ -35,7 +35,11 @@ use RuntimeException;
 
 class Asit2Test extends TestCase
 {
-    public function arrayLoader( $max = 1000 ) : array
+    /**
+     * @param null|int $max
+     * @return array
+     */
+    public function arrayLoader( ? int $max = 1000 ) : array
     {
         $output = [];
         for( $ix=0; $ix < $max; $ix++ ) {
@@ -45,6 +49,9 @@ class Asit2Test extends TestCase
         return $output;
     }
 
+    /**
+     * @var array|string[]
+     */
     public static array $COLORS = [
         0 => 'Black',
         1 => 'Gray',
@@ -58,7 +65,11 @@ class Asit2Test extends TestCase
         9 => 'Purple'
     ];
 
-    public static function getAttribute( $index ) : string
+    /**
+     * @param int $index
+     * @return string
+     */
+    public static function getAttribute( int $index ) : string
     {
         $cIx = $index % 10;
         return self::$COLORS[$cIx];
@@ -401,51 +412,38 @@ class Asit2Test extends TestCase
      */
     public function asitTest55() : void
     {
-        $asit = new Asittag();
+        $asittag = new Asittag();
         foreach( $this->arrayLoader( 100 ) as $key => $value ) {
-            $asit->append( $value, $key );
-            $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
+            $asittag->append( $value, $key );
+            $asittag->addPkeyTag( $key, self::getAttribute( $asittag->key() ) );
         } // end foreach
-        $asit->seek( array_rand( array_flip( range( 40, 44 ))));
-
-        $ok = 0;
-        try {
-            $asit->addCurrentTag( [] );  // addCurrentTag + exception (invalid tag)
-            $ok = 1;
-        }
-        catch( InvalidArgumentException $e ) {
-            $ok = 2;
-        }
-        catch( Exception $e ) {
-            $ok = 3;
-        }
-        $this->assertEquals( 2, $ok, 'test55-6, exp 2, got ' . $ok );
+        $asittag->seek( array_rand( array_flip( range( 40, 44 ))));
 
         $newTag = 'newTag';
         $this->assertFalse(
-            $asit->hasPkeyTag( 'fakePkey', $newTag ), // not found pKey
+            $asittag->hasPkeyTag( 'fakePkey', $newTag ), // not found pKey
             'test55-7'
         );
 
-        $pKey   = $asit->getCurrentPkey();
-        $tags   = $asit->getCurrentTags();
+        $pKey   = $asittag->getCurrentPkey();
+        $tags   = $asittag->getCurrentTags();
         // position somewhere else
-        $asit->seek( array_rand( array_flip( range( 45, 49 ))));
+        $asittag->seek( array_rand( array_flip( range( 45, 49 ))));
 
-        $asit->addPkeyTag( $pKey, $newTag );
+        $asittag->addPkeyTag( $pKey, $newTag );
         $tags[] = $newTag;
         foreach( $tags as $testTag ) {
             $this->assertTrue(
-                $asit->hasPkeyTag( $pKey, $testTag ),
+                $asittag->hasPkeyTag( $pKey, $testTag ),
                 'test55-8'
             );
         }
         $this->assertfalse(
-            $asit->hasPkeyTag( $pKey, 'fakeTag' ),
+            $asittag->hasPkeyTag( $pKey, 'fakeTag' ),
             'test55-9'
         );
 
-        $asit = null;
+        $asittag = null;
     }
 
     /**

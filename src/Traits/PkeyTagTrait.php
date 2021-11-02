@@ -27,7 +27,6 @@
  */
 namespace Kigkonsult\Asit\Traits;
 
-use Kigkonsult\Asit\BaseInterface;
 use Kigkonsult\Asit\Exceptions\PkeyException;
 use Kigkonsult\Asit\Exceptions\SortException;
 use Kigkonsult\Asit\Exceptions\TagException;
@@ -57,11 +56,11 @@ trait PkeyTagTrait
      *
      * Not found pKey/tag return false
      *
-     * @param  int|string       $pKey
-     * @param  int|string|array $tag
+     * @param int|string $pKey
+     * @param array|int|string $tag
      * @return bool
      */
-    public function hasPkeyTag( $pKey, $tag ) : bool
+    public function hasPkeyTag( int | string $pKey, array | int | string $tag ) : bool
     {
         if( ! $this->pKeyExists( $pKey )) {
             return false;
@@ -76,13 +75,13 @@ trait PkeyTagTrait
     /**
      * Add tag (secondary key) for primary key element
      *
-     * @param  int|string $pKey
-     * @param int|string  $tag  0 (zero) allowed also duplicates
-     * @return self
+     * @param int|string $pKey
+     * @param int|string $tag  0 (zero) allowed also duplicates
+     * @return static
      * @throws PkeyException
      * @throws TagException
      */
-    public function addPkeyTag( $pKey, $tag ) : BaseInterface
+    public function addPkeyTag( int | string $pKey, int | string $tag ) : static
     {
         $this->assertPkeyExists( $pKey );
         $this->addTag( $tag, $this->pKeys[$pKey] );
@@ -96,12 +95,12 @@ trait PkeyTagTrait
     /**
      * Remove tag (secondary key) for primary key element
      *
-     * @param  int|string $pKey
-     * @param int|string  $tag  0 (zero) allowed also duplicates
-     * @return self
+     * @param int|string $pKey
+     * @param int|string $tag  0 (zero) allowed also duplicates
+     * @return static
      * @throws PkeyException
      */
-    public function removePkeyTag( $pKey, $tag ) : BaseInterface
+    public function removePkeyTag( int | string $pKey, int | string $tag ) : static
     {
         if( ! $this->tagExists( $tag )) {
             return $this;
@@ -135,7 +134,7 @@ trait PkeyTagTrait
      * @param null|int $sortFlag   default SORT_REGULAR
      * @return array
      */
-    public function getPkeys( $tag = null, ? int $sortFlag = SORT_REGULAR ) : array
+    public function getPkeys( mixed $tag = null, ? int $sortFlag = SORT_REGULAR ) : array
     {
         if( empty( $tag )) {
             return parent::getPkeys( SORT_REGULAR );
@@ -160,14 +159,14 @@ trait PkeyTagTrait
      *
      * Empty array on not found
      *
-     * @param int|string $pKey
+     * @param null|bool|int|string $pKey
      * @param null|int   $sortFlag  default SORT_REGULAR
      * @return array
      */
-    public function getTags( $pKey = null, ? int $sortFlag = SORT_REGULAR ) : array
+    public function getTags( null|bool|int|string $pKey = null, ? int $sortFlag = SORT_REGULAR ) : array
     {
         $tags = array_keys( $this->tags );
-        if( null === $pKey ) {
+        if(( null === $pKey ) || ( false === $pKey )) {
             sort( $tags, $sortFlag ?? SORT_REGULAR );
             return $tags;
         }
@@ -194,7 +193,7 @@ trait PkeyTagTrait
      * @param int         $sortFlag  default SORT_REGULAR
      * @return array
      */
-    public function getPkeyTags( $pKey, int $sortFlag = SORT_REGULAR ) : array
+    public function getPkeyTags( int | string $pKey, int $sortFlag = SORT_REGULAR ) : array
     {
         return $this->getTags( $pKey, $sortFlag );
     }
@@ -208,11 +207,11 @@ trait PkeyTagTrait
      *
      * Return empty array on not found or for incompatible tags
      *
-     * @param  int|string|array $tags
+     * @param array|int|string $tags
      * @param bool|null $union
      * @return array
      */
-    private function getTagIndexes( $tags, ?bool $union = true ) : array
+    private function getTagIndexes( array | int | string $tags, ?bool $union = true ) : array
     {
         $elementIxs = [];
         foreach((array) $tags as $tag ) {
@@ -253,20 +252,20 @@ trait PkeyTagTrait
      * Hits with exclTags are excluded
      *
      * @override
-     * @param  int|string|array $pKeys
-     * @param  int|string|array $tags       none-used tag is skipped
-     * @param  null|bool        $union
-     * @param  null|int|string|array $exclTags
-     * @param  null|int|callable     $sortParam  asort sort_flags or uasort callable
+     * @param int|array|string|null $pKeys
+     * @param int|array|string|null $tags       none-used tag is skipped
+     * @param  null|bool            $union
+     * @param int|array|string|null $exclTags
+     * @param  null|int|callable    $sortParam  asort sort_flags or uasort callable
      * @return array
      * @throws SortException
      */
     public function pKeyTagGet(
-        $pKeys = null,
-        $tags = null,
-        ? bool $union = true,
-        $exclTags = [],
-        $sortParam = null
+        null | int | array | string $pKeys = null,
+        null | int | array | string $tags = null,
+        ? bool                      $union = true,
+        null | int | string | array $exclTags = [],
+        mixed                       $sortParam = null
     ) : array
     {
         if( empty( $pKeys ) && empty( $tags )) {
@@ -284,7 +283,7 @@ trait PkeyTagTrait
         $result = [];
         if( null === $tags ) { // pKeys found, no tags
             foreach( $indexes as $index ) {
-                if( ! $this->hasTag( $index, $exclTags )) {
+                if( ! $this->hasTag( $index, ( $exclTags ?? [] ))) {
                     $result[$index] = $this->collection[$index];
                 }
             } // end foreach
@@ -298,7 +297,7 @@ trait PkeyTagTrait
             }
         } // end foreach
         foreach( array_keys( $result ) as $hitIx ) {
-            if( $this->hasTag( $hitIx, $exclTags )) {
+            if( $this->hasTag((int) $hitIx, ( $exclTags ?? [] ))) {
                 unset( $result[$hitIx] );
             }
         } // end foreach
@@ -318,14 +317,18 @@ trait PkeyTagTrait
      * Note, last appended element is always 'current'
      *
      * @override
-     * @param mixed            $element
-     * @param int|string       $pKey  MUST be unique
-     * @param int|string|array $tags  only int or string allowed
-     * @return self
+     * @param mixed                 $element
+     * @param null|int|string       $pKey  MUST be unique
+     * @param null|int|string|array $tags  only int or string allowed
+     * @return static
      * @throws PkeyException
      * @throws TagException
      */
-    public function append( $element, $pKey = null, $tags = null ) : BaseInterface
+    public function append(
+        mixed           $element,
+        null|int|string $pKey = null,
+        null|int|string|array $tags = null
+    ) : static
     {
         $index = $this->count();
         if( null === $pKey ) {

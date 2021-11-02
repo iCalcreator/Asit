@@ -127,7 +127,6 @@ class AsitListTest extends TestCase
 
     /**
      * @test *List singleton
-     *
      */
     public function ListTest2() : void
     {
@@ -197,7 +196,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest12( int $case, $list ) : void
+    public function ListTest12( int $case, mixed $list ) : void
     {
         $case += 10;
         $ok    = 0;
@@ -226,7 +225,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest20( int $case, $list ) : void
+    public function ListTest20( int $case, mixed $list ) : void
     {
         $case += 200;
         $ok    = 0;
@@ -251,7 +250,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest21( int $case, $list ) : void
+    public function ListTest21( int $case, mixed $list ) : void
     {
         $case += 210;
         $ok   = 0;
@@ -295,7 +294,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest22( int $case, $list ) : void
+    public function ListTest22( int $case, mixed $list ) : void
     {
         $case += 220;
         $ok   = 0;
@@ -339,7 +338,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest23( int $case, $list ) : void
+    public function ListTest23( int $case, mixed $list ) : void
     {
         $case += 230;
         $ok   = 0;
@@ -383,7 +382,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest24( int $case, $list ) : void
+    public function ListTest24( int $case, mixed $list ) : void
     {
         $case += 240;
         $ok   = 0;
@@ -427,7 +426,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest25( int $case, $list ) : void
+    public function ListTest25( int $case, mixed $list ) : void
     {
         $case += 250;
         $ok   = 0;
@@ -456,7 +455,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest26( int $case, $list ) : void
+    public function ListTest26( int $case, mixed $list ) : void
     {
         $case += 260;
         $ok   = 0;
@@ -485,7 +484,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest27( int $case, $list ) : void
+    public function ListTest27( int $case, mixed $list ) : void
     {
         $case += 270;
         $ok   = 0;
@@ -514,7 +513,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest28( int $case, $list ) : void
+    public function ListTest28( int $case, mixed $list ) : void
     {
         $case += 280;
         $ok   = 0;
@@ -543,7 +542,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest29( int $case, $list ) : void
+    public function ListTest29( int $case, mixed $list ) : void
     {
         $case += 290;
         $ok   = 0;
@@ -631,7 +630,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest3( int $case, $list ) : void
+    public function ListTest3( int $case, mixed $list ) : void
     {
         $case += 300;
         foreach(
@@ -681,7 +680,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest4( int $case, $list ) : void
+    public function ListTest4( int $case, mixed $list ) : void
     {
         $case += 400;
         $list->setValueType( testClass1::class );
@@ -705,7 +704,7 @@ class AsitListTest extends TestCase
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest5( int $case, $list ) : void
+    public function ListTest5( int $case, mixed $list ) : void
     {
         $case  += 500;
         $string = '';
@@ -734,11 +733,11 @@ class AsitListTest extends TestCase
                     if( $class === ItList::class ) {
                         continue;
                     }
-                    if(( in_array( $class, [ AsmitList::class, AsmittagList::class ] )) &&
+                    if(( in_array( $class, [ AsmitList::class, AsmittagList::class ], true ) ) &&
                         ( 0 === ( $list->key() % 3 ))) {
                         $list->addCurrentPkey( 'test' . $x );
                     }
-                    if( in_array( $class, [ AsittagList::class, AsmittagList::class ] )) {
+                    if( in_array( $class, [ AsittagList::class, AsmittagList::class ], true ) ) {
                         $list->addCurrentTag( self::getAttribute( $list->key()));
                         $list->addCurrentTag( self::getAttribute(( $list->key() + 5 )));
                     }
@@ -757,7 +756,11 @@ class AsitListTest extends TestCase
         */
     }
 
-    public static function getElement( $valueType )
+    /**
+     * @param mixed $valueType
+     * @return mixed
+     */
+    public static function getElement( mixed $valueType ) : mixed
     {
         $ix = array_rand( [ 0, 1 ] );
         switch( $valueType ) {
@@ -813,7 +816,12 @@ class AsitListTest extends TestCase
         } // end switch
 
     }
-    public function arrayLoader( $valueType ) : array
+
+    /**
+     * @param mixed $valueType
+     * @return array
+     */
+    public function arrayLoader( mixed $valueType ) : array
     {
 
         $output = [];
@@ -824,6 +832,9 @@ class AsitListTest extends TestCase
         return $output;
     }
 
+    /**
+     * @var array|string[]
+     */
     public static array $COLORS = [
         0 => 'Black',
         1 => 'Gray',
@@ -837,6 +848,10 @@ class AsitListTest extends TestCase
         9 => 'Purple'
     ];
 
+    /**
+     * @param int $index
+     * @return string
+     */
     public static function getAttribute( int $index ) : string
     {
         $cIx = $index % 10;

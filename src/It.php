@@ -83,10 +83,10 @@ class It implements BaseInterface, SeekableIterator, Countable
     /**
      * Class construct method
      *
-     * @param  mixed $collection
+     * @param mixed|null $collection
      * @throws CollectionException
      */
-    public function __construct( $collection = null )
+    public function __construct( mixed $collection = null )
     {
         if( null !== $collection ) {
             $this->setCollection( $collection );
@@ -96,31 +96,29 @@ class It implements BaseInterface, SeekableIterator, Countable
     /**
      * Class factory method
      *
-     * @param  mixed  $collection
-     * @param  mixed  $dummy  to fix inheritance
-     * @return self
+     * @param mixed|null $collection
+     * @param mixed|null $dummy  to fix inheritance
+     * @return static
      * @throws CollectionException
      */
-    public static function factory( $collection = null, $dummy = null ) : BaseInterface
+    public static function factory( mixed $collection = null, mixed $dummy = null ) : static
     {
-        $class = static::class;
-        return new $class( $collection );
+        return new static( $collection );
     }
 
     /**
      * Class singleton method
      *
-     * @param  mixed $collection
-     * @param  mixed  $dummy
-     * @return self
+     * @param mixed|null $collection
+     * @param mixed|null $dummy
+     * @return static
      * @throws CollectionException
      */
-    public static function singleton( $collection = null, $dummy = null ) : BaseInterface
+    public static function singleton( mixed $collection = null, mixed $dummy = null ) : static
     {
         static $instance = null;
         if( null === $instance ) {
-            $class    = static::class;
-            $instance = new $class( $collection );
+            $instance = new static( $collection );
         }
         return $instance;
     }
@@ -128,9 +126,9 @@ class It implements BaseInterface, SeekableIterator, Countable
     /**
      * Clear (remove) collection
      *
-     * @return BaseInterface
+     * @return static
      */
-    public function init() : BaseInterface
+    public function init() : static
     {
         $this->collection = [];
         return $this;
@@ -176,31 +174,19 @@ class It implements BaseInterface, SeekableIterator, Countable
      * @param mixed  $element
      * @return string
      */
-    protected static function element2String( string $key, $element ) : string
+    protected static function element2String( string $key, mixed $element ) : string
     {
         static $TMPL = "%s : (%s) ";
         $type        = gettype( $element );
         $string      = sprintf( $TMPL, $key, $type );
-        switch( true ) {
-            case is_bool( $element ) :
-                $string .= self::getDispVal( $element );
-                break;
-            case is_scalar( $element ) :
-                $string .= $element;
-                break;
-            case is_array( $element ) :
-                $string .= self::getDispVal( $element );
-                break;
-            case ( self::OBJECT === $type ) :
-                $string .= get_class( $element );
-                break;
-            case ( self::RESOURCE === $type ) :
-                $string .= self::RESOURCE;
-                break;
-            default :
-                $string .= self::getDispVal( $element );
-                break;
-        } // end switch
+        $string .= match ( true ) {
+            is_bool( $element )      => self::getDispVal( $element ),
+            is_scalar( $element )    => $element,
+            is_array( $element )     => self::getDispVal( $element ),
+            self::OBJECT === $type   => get_class( $element ),
+            self::RESOURCE === $type => self::RESOURCE,
+            default                  => self::getDispVal( $element ),
+        }; // end mach
         $string .= PHP_EOL;
         return $string;
     }
@@ -210,7 +196,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      * @param mixed $value
      * @return string
      */
-    protected static function getDispVal( $value ) : string
+    protected static function getDispVal( mixed $value ) : string
     {
         return var_export( $value, true );
     }
@@ -221,30 +207,24 @@ class It implements BaseInterface, SeekableIterator, Countable
      * For int (sort constants) sortParam, an asort is performed,
      * for callable, uasort
      *
-     * @param  array        $collection
-     * @param  int|callable $sortParam
+     * @param array        $collection
+     * @param null|callable|int $sortParam
      * @return array
-     *@throws SortException
+     * @throws SortException
      */
     protected static function sort(
         array $collection,
-        $sortParam = SORT_REGULAR
+        null | int | callable $sortParam = SORT_REGULAR
     ) : array
     {
-        $sortOk = false;
         $sortParam = $sortParam ?? SORT_REGULAR;
-        switch( true ) {
-            case is_int( $sortParam ) :
-                $sortOk = asort( $collection, $sortParam );
-                break;
-            case is_callable( $sortParam ) :
-                $sortOk = uasort( $collection, $sortParam );
-                break;
-            default :
-                throw new SortException(
-                    sprintf( SortException::$ERRTXT1, self::getDispVal( $sortParam ))
-                );
-        } // end switch
+        $sortOk    = match( true ) {
+            is_int( $sortParam )      => asort( $collection, $sortParam ),
+            is_callable( $sortParam ) => uasort( $collection, $sortParam ),
+            default                   => throw new SortException(
+                sprintf( SortException::$ERRTXT1, self::getDispVal( $sortParam ))
+            ),
+        }; // end match
         if( ! $sortOk ) {
             throw new SortException(
                 sprintf( SortException::$ERRTXT2, self::getDispVal( $sortParam ))
@@ -260,11 +240,11 @@ class It implements BaseInterface, SeekableIterator, Countable
     /**
      * Return collection, opt sorted
      *
-     * @param  int|callable $sortParam
+     * @param callable|int|null $sortParam
      * @return array
      * @throws SortException
      */
-    public function get( $sortParam = null ) : array
+    public function get( callable | int $sortParam = null ) : array
     {
         if( null !== $sortParam ) {
             $result = $this->collection;
@@ -283,10 +263,16 @@ class It implements BaseInterface, SeekableIterator, Countable
      * Note, last appended element is always 'current'
      *
      * @override
-     * @param mixed $element
-     * @return self
+     * @param mixed                 $element
+     * @param null|int|string       $pKey   not used here
+     * @param null|int|string|array $tags   not use here
+     * @return static
      */
-    public function append( $element ) : BaseInterface
+    public function append(
+        mixed $element,
+        null|int|string $pKey = null,
+        null|int|string|array $tags = null
+    ) : static
     {
         $index = $this->count();
         $this->collection[$index] = $element;
@@ -297,28 +283,22 @@ class It implements BaseInterface, SeekableIterator, Countable
     /**
      * Set (array) collection
      *
-     * @param  array|Traversable $collection
-     * @return self
+     * @param Traversable|array $collection
+     * @return static
      * @throws CollectionException
      */
-    public function setCollection( $collection ) : BaseInterface
+    public function setCollection( Traversable | array $collection ) : static
     {
-        switch( true ) {
-            case is_array( $collection ) :
-                foreach( array_keys( $collection ) as $cIx ) {
-                    $this->append( $collection[$cIx] );
-                }
-                break;
-            case ( $collection instanceof Traversable ) :
-                foreach( $collection as $element ) {
-                    $this->append( $element );
-                }
-                break;
-            default :
-                throw new CollectionException(
-                    sprintf( CollectionException::$ERRTXT, self::getErrType( $collection ))
-                );
-        } // end switch
+        if( is_array( $collection ))  {
+            foreach( array_keys( $collection ) as $cIx ) {
+                $this->append( $collection[$cIx] );
+            }
+        }
+        else { // ( $collection instanceof Traversable )
+            foreach( $collection as $element ) {
+                $this->append( $element );
+            }
+        }
         return $this;
     }
 
@@ -328,21 +308,15 @@ class It implements BaseInterface, SeekableIterator, Countable
      * @param mixed $value
      * @return string
      */
-    protected static function getErrType( $value ) : string
+    protected static function getErrType( mixed $value ) : string
     {
         $getType = gettype( $value );
-        switch( true ) {
-            case ( self::OBJECT === $getType ) :
-                $type = get_class( $value );
-                break;
-            case ( self::RESOURCE === $getType ) :
-                $type = self::RESOURCE;
-                break;
-            default :
-                $type = $getType;
-                break;
-        } // end switch
-        return $type;
+        // end switch
+        return match ( true ) {
+            self::OBJECT === $getType   => get_class( $value ),
+            self::RESOURCE === $getType => self::RESOURCE,
+            default                     => $getType,
+        };
     }
 
     /**
@@ -368,7 +342,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * @return mixed
      */
-    public function current()
+    public function current() : mixed
     {
         return $this->collection[$this->position];
     }
@@ -423,9 +397,9 @@ class It implements BaseInterface, SeekableIterator, Countable
     /**
      * Move position to last element, if empty set to 0
      *
-     * @return self
+     * @return static
      */
-    public function last() : BaseInterface
+    public function last() : static
     {
         $count          = count( $this->collection );
         $this->position = empty( $count ) ? 0 : ( $count - 1 );
@@ -437,9 +411,9 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * Required method implementing the Iterator interface
      *
-     * @return self
+     * @return static
      */
-    public function next() : BaseInterface
+    public function next() : static
     {
         ++$this->position;
         return $this;
@@ -448,9 +422,9 @@ class It implements BaseInterface, SeekableIterator, Countable
     /**
      * Move position backward to previous element
      *
-     * @return self
+     * @return static
      */
-    public function previous() : BaseInterface
+    public function previous() : static
     {
         --$this->position;
         return $this;
@@ -461,9 +435,9 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * Required method implementing the Iterator interface
      *
-     * @return self
+     * @return static
      */
-    public function rewind() : BaseInterface
+    public function rewind() : static
     {
         $this->position = 0;
         return $this;
@@ -523,7 +497,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      * @param array      $array
      * @return false|int|string
      */
-    protected static function search( $value, array $array )
+    protected static function search( int | string $value, array $array ) : bool | int | string
     {
         return array_search( $value, $array, true );
     }

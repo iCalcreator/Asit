@@ -48,13 +48,18 @@ class AsmitList extends Asmit implements ListTypeInterface
      * Append typed element to (array) collection, opt with primary key
      *
      * @override
-     * @param mixed      $element
-     * @param int|string $pKey     MUST be unique
-     * @return self
+     * @param mixed           $element
+     * @param null|int|string $pKey        MUST be unique
+     * @param null|int|string|array $tags  not used here
+     * @return static
      * @throws PkeyException
      * @throws TypeException
      */
-    public function append( $element, $pKey = null ) : BaseInterface
+    public function append(
+        mixed $element,
+        null|int|string $pKey = null,
+        null|int|string|array $tags = null
+    ) : static
     {
         if( $this->isValueTypeSet()) {
             $this->assertElementType( $element );

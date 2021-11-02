@@ -38,7 +38,11 @@ use Traversable;
 class Asit1Test extends TestCase
 {
 
-    public function arrayLoader( $max = 1000 ) : array
+    /**
+     * @param null|int $max
+     * @return array
+     */
+    public function arrayLoader( null|int $max = 1000 ) : array
     {
 
         $output = [];
@@ -49,6 +53,9 @@ class Asit1Test extends TestCase
         return $output;
     }
 
+    /**
+     * @var array|string[]
+     */
     public static array $COLORS = [
         0 => 'Black',
         1 => 'Gray',
@@ -62,7 +69,11 @@ class Asit1Test extends TestCase
         9 => 'Purple'
     ];
 
-    public static function getAttribute( $index ) : string
+    /**
+     * @param int $index
+     * @return string
+     */
+    public static function getAttribute( int $index ) : string
     {
         $cIx = $index % 10;
         return self::$COLORS[$cIx];
@@ -239,7 +250,8 @@ class Asit1Test extends TestCase
             );
 
             // testing Traversable, i.e. makes the class traversable using foreach
-            $cnt = 0;
+            $cnt = $key = 0;
+            $value = null;
             foreach( $asit as $key => $value ) { // 'internal key', NOT pKey
                 ++$cnt;
             }
@@ -950,21 +962,6 @@ class Asit1Test extends TestCase
                 2, $ok, 'test81-1-' . $aIx . ', exp 2, got ' . $ok  . ' ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString()
             );
 
-            $ok = 0;
-            try {
-                $asit->append( 'value2', [ 1, 2, 3 ] ); // unvalid key
-                $ok = 1;
-            }
-            catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            }
-            catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertEquals(
-                2, $ok, 'test81-2-' . $aIx . ', exp 2, got ' . $ok  . ' ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString()
-            );
-
             $asit = null;
         } // end foreach
 
@@ -1053,7 +1050,12 @@ class Asit1Test extends TestCase
         $asit = null;
     }
 
-    public static function cmp( $a, $b ) : int
+    /**
+     * @param int|string $a
+     * @param int|string $b
+     * @return int
+     */
+    public static function cmp( int|string $a, int|string $b ) : int
     {
         if( $a === $b ) {
             return 0;

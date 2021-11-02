@@ -84,7 +84,7 @@ Composer, in your `composer.json`:
     }
 }
 ```
-Version 2.0 supports PHP 7.4, 1.8.2 7.0. 
+Version 2.2 supports PHP 8.0, 2.0 7.4, 1.8.2 7.0. 
 
 Composer, acquire access
 ``` php

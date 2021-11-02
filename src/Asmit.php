@@ -103,10 +103,10 @@ class Asmit extends Asit
      * @override
      * @param int|string $pKey 0 (zero) allowed
      * @param int        $index
-     * @return self
+     * @return static
      * @throws PkeyException
      */
-    protected function setPkey( $pKey, int $index ) : BaseInterface
+    protected function setPkey( int | string $pKey, int $index ) : static
     {
         self::assertPkey( $pKey );
         switch( true ) {
@@ -131,7 +131,7 @@ class Asmit extends Asit
      * @return int
      * @throws PkeyException
      */
-    public function countPkey( $pKey ) : int
+    public function countPkey( int | string $pKey ) : int
     {
         $this->assertPkeyExists( $pKey );
         return count(
@@ -143,10 +143,10 @@ class Asmit extends Asit
      * Remove primary key for collection element but not last
      *
      * @param int|string $pKey
-     * @return self
+     * @return static
      * @throws PkeyException
      */
-    public function removePkey( $pKey ) : BaseInterface
+    public function removePkey( int | string $pKey ) : static
     {
         $this->assertPkeyExists( $pKey );
         if( 1 < $this->countPkey( $pKey )) {
@@ -159,11 +159,10 @@ class Asmit extends Asit
      * Return pKey(s) for 'current', one (firstFound=true) or all (array)
      *
      * @override
-     * @param bool $firstFound
-     * @return int|string|array
-     * @throws RuntimeException
+     * @param null|bool $firstFound
+     * @return bool|int|string|array
      */
-    public function getCurrentPkey( bool $firstFound = true )
+    public function getCurrentPkey( ? bool $firstFound = true ) : bool|int|string|array
     {
         $this->assertCurrent();
         return $firstFound
@@ -177,11 +176,11 @@ class Asmit extends Asit
      * setCurrentPkey() alias
      *
      * @param int|string $pKey
-     * @return self
+     * @return static
      * @throws PkeyException
      * @throws RuntimeException
      */
-    public function addCurrentPkey( $pKey ) : BaseInterface
+    public function addCurrentPkey( int | string $pKey ) : static
     {
         $this->setCurrentPkey( $pKey );
         return $this;

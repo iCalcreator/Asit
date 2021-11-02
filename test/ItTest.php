@@ -38,6 +38,10 @@ use Traversable;
 
 class ItTest extends TestCase
 {
+    /**
+     * @param int $max
+     * @return array
+     */
     public function arrayLoader( int $max = 100 ) : array
     {
         $output = [];
@@ -47,6 +51,9 @@ class ItTest extends TestCase
         return $output;
     }
 
+    /**
+     * @var array|string[]
+     */
     public static array $COLORS = [
         0 => 'Black',
         1 => 'Gray',
@@ -60,6 +67,10 @@ class ItTest extends TestCase
         9 => 'Purple'
     ];
 
+    /**
+     * @param int $index
+     * @return string
+     */
     public function getAttribute( int $index ) : string
     {
         $cIx = $index % 10;
@@ -254,30 +265,6 @@ class ItTest extends TestCase
     }
 
     /**
-     * Test It / Asit setCollection + InvalidArgumentException
-     *
-     * @test
-     */
-    public function ItTest21exception() : void
-    {
-        $invalid = new stdClass;
-        foreach( [ It::factory(), Asit::factory() ] as $it ) {
-            $ok = 0;
-            try {
-                $it->setCollection( $invalid );
-                $ok = 1;
-            }
-            catch( InvalidArgumentException $e ) {
-                $ok = 2;
-            }
-            catch( Exception $e ) {
-                $ok = 3;
-            }
-            $this->assertEquals( 2, $ok, 'test21 exception, exp 2, got ' . $ok );
-        } // end foreach
-    }
-
-    /**
      * Test It / Asit multiple setCollections, note, Asit requires unique pkeys
      *
      * @test
@@ -328,6 +315,7 @@ class ItTest extends TestCase
 
         // testing Traversable, i.e. makes the class traversable using foreach
         $cnt = 0;
+        $key = $value = null;
         foreach(   $it   as $key => $value ) { // 'internal key', NOT pKey
             ++$cnt;
         }
@@ -366,41 +354,6 @@ class ItTest extends TestCase
     protected static array $collection = [ 'value9-2', 'value1-3', 'Value3-1' ];
 
     /**
-     * Test It sort - InvalidArgumentException
-     *
-     * @test
-     */
-    public function itTest31() : void
-    {
-        $it = new It( self::$collection );
-        $ok = 0;
-        try {
-            $it->get( [] );
-            $ok = 1;
-        }
-        catch( InvalidArgumentException $e ) {
-            $ok = 2;
-        }
-        catch( Exception $e ) {
-            $ok = 3;
-        }
-        $this->assertEquals( 2, $ok, 'test31-1, exp 2, got ' . $ok );
-
-        $ok = 0;
-        try {
-            $it->get( 'dummy' );
-            $ok = 1;
-        }
-        catch( InvalidArgumentException $e ) {
-            $ok = 2;
-        }
-        catch( Exception $e ) {
-            $ok = 3;
-        }
-        $this->assertEquals( 2, $ok, 'test31-2, exp 2, got ' . $ok );
-    }
-
-    /**
      * Test It sort
      *
      * @test
@@ -414,7 +367,7 @@ class ItTest extends TestCase
         $this->assertEquals(
             'value9-2',
             $result1,
-            'test 32-1 exp "value9",  got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
+            'test 32-1 exp "value9-2",  got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
         );
 
         $result  = $it->get( SORT_FLAG_CASE | SORT_STRING );
@@ -422,7 +375,7 @@ class ItTest extends TestCase
         $this->assertEquals(
             'value1-3',
             $result1,
-            'test 32-2 exp "value1", got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
+            'test 32-2 exp "value1-3", got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
         );
 
         $result  = $it->get( [ self::class, 'cmp' ] );
@@ -430,11 +383,16 @@ class ItTest extends TestCase
         $this->assertEquals(
             'Value3-1',
             $result1,
-            'test 32-2 exp "value1", got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
+            'test 32-2 exp "value3-1", got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
         );
     }
 
-    public static function cmp( $a, $b ) : int
+    /**
+     * @param string $a
+     * @param string $b
+     * @return int
+     */
+    public static function cmp( string $a, string $b ) : int
     {
         $aLast = substr( $a, -1 );
         $bLast = substr( $b, -1 );

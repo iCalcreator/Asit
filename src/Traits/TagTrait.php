@@ -28,7 +28,6 @@
 namespace Kigkonsult\Asit\Traits;
 
 use InvalidArgumentException;
-use Kigkonsult\Asit\BaseInterface;
 use Kigkonsult\Asit\Exceptions\SortException;
 use Kigkonsult\Asit\Exceptions\TagException;
 use RuntimeException;
@@ -61,9 +60,9 @@ trait TagTrait
      * Clear (remove) collection
      *
      * @override
-     * @return self
+     * @return static
      */
-    public function init() : self
+    public function init() : static
     {
         $this->tags = [];
         parent::init();
@@ -77,7 +76,7 @@ trait TagTrait
      * @return void
      * @throws TagException
      */
-    public static function assertTag( $tag ) : void
+    public static function assertTag( mixed $tag ) : void
     {
         static $TMPL = "Invalid tag : (%s) %s";
         try {
@@ -109,10 +108,10 @@ trait TagTrait
     /**
      * Return bool true if single or any tag in array is set
      *
-     * @param  int|string|array $tag
+     * @param array|int|string $tag
      * @return bool
      */
-    public function tagExists( $tag ) : bool
+    public function tagExists( array | int | string $tag ) : bool
     {
         $found = false;
         foreach((array) $tag as $theTag ) {
@@ -143,11 +142,11 @@ trait TagTrait
      *
      * Not found index return false
      *
-     * @param  int              $index
-     * @param  int|string|array $tag
+     * @param int              $index
+     * @param array|int|string $tag
      * @return bool
      */
-    private function hasTag( int $index, $tag ) : bool
+    private function hasTag( int $index, array | int | string $tag ) : bool
     {
         if( empty( $tag ) || ! isset( $this->collection[$index] )) {
             return false;
@@ -166,11 +165,11 @@ trait TagTrait
      *
      * To be used in parallel with the Iterator 'current' method
      *
-     * @param  int|string|array $tag
+     * @param array|int|string $tag
      * @return bool
      * @throws RuntimeException
      */
-    public function hasCurrentTag( $tag ) : bool
+    public function hasCurrentTag( array | int | string $tag ) : bool
     {
         $this->assertCurrent();
         return $this->hasTag( $this->position, $tag );
@@ -179,10 +178,10 @@ trait TagTrait
     /**
      * Return count of collection element using the tag, not found return 0
      *
-     * @param  int|string $tag
+     * @param int|string $tag
      * @return int
      */
-    public function tagCount( $tag ) : int
+    public function tagCount( int | string $tag ) : int
     {
         return $this->tagExists( $tag ) ? count( $this->tags[$tag] ) : 0;
     }
@@ -199,7 +198,7 @@ trait TagTrait
      * @return void
      * @throws TagException
      */
-    private function addTag( $tag, int $index ) : void
+    private function addTag( int | string $tag, int $index ) : void
     {
         self::assertTag( $tag );
         if( ! $this->tagExists( $tag )) {
@@ -217,12 +216,12 @@ trait TagTrait
      *
      * To be used in parallel with the Iterator 'current' method
      *
-     * @param int|string  $tag  0 (zero) allowed also duplicates
-     * @return self
+     * @param int|string $tag  0 (zero) allowed also duplicates
+     * @return static
      * @throws RuntimeException
      * @throws TagException
      */
-    public function addCurrentTag( $tag ) : BaseInterface
+    public function addCurrentTag( int | string $tag ) : static
     {
         $this->assertCurrent();
         $this->addTag( $tag, $this->position );
@@ -234,15 +233,15 @@ trait TagTrait
      */
 
     /**
-     * Remove tag (secondary key) for current
+     * Remove tag (non-unique key) for current
      *
      * To be used in parallel with the Iterator 'current' method
      *
-     * @param int|string  $tag  0 (zero) allowed also duplicates
-     * @return self
+     * @param int|string $tag  0 (zero) allowed also duplicates
+     * @return static
      * @throws RuntimeException
      */
-    public function removeCurrentTag( $tag ) : BaseInterface
+    public function removeCurrentTag( int | string $tag ) : static
     {
         $this->assertCurrent();
         $this->removePkeyTag( $this->getCurrentPkey(), $tag );
@@ -261,7 +260,7 @@ trait TagTrait
      *     false match any tag.
      * Convenient get method alias
      *
-     * @param  int|string|array  $tags
+     * @param array|int|string $tags
      * @param bool|null $union
      * @param  int|string|array  $exclTags
      * @param  int|callable      $sortParam    asort sort_flags or uasort callable
@@ -269,10 +268,10 @@ trait TagTrait
      * @throws SortException
      */
     public function tagGet(
-        $tags,
-        ?bool $union = true,
-        $exclTags = [],
-        $sortParam = null
+        array | int | string $tags,
+        ?bool                $union = true,
+        mixed                $exclTags = [],
+        mixed                $sortParam = null
     ) : array
     {
         return $this->pKeyTagGet( null, $tags, $union, $exclTags, $sortParam );

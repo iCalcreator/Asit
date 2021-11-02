@@ -27,7 +27,6 @@
  */
 namespace Kigkonsult\Asit\Traits;
 
-use Kigkonsult\Asit\BaseInterface;
 use Kigkonsult\Asit\Exceptions\CollectionException;
 use Kigkonsult\Asit\Exceptions\TypeException;
 
@@ -44,12 +43,12 @@ trait ListTrait
      * Extended constructor, accepts value type as single or second argument
      *
      * @override
-     * @param  mixed  $collection
+     * @param mixed|null $collection
      * @param string|null $valueType
      * @throws CollectionException
      * @throws TypeException
      */
-    public function __construct( $collection = null, ? string $valueType = null )
+    public function __construct( mixed $collection = null, ? string $valueType = null )
     {
         switch( true ) {
             case ( is_string( $collection ) && ( null === $valueType )) :
@@ -67,32 +66,30 @@ trait ListTrait
      * Extended factory method, accepts value type as single or second argument
      *
      * @override
-     * @param mixed  $collection
-     * @param string $valueType
-     * @return self
+     * @param mixed|null $collection
+     * @param mixed|null $dummy
+     * @return static
      */
-    public static function factory( $collection = null, $valueType = null ) : BaseInterface
+    public static function factory( mixed $collection = null, mixed $dummy = null ) : static
     {
-        $class = static::class;
-        return new $class( $collection, $valueType );
+        return new static( $collection, $dummy );
     }
 
     /**
      * Extended class singleton method
      *
      * @override
-     * @param  mixed  $collection
-     * @param  string $valueType
-     * @return self
+     * @param mixed|null $collection
+     * @param mixed|null $dummy
+     * @return static
      * @throws CollectionException
      * @throws TypeException
      */
-    public static function singleton( $collection = null, $valueType = null ) : BaseInterface
+    public static function singleton( mixed $collection = null, mixed $dummy = null ) : static
     {
         static $instance = null;
         if( null === $instance ) {
-            $class    = static::class;
-            $instance = new $class( $collection, $valueType );
+            $instance = new static( $collection, $dummy );
         }
         return $instance;
     }

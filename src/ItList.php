@@ -48,10 +48,16 @@ class ItList extends It implements ListTypeInterface
      *
      * @override
      * @param mixed $element
-     * @return self
+     * @param null|int|string       $pKey  not used here
+     * @param null|int|string|array $tags  not used here
+     * @return static
      * @throws TypeException
      */
-    public function append( $element ) : BaseInterface
+    public function append(
+        mixed $element,
+        null|int|string $pKey = null,
+        null|int|string|array $tags = null
+    ) : static
     {
         if( $this->isValueTypeSet()) {
             $this->assertElementType( $element );
