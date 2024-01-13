@@ -2,7 +2,7 @@
 
 ## Asit
 
-The Asit package manages collections of elements extending the Iterator interface.
+The Asit package manages collection of elements extending the Iterator interface.
 
 - no, single or multi primary (assoc) keys
 - (multi-)label collection elements using tags
@@ -11,10 +11,10 @@ The Asit package manages collections of elements extending the Iterator interfac
 Oveview [summary here].
 
 ###### Method summary
-* [It] - collections of elements
-* [Asit/Asmit] - assoc collections of elements, opt multi key
+* [It] - collection of elements
+* [Asit/Asmit] - assoc collection of elements, opt multi key
 * [Asittag/Asmittag] - as above but with tags
-* It/Asit/Asmit/Asitag/Asmitag[List] - as above but with spec. collection valueType 
+* It/Asit/Asmit/Asitag/Asmitag[List] - as above but with spec. collection element valueType 
 
 ###### Sponsorship
 

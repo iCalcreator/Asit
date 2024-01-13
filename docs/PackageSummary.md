@@ -1,6 +1,6 @@
 [comment]: # (This file is part of Asit, manages array collections. Copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 
-> Class [It] manages array collections
+> Class [It] manages array collection
 * Implement _SeekableIterator_, _Countable_ and _IteratorAggregate_ methods
 * Collection elements are searchable using
   * Iterator (et al.) methods

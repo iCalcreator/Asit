@@ -1,7 +1,9 @@
 
-2.2.1 Code rewrites
-2.2.2 Added iterator last, previous and remove methods
+
+2.2.4 Readme upd
 2.2.3 Updated tests
+2.2.2 Added iterator last, previous and remove methods
+2.2.1 Code rewrites
 
 2.2   PHP 8.0
 
