@@ -5,8 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @link      https://kigkonsult.se
+ * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -31,52 +30,10 @@ namespace Kigkonsult\Asit;
 use ArrayIterator;
 use Exception;
 use OutOfBoundsException;
-use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
-use stdClass;
 use Traversable;
 
-class ItTest extends TestCase
+class ItTest extends AsitBaseTest
 {
-    /**
-     * @param int $max
-     * @return array
-     */
-    public function arrayLoader( int $max = 100 ) : array
-    {
-        $output = [];
-        for( $ix=0; $ix < $max; $ix++ ) {
-            $output['key' . $ix] = 'element' . $ix;
-        } // end for
-        return $output;
-    }
-
-    /**
-     * @var array|string[]
-     */
-    public static array $COLORS = [
-        0 => 'Black',
-        1 => 'Gray',
-        2 => 'Blue',
-        3 => 'Green',
-        4 => 'Yellow',
-        5 => 'Brown',
-        6 => 'Orange',
-        7 => 'Red',
-        8 => 'Pink',
-        9 => 'Purple'
-    ];
-
-    /**
-     * @param int $index
-     * @return string
-     */
-    public function getAttribute( int $index ) : string
-    {
-        $cIx = $index % 10;
-        return self::$COLORS[$cIx];
-    }
-
     /**
      * @test It isCollectionSet, exists, count,
      *
@@ -90,7 +47,7 @@ class ItTest extends TestCase
             'test10'
         );
 
-        foreach( $this->arrayLoader() as  $value ) {
+        foreach( self::arrayLoader() as $value ) {
             $it->append( $value );
         } // end for
 
@@ -135,10 +92,10 @@ class ItTest extends TestCase
      */
     public function itTest2() : void
     {
-        $it1  = It::singleton( $this->arrayLoader());
+        $it1  = It::getInstance( self::arrayLoader());
         $cnt1 = $it1->count();
 
-        $it2 = It::singleton();
+        $it2 = It::getInstance();
 
         $this->assertEquals(
             $cnt1,
@@ -156,25 +113,25 @@ class ItTest extends TestCase
     {
 
         $it1 = new It();
-        foreach( $this->arrayLoader() as $value ) {
+        foreach( self::arrayLoader() as $value ) {
             $it1->append( $value );
         } // end for
 
         $asit1 = new Asit();
-        foreach( $this->arrayLoader() as $value ) {
+        foreach( self::arrayLoader() as $value ) {
             $asit1->append( $value );
         } // end for
 
         foreach(
             [
                 $it1,                             // loaded using append
-                new It( $this->arrayLoader()),    // loaded using array
+                new It( self::arrayLoader()),    // loaded using array
                 new It( $it1 ),                   // loaded using It, Traversable
-                new It( new ArrayIterator( $this->arrayLoader())), // any Traversable
+                new It( new ArrayIterator( self::arrayLoader())), // any Traversable
                 $asit1,                           // loaded using append
-                new Asit( $this->arrayLoader()),  // loaded using array
+                new Asit( self::arrayLoader()),  // loaded using array
                 new Asit( $asit1 ),               // loaded using Asit, Traversable
-                new Asit( new ArrayIterator( $this->arrayLoader())) // any Traversable
+                new Asit( new ArrayIterator( self::arrayLoader())) // any Traversable
             ] as $ix => $it ) {
             $this->itTest21test( $ix, $it );
         }
@@ -271,8 +228,8 @@ class ItTest extends TestCase
      */
     public function ItTest22() : void
     {
-        $payLoad1 = array_values( $this->arrayLoader());
-        $payLoad2 = array_combine( range( 100, 199 ), $this->arrayLoader());
+        $payLoad1 = array_values( self::arrayLoader());
+        $payLoad2 = array_combine( range( 100, 199 ), self::arrayLoader());
         foreach( [ It::factory( $payLoad1 ) , Asit::factory( $payLoad1 ) ] as $it ) {
             $it->setCollection( $payLoad2 );
             $this->assertEquals(     // test count
@@ -300,7 +257,7 @@ class ItTest extends TestCase
     {
 
         $it = new It();
-        foreach( $this->arrayLoader() as $value ) {
+        foreach( self::arrayLoader() as $value ) {
             $it->append( $value );
         } // end for
 
@@ -400,5 +357,65 @@ class ItTest extends TestCase
             return 0;
         }
         return ( $aLast < $bLast ) ? -1 : +1;
+    }
+
+    /**
+     * @test It isCollectionSet, last, previous, remove
+     *
+     */
+    public function itTest4() : void
+    {
+        $it = It::factory();
+        $this->assertEquals( 0, $it->key(), __FUNCTION__ . ' #1');
+
+        $it->last();
+        $this->assertEquals( 0, $it->key(), __FUNCTION__ . ' #2');
+
+        $it->setCollection( self::arrayLoader(5 ));
+        $this->assertTrue( $it->isCollectionSet(), __FUNCTION__ . ' #3' );
+
+        $count = $it->count();
+        $this->assertEquals(
+            5, $count, __FUNCTION__ . ' #4, exp: 5, got: ' . $count
+        );
+
+        $it->last();
+        $key = $it->key();
+        $this->assertEquals( 4, $key, __FUNCTION__ . ' #5, exp 4, got: ' . $key );
+
+        $it->previous();
+        $key = $it->key();
+        $this->assertEquals( 3, $key, __FUNCTION__ . ' #6, exp 3, got: ' . $key );
+
+        $it->remove();
+        $this->assertFalse( $it->exists( $key ), __FUNCTION__ . ' #7' );
+
+        $it->rewind();
+        $key = $it->key();
+        $this->assertEquals( 0, $key, __FUNCTION__ . ' #8, exp 0, got: ' . $key );
+
+        $it->last();
+        $key = $it->key();
+        $this->assertEquals( 4, $key, __FUNCTION__ . ' #9, exp 4, got: ' . $key );
+
+        $it->previous();
+        $it->previous();
+        $key = $it->key();
+        $this->assertEquals( 1, $key, __FUNCTION__ . ' #10, exp 1, got: ' . $key );
+
+        $it->next();
+        $key = $it->key();
+        $this->assertEquals( 2, $key, __FUNCTION__ . ' #11, exp 2, got: ' . $key );
+
+        $it->next();
+        $key = $it->key();
+        $this->assertEquals( 4, $key, __FUNCTION__ . ' #12, exp 4, got: ' . $key );
+
+        $it->last();
+        while( $it->valid()) {
+            $it->remove();
+            $it->previous();
+        }
+        $this->assertEquals( -1, $it->key(), __FUNCTION__ . ' #13');
     }
 }

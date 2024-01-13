@@ -5,8 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @link      https://kigkonsult.se
+ * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -41,7 +40,6 @@ use function array_keys;
 use function is_int;
 use function is_string;
 use function ksort;
-use function sort;
 use function sprintf;
 use function strlen;
 
@@ -84,7 +82,7 @@ class Asit extends It
     /**
      * Primary keys for collection element
      *
-     * @var array
+     * @var array<string|int, int>
      */
     protected array $pKeys = [];
 
@@ -134,6 +132,26 @@ class Asit extends It
     {
         static $TMPL = "%s : (pKey) %s";
         return sprintf( $TMPL, $key, $pKey ) . PHP_EOL;
+    }
+
+    /**
+     * Overriden It methods
+     */
+
+    /**
+     * Remove the current element
+     *
+     * @override
+     * @return static
+     * @since 2.2.1 2024-01-08
+     */
+    public function remove() : static
+    {
+        parent::remove();
+        $key  = $this->position;
+        $pKey = array_search( $key, $this->pKeys, true );
+        unset( $this->pKeys[ $pKey] );
+        return $this;
     }
 
     /**
@@ -222,15 +240,13 @@ class Asit extends It
     /**
      * Return all primary keys
      *
-     * @param mixed|int $sortFlag default SORT_REGULAR
-     * @param null|int  $dummy
-     * @return array
+     * @param null|int|string $dummy
+     * @param null|int $sortFlag default SORT_REGULAR
+     * @return int[]|string[]
      */
-    public function getPkeys( mixed $sortFlag = SORT_REGULAR, ? int $dummy = null ) : array
+    public function getPkeys( null|int|string $dummy = null, ? int $sortFlag = SORT_REGULAR ) : array
     {
-        $pKeys = array_keys( $this->pKeys );
-        sort( $pKeys, (int) ( $sortFlag ?? SORT_REGULAR ));
-        return $pKeys;
+        return self::sort( array_keys( $this->pKeys ), $sortFlag );
     }
 
     /**
@@ -258,7 +274,7 @@ class Asit extends It
             unset( $this->pKeys[$foundKey] );
         }
         $this->pKeys[$pKey] = $index;
-        ksort( $this->pKeys, SORT_REGULAR );
+        ksort( $this->pKeys );
         return $this;
     }
 
@@ -284,11 +300,11 @@ class Asit extends It
     }
 
     /**
-     * Return pKey for "current'
+     * Return pKey for 'current'
      *
      * To be used in parallel with the Iterator 'current' method, below
      *
-     * @return mixed  eg bool|int|string
+     * @return bool|int|string
      */
     public function getCurrentPkey() : mixed
     {
@@ -317,10 +333,10 @@ class Asit extends It
      *
      * Return empty array on not found
      *
-     * @param  array $pKeys
-     * @return array
+     * @param  int[]|string[] $pKeys
+     * @return int[]|string[]
      */
-    public function getPkeyIndexes( array $pKeys = [] ) : array
+    public function getPkeyIndexes( array $pKeys ) : array
     {
         $result = [];
         foreach( $pKeys as $pKey ) {
@@ -341,29 +357,23 @@ class Asit extends It
      *
      * Opt using primary keys and/or tag(s) for selection
      *
-     * @param  int|string|array $pKeys
-     * @param  int|callable     $sortParam  asort sort_flags or uasort callable
-     * @return array
+     * @param int|string|int[]|string[] $pKeys
+     * @param null|int|callable $sortParam asort sort_flags or uasort callable
+     *                                     (null, default, ksort)
+     * @return mixed[]
      * @throws SortException
      */
     public function pKeyGet( mixed $pKeys = null, mixed $sortParam = null ) : array
     {
         if( empty( $pKeys )) {
-            return ( null === $sortParam )
-                ? $this->collection
-                : self::sort( $this->collection, $sortParam );
+            return self::sort( $this->collection, $sortParam );
         }
         $indexes = $this->getPkeyIndexes((array) $pKeys );
         if( empty( $indexes )) {
             return [];
         }
-        $result = [];
-        foreach( $indexes as $pIx ) {
-            $result[$pIx] = $this->collection[$pIx];
-        }
-        return ( null === $sortParam )
-            ? $result
-            : self::sort( $result, $sortParam );
+        $this->copyElements( $indexes, $result );
+        return self::sort( $result, $sortParam );
     }
 
     /**
@@ -378,7 +388,7 @@ class Asit extends It
      * @override
      * @param mixed                 $element
      * @param null|int|string       $pKey  MUST be unique
-     * @param null|int|string|array $tags  not used here
+     * @param null|int|string|int[]|string[] $tags  not used here
      * @return static
      * @throws PkeyException
      */
@@ -406,12 +416,12 @@ class Asit extends It
      * Set (array) collection using array key as primary key
      *
      * @override
-     * @param Traversable|array $collection
+     * @param mixed[] $collection
      * @return static
      * @throws CollectionException
      * @throws PkeyException
      */
-    public function setCollection( Traversable | array $collection ) : static
+    public function setCollection( iterable $collection ) : static
     {
         switch( true ) {
             case is_array( $collection ) :
@@ -419,10 +429,6 @@ class Asit extends It
                     $this->append( $collection[$cIx], $cIx );
                 }
                 break;
-            case ( ! ( $collection instanceof Traversable )) :
-                throw new CollectionException(
-                    sprintf( CollectionException::$ERRTXT, self::getErrType( $collection ))
-                );
             case ( $collection instanceof self ) :
                 foreach( $collection->getPkeyIterator() as $cIx => $element ) {
                     $this->append( $element, $cIx );
@@ -443,7 +449,7 @@ class Asit extends It
     /**
      * Return an external iterator ( pKey => element ), Traversable
      *
-     * @return Traversable
+     * @return mixed[]|Traversable
      */
     public function getPkeyIterator() : Traversable
     {

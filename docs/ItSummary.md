@@ -1,4 +1,4 @@
-[comment]: # (This file is part of Asit, manages array collections. Copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
+[comment]: # (This file is part of Asit, manages array collections. Copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 ## It Summary
 
 Class It implements 
@@ -9,7 +9,7 @@ The collection element may be of any valueType.
 Collection elements are searchable using
 * Iterator etc methods, below
 
-It class extends :
+It class is extended by :
 * [ItList], assert collection elements of expected valueType
 * [Asit], implements assoc array collection element get-/set-methods
 
@@ -33,12 +33,16 @@ It class extends :
 * Return _static_
 * Throws CollectionException
 * Static
-    
+
+```*It::getInstance( [ collection ] )```
+* It::singleton() alias
+
+
 #### Get method
 
 ```It::get( [ sortParam ] )```
 * Return (non-assoc) array of element(s) in collection
-* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
+* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable, null=>ksort
 * Return _array_
 * Throws SortException
 
@@ -103,6 +107,11 @@ It class extends :
 
 ```It::previous()```
 * Move position backward to previous element
+* Return _static_
+ 
+```It::remove()```
+* Remove the current element. 
+* The current element is hereafter null (i.e. NOT valid)
 * Return _static_
 
 ```It::rewind()```

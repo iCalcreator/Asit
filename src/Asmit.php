@@ -5,8 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @link      https://kigkonsult.se
+ * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -85,12 +84,31 @@ class Asmit extends Asit
         while( $this->valid()) {
             $key = self::prepKeyString( $this->key(), $pLen );
             foreach((array) $this->getCurrentPkey( false ) as $pKey ) {
-                $string .= self::pKey2String($key, $pKey );
+                $string .= self::pKey2String( $key, (string) $pKey );
             }
             $string .= self::element2String( $key, $this->current());
             $this->next();
         }
         return $string;
+    }
+    /**
+     * Overriden It/Asit methods
+     */
+
+    /**
+     * Remove the current element
+     *
+     * @override
+     * @return static
+     * @since 2.2.1 2024-01-08
+     */
+    public function remove() : static
+    {
+        foreach((array) $this->getCurrentPkey( false ) as $pKey ) {
+            unset( $this->pKeys[$pKey] );
+        }
+        parent::remove();
+        return $this;
     }
 
     /**
@@ -120,7 +138,7 @@ class Asmit extends Asit
                 );
         } // end switch
         $this->pKeys[$pKey] = $index;
-        ksort( $this->pKeys, SORT_REGULAR );
+        ksort( $this->pKeys );
         return $this;
     }
 
@@ -156,11 +174,11 @@ class Asmit extends Asit
     }
 
     /**
-     * Return pKey(s) for 'current', one (firstFound=true) or all (array)
+     * Return pKey(s) for 'current', one (firstFound=true) or all (array), false on not found
      *
      * @override
      * @param null|bool $firstFound
-     * @return bool|int|string|array
+     * @return bool|int|string|int[]|string[]
      */
     public function getCurrentPkey( ? bool $firstFound = true ) : bool|int|string|array
     {
@@ -196,7 +214,7 @@ class Asmit extends Asit
      * In case of multiple primary keys for element, first found is used
      *
      * @override
-     * @return Traversable
+     * @return mixed[]|Traversable
      */
     public function getPkeyIterator() : Traversable
     {

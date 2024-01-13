@@ -5,8 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @link      https://kigkonsult.se
+ * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -33,48 +32,8 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-class Asit2Test extends TestCase
+class Asit2Test extends AsitBaseTest
 {
-    /**
-     * @param null|int $max
-     * @return array
-     */
-    public function arrayLoader( ? int $max = 1000 ) : array
-    {
-        $output = [];
-        for( $ix=0; $ix < $max; $ix++ ) {
-            $output['key' . $ix] = 'element' . $ix;
-        } // end for
-
-        return $output;
-    }
-
-    /**
-     * @var array|string[]
-     */
-    public static array $COLORS = [
-        0 => 'Black',
-        1 => 'Gray',
-        2 => 'Blue',
-        3 => 'Green',
-        4 => 'Yellow',
-        5 => 'Brown',
-        6 => 'Orange',
-        7 => 'Red',
-        8 => 'Pink',
-        9 => 'Purple'
-    ];
-
-    /**
-     * @param int $index
-     * @return string
-     */
-    public static function getAttribute( int $index ) : string
-    {
-        $cIx = $index % 10;
-        return self::$COLORS[$cIx];
-    }
-
     /**
      * Testing Asittag 'current' methods :
      *    getCurrentTags, hasCurrentTag, addCurrentTag,
@@ -85,15 +44,16 @@ class Asit2Test extends TestCase
     {
 
         $asit = new Asittag();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
             $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end foreach
-        $asit->rewind()->previous(); // no valid current
+        $asit->rewind()->previous();
 
+        // no valid current
         $ok = 0;
         try {
-            $asit->getCurrentTags(); // no current
+            $asit->getCurrentTags();
             $ok = 1;
         }
         catch( RuntimeException $e ) {
@@ -102,11 +62,12 @@ class Asit2Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test321, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
 
+        // no current
         $ok = 0;
         try {
-            $asit->hasCurrentTag( 'fake '); // no current
+            $asit->hasCurrentTag( 'fake ');
             $ok = 1;
         }
         catch( RuntimeException $e ) {
@@ -115,11 +76,12 @@ class Asit2Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test322, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #2, exp 2, got ' . $ok );
 
+        // invalid tag
         $ok = 0;
         try {
-            $asit->addCurrentTag( 'fake '); // no current
+            $asit->addCurrentTag( '' );
             $ok = 1;
         }
         catch( RuntimeException $e ) {
@@ -128,32 +90,56 @@ class Asit2Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test323, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #3, exp 2, got ' . $ok );
+
+        // no current
+        $ok = 0;
+        try {
+            $asit->addCurrentTag( 'fake ' );
+            $ok = 1;
+        }
+        catch( RuntimeException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #4, exp 2, got ' . $ok );
 
         $asit->seek( array_rand( array_flip( range( 30, 39 )))); // set valid current
 
         $tags1 = $asit->getCurrentTags();
         $this->assertCount(
-            1, $tags1, 'test324 exp 1, got ' . implode( ',', $tags1 )
+            1, $tags1, __FUNCTION__ . ' #5 exp 1, got ' . implode( ',', $tags1 )
         );
 
         $newTag = 'newTag';
         $this->assertFalse(
             $asit->hasCurrentTag( $newTag ),
-            'test325'
+            __FUNCTION__ . ' #5'
         );
         $asit->addCurrentTag( $newTag );
         $this->assertTrue(
             $asit->hasCurrentTag( $newTag ),
-            'test326'
+            __FUNCTION__ . ' #6'
         );
         $this->assertEquals(
-            1, $asit->tagCount( $newTag ), 'test327'
+            1, $asit->tagCount( $newTag ), __FUNCTION__ . ' #7'
         );
 
         $tags2 = $asit->getCurrentTags();
         $this->assertCount(
-            2, $tags2, 'test328 exp 2, got ' . implode( ',', $tags2 )
+            2, $tags2, __FUNCTION__ . ' #8 exp 2, got ' . implode( ',', $tags2 )
+        );
+
+        $this->assertFalse(
+            $asit->hasCurrentTag( '' ),
+            __FUNCTION__ . ' #9'
+        );
+
+        $this->assertFalse(
+            $asit->hasCurrentTag( 0 ),
+            __FUNCTION__ . ' #10'
         );
 
         $asit = null;
@@ -167,7 +153,7 @@ class Asit2Test extends TestCase
     public function asitTest37() : void
     {
         $asit = new Asittag();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
             $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
@@ -186,14 +172,14 @@ class Asit2Test extends TestCase
         $this->assertEquals(
             [ $ix1 => 'element' . $ix1 ],
             $asit->pKeyTagGet( $search, $tags1 ),  // get( pKeys, tags )
-            'test37-10 search : ' .
+            __FUNCTION__ . ' #10 search : ' .
             implode( ',', $search ) . ' tags : ' . implode( ',', $tags1 ) .
             ' got : ' . implode( ',', $asit->pKeyTagGet( $search, $tags1 ))
         );
 
         $this->assertEquals(
             [ $ix2 => 'element' . $ix2 ], $asit->pKeyTagGet( $search, $asit->getTags( $pKey2 ) ),  // get( pKeys, tags )
-            'test37-11'
+            __FUNCTION__ . ' #11'
         );
         $tags = array_merge(
             $asit->getTags( $pKey1 ),
@@ -201,12 +187,12 @@ class Asit2Test extends TestCase
         );
         $this->assertEquals(
             [], $asit->pKeyTagGet( $search, $tags, true ),  // get( pKeys, tags )
-            'test37-12'
+            __FUNCTION__ . ' #12'
         );
         $this->assertEquals(
             [  $ix1 => 'element' . $ix1, $ix2 => 'element' . $ix2 ],
             $asit->pKeyTagGet( $search, $tags, false ),  // get( pKeys, tags )
-            'test37-13'
+            __FUNCTION__ . ' #13'
         );
 
         $asit->seek( array_rand( array_flip( range( 50, 84 ))));
@@ -221,7 +207,7 @@ class Asit2Test extends TestCase
         $newTag    = 'someOtherColor';
         $asit->addCurrentTag( $newTag );
         $this->assertContains(
-            $newTag, $asit->getCurrentTags(), 'test37-14'
+            $newTag, $asit->getCurrentTags(), __FUNCTION__ . ' #14'
         );
 
         $newPkey = 'key9876';
@@ -229,40 +215,40 @@ class Asit2Test extends TestCase
         $asit->replacePkey( $orgPkey, $newPkey ); // alter pKey, replacePkey, ok
         $this->assertFalse(
             $asit->pKeyExists( $orgPkey ),
-            'test37-18'
+            __FUNCTION__ . ' #18'
         );
 
         $orgIndex2 = $asit->getPkeyIndexes( [ $newPkey ] );
         $orgIndex1 = reset( $orgIndex2 );
         $this->assertEquals(
             $asit->key(), $orgIndex1,
-            'test37-19 exp : ' . $asit->key() . ', got : ' . implode( ',', $orgIndex2 )
+            __FUNCTION__ . ' #19 exp : ' . $asit->key() . ', got : ' . implode( ',', $orgIndex2 )
         );
 
         $this->assertEquals(
             $newPkey,
             $asit->getCurrentPkey(),
-            'test37-20 current ix :' . $asit->key()
+            __FUNCTION__ . ' #20 current ix :' . $asit->key()
         );
         $this->assertEquals(
             [ $orgIndex => $current ],
             $asit->pKeyTagGet( $newPkey ),
-            'test37-21'
+            __FUNCTION__ . ' #21'
         );
         $this->assertEquals(
             $tags, $asit->getTags( $newPkey ),
-            'test37-22'
+            __FUNCTION__ . ' #22'
         );
 
         $orgPkey = $asit->getCurrentPkey();
         $newPkey = 'testbcdefg';
         $asit->setCurrentPkey( $newPkey ); // alter pKey, replacePkey, ok
         $this->assertNotEquals(
-            $orgPkey, $asit->getCurrentPkey(), 'test37-23'
+            $orgPkey, $asit->getCurrentPkey(), __FUNCTION__ . ' #23'
         );
         $this->assertEquals(
             $newPkey, $asit->getCurrentPkey(),
-            'test37-24'
+            __FUNCTION__ . ' #24'
         );
 
         $asit = null;
@@ -276,7 +262,7 @@ class Asit2Test extends TestCase
     public function asitTest41() : void
     {
         foreach(
-            [ new Asit( $this->arrayLoader( 10 )), new Asmit( $this->arrayLoader( 10 )) ]
+            [ new Asit( self::arrayLoader( 10 )), new Asmit( self::arrayLoader( 10 )) ]
             as $tx => $asit ) {
 
             $asit->seek( array_rand( array_flip( range( 0, 8 ))));
@@ -288,7 +274,7 @@ class Asit2Test extends TestCase
             $this->assertEquals(
                 [ $ix1 ],
                 $orgIndex2,
-                'test41-1-' . $tx . ' org : ' . $ix1 . ', org2 : ' . var_export( $orgIndex2, true )
+                __FUNCTION__ . ' #1-' . $tx . ' org : ' . $ix1 . ', org2 : ' . var_export( $orgIndex2, true )
             );
 
             $newPkey = 'testbcdefg';
@@ -296,16 +282,16 @@ class Asit2Test extends TestCase
             $asit->replacePkey( $pKey1, $newPkey );
             $this->assertFalse(
                 $asit->pKeyExists( $pKey1 ),
-                'test41-2-' . $tx
+                __FUNCTION__ . ' #2-' . $tx
             );
             $this->assertEquals(
                 $ix1, $asit->key(),
-                'test41-3-' . $tx
+                __FUNCTION__ . ' #3-' . $tx
             );
             $this->assertEquals(
                 $newPkey,
                 $asit->getCurrentPkey(),
-                'test41-4-' . $tx
+                __FUNCTION__ . ' #4-' . $tx
             );
 
             $asit->next();
@@ -314,16 +300,16 @@ class Asit2Test extends TestCase
             $asit->replacePkey( $pKey2, $pKey1 );
             $this->assertFalse(
                 $asit->pKeyExists( $pKey2 ),
-                'test41-5-' . $tx
+                __FUNCTION__ . ' #5-' . $tx
             );
             $this->assertEquals(
                 $ix2, $asit->key(),
-                'test41-6-' . $tx
+                __FUNCTION__ . ' #6-' . $tx
             );
             $this->assertEquals(
                 $pKey1,
                 $asit->getCurrentPkey(),
-                'test41-7-' . $tx
+                __FUNCTION__ . ' #7-' . $tx
             );
 
             $asit = null;
@@ -350,7 +336,7 @@ class Asit2Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test52-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -375,7 +361,7 @@ class Asit2Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test53-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -400,7 +386,7 @@ class Asit2Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test54-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -413,7 +399,7 @@ class Asit2Test extends TestCase
     public function asitTest55() : void
     {
         $asittag = new Asittag();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asittag->append( $value, $key );
             $asittag->addPkeyTag( $key, self::getAttribute( $asittag->key() ) );
         } // end foreach
@@ -422,7 +408,7 @@ class Asit2Test extends TestCase
         $newTag = 'newTag';
         $this->assertFalse(
             $asittag->hasPkeyTag( 'fakePkey', $newTag ), // not found pKey
-            'test55-7'
+            __FUNCTION__ . ' #1'
         );
 
         $pKey   = $asittag->getCurrentPkey();
@@ -435,12 +421,12 @@ class Asit2Test extends TestCase
         foreach( $tags as $testTag ) {
             $this->assertTrue(
                 $asittag->hasPkeyTag( $pKey, $testTag ),
-                'test55-8'
+                __FUNCTION__ . ' #3'
             );
         }
         $this->assertfalse(
             $asittag->hasPkeyTag( $pKey, 'fakeTag' ),
-            'test55-9'
+            __FUNCTION__ . ' #4'
         );
 
         $asittag = null;
@@ -455,7 +441,7 @@ class Asit2Test extends TestCase
     {
 
         $asitTag = new Asittag();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asitTag->append( $value, $key );
             $asitTag->addPkeyTag( $key, self::getAttribute( $asitTag->key() ) );
         } // end for
@@ -467,7 +453,8 @@ class Asit2Test extends TestCase
         $pKeytags1    = $asitTag->getTags( $currentPkey );   // test getTags( $pKey )
         $this->assertEquals(
             $currentags, $pKeytags1,
-            'test62-1 - currenTags : ' . implode( ',', $currentags ) . ' <-> pKeytags1 : ' . implode( ',', $pKeytags1 )
+            __FUNCTION__ . ' #1 - currenTags : ' . implode( ',', $currentags ) .
+                ' <-> pKeytags1 : ' . implode( ',', $pKeytags1 )
         );
         $this->assertEquals(
             [], $asitTag->getTags( 'fake pKey' ), 'test62-2'
@@ -476,34 +463,35 @@ class Asit2Test extends TestCase
         $this->assertEquals(
             $pKeytags1,
             $pKeytags2,
-            'test62-3 - tags1 : ' . implode( ',', $pKeytags1 ) . ' <-> tags2 : ' . implode( ',', $pKeytags2 )
+            __FUNCTION__ . ' #3 - tags1 : ' . implode( ',', $pKeytags1 ) .
+                ' <-> tags2 : ' . implode( ',', $pKeytags2 )
         );
 
         $this->assertContains(
 //          $currentPkey, $asitTag->getPkeys( $pKeytags1[0], null ), 'test62-5'
-            $currentPkey, $asitTag->getPkeys( $pKeytags1[0] ), 'test62-5'
+            $currentPkey, $asitTag->getPkeys( $pKeytags1[0] ), __FUNCTION__ . ' #5'
         );
         $this->assertEquals(
 //          [], $asitTag->getPkeys( 'fakeTag', null ), 'test62-6'
-            [], $asitTag->getPkeys( 'fakeTag' ), 'test62-6'
+            [], $asitTag->getPkeys( 'fakeTag' ), __FUNCTION__ . ' #6'
         );
 
         $allTags = $asitTag->getTags();
         foreach( self::$COLORS as $attribute ) {
             $this->assertContains(
-                $attribute, $allTags, 'test62-7'
+                $attribute, $allTags, __FUNCTION__ . ' #7'
             );
             $attrCnt = $asitTag->tagCount( $attribute ); // test tagCount( <tag> )
             $this->assertEquals(
-                10, $attrCnt, 'test62-8 - tag : ' . $attribute . ', count: ' . $attrCnt
+                10, $attrCnt, __FUNCTION__ . ' #8 - tag : ' . $attribute . ', count: ' . $attrCnt
             );
         }
         $elements1 = $asitTag->pKeyTagGet( null, $currentags ); // test get( null, $tags1 ) : all with currentags
         $this->assertContains(
-            $currentValue, $elements1, 'test62-9 exp : ' . $currentValue . ', got ' . var_export( $elements1, true )
+            $currentValue, $elements1, __FUNCTION__ . ' #9 exp : ' . $currentValue . ', got ' . var_export( $elements1, true )
         );
         $this->assertCount(
-            10, $elements1, 'test62-10 exp : 100, got ' . count( $elements1 )
+            10, $elements1, __FUNCTION__ . ' #10 exp : 100, got ' . count( $elements1 )
         );
 
         $asitTag = null;
@@ -525,14 +513,17 @@ class Asit2Test extends TestCase
             );
         } // end for
 
-        foreach( $asit->getTags( null, SORT_FLAG_CASE | SORT_STRING ) as $tIx => $tag ) {
+        $tags = $asit->getTags( null, SORT_FLAG_CASE | SORT_STRING );
+        $tIx = -1;
+        foreach( $tags as $tag ) {
+            ++$tIx;
             // case-insensitively sort
             $exp = ( 0 === ( $tIx % 2 )) ? 'TAG' :  'tag';
 //          echo ' 1 got : ' . $tag . PHP_EOL;
             $this->assertEquals(
                 $exp,
                 substr( $tag, 0, 3 ),
-                'test65-2-' . $tIx . ', exp : ' . $exp . ', got : ' . $tag
+                __FUNCTION__ . ' #2-' . $tIx . ', exp : ' . $exp . ', got : ' . $tag
             );
         }
         foreach( $asit->getTags() as $tIx => $tag ) {
@@ -542,11 +533,37 @@ class Asit2Test extends TestCase
             $this->assertEquals(
                 $exp,
                 substr( $tag, 0, 3 ),
-                'test65-3-' . $tIx . ', exp : ' . $exp . ', got : ' . $tag
+                __FUNCTION__ . ' #3-' . $tIx . ', exp : ' . $exp . ', got : ' . $tag
             );
         }
 
-        $asit = null;
+        $asit = new Asittag();
+
+        $ok = 0;
+        try {
+            $asit->getTags( true ); // false|int|string exp
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #4, exp 2, got ' . $ok );
+
+        $ok = 0;
+        try {
+            Asittag::factory()->assertTag( '' ); // false|int|string exp
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #5, exp 2, got ' . $ok );
     }
 
     /**
@@ -557,7 +574,7 @@ class Asit2Test extends TestCase
     public function asitTest71() : void
     {
         $asitTag = new Asittag();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asitTag->append( $value, $key );
             $asitTag->addPkeyTag( $key, self::getAttribute( $asitTag->key() ) );
         } // end for
@@ -573,14 +590,14 @@ class Asit2Test extends TestCase
         $this->assertContains(
             $currentPkey,
             $hayStack,
-            'test71-1 exp : ' . $currentPkey . ', got ' . implode( ',', $hayStack ) .
+            __FUNCTION__ . ' #1 exp : ' . $currentPkey . ', got ' . implode( ',', $hayStack ) .
             ', search on tag ' . $lightGray . ', current has ' . implode( ',', $asitTag->getCurrentTags() )
         );
         $hayStack    = $asitTag->getPkeys( $deepBlue );
         $this->assertContains(
             $currentPkey,
             $hayStack,
-            'test71-2 exp : ' . $currentPkey . ', got ' . implode( ',', $hayStack ) .
+            __FUNCTION__ . ' #2 exp : ' . $currentPkey . ', got ' . implode( ',', $hayStack ) .
             ', search on tag ' . $deepBlue . ', current has ' . implode( ',', $asitTag->getCurrentTags() )
         );
 
@@ -592,30 +609,30 @@ class Asit2Test extends TestCase
 
         $pKeytags3   = $asitTag->getPkeyTags( $currentPkey );   // test getPkeyTags( $currentPkey ) getTags alias
         $this->assertCount(
-            5, $pKeytags3, 'test71-3'
+            5, $pKeytags3, __FUNCTION__ . ' #3'
         );
         $this->assertContains(
-            $lightGray, $pKeytags3, 'test71-4'
+            $lightGray, $pKeytags3, __FUNCTION__ . ' #4'
         );
         $this->assertContains(
-            $deepBlue, $pKeytags3, 'test71-5'
+            $deepBlue, $pKeytags3, __FUNCTION__ . ' #5'
         );
         $this->assertContains(
-            $lightBlue, $pKeytags3, 'test71-6'
+            $lightBlue, $pKeytags3, __FUNCTION__ . ' #6'
         );
         $this->assertContains(
-            $numericTag, $pKeytags3, 'test71-7'
+            $numericTag, $pKeytags3, __FUNCTION__ . ' #7'
         );
 
         $current   = $asitTag->current(); // current value
         $currentIx = $asitTag->key();
         $this->assertEquals(
             [ $currentIx => $current ], $asitTag->tagGet( $lightBlue ),
-            'test71-8'
+            __FUNCTION__ . ' #8'
         );
         $this->assertEquals(
             [ $currentIx => $current ], $asitTag->tagGet( $pKeytags3, true ),
-            'test71-9'
+            __FUNCTION__ . ' #9'
         );
 
         $newElement = 'element1234';
@@ -630,7 +647,7 @@ class Asit2Test extends TestCase
         $this->assertEquals(
             [ $currentIx => $current, $newIx => $newElement ],
             $asitTag->tagGet( $newTags, true ), // tagGet
-            'test71-20'
+            __FUNCTION__ . ' #20'
         );
 
         $this->assertEquals(
@@ -671,7 +688,7 @@ class Asit2Test extends TestCase
     public function asitTest72() : void
     {
         $asit = new Asittag();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
             $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
@@ -685,7 +702,7 @@ class Asit2Test extends TestCase
         } catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 1, $ok, 'test72-1, exp 1, got ' . $ok );
+        $this->assertEquals( 1, $ok, __FUNCTION__ . ' #1, exp 1, got ' . $ok );
 
         $ok   = 0;
         try {
@@ -696,7 +713,7 @@ class Asit2Test extends TestCase
         } catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test72-2, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #2, exp 2, got ' . $ok );
 
         $ok   = 0;
         try {
@@ -707,7 +724,7 @@ class Asit2Test extends TestCase
         } catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 1, $ok, 'test72-3, exp 1, got ' . $ok );
+        $this->assertEquals( 1, $ok, __FUNCTION__ . ' #3, exp 1, got ' . $ok );
 
         $asit->seek( array_rand( array_flip( range( 62, 66 ))));
 
@@ -716,27 +733,27 @@ class Asit2Test extends TestCase
         $tCnt = $asit->tagCount( $tags[0] );
         $this->assertTrue(
             $asit->hasPkeyTag( $pKey, $tags[0] ),
-            'test72-4'
+            __FUNCTION__ . ' #4'
         );
         $asit->removePkeyTag( $pKey, $tags[0] ); // but tag exists
         $this->assertFalse(
             $asit->hasPkeyTag( $pKey, $tags[0] ),
-            'test72-5'
+            __FUNCTION__ . ' #5'
         );
         $this->assertEquals(
             ( $tCnt - 1 ),
             $asit->tagCount( $tags[0] ),
-            'test72-6'
+            __FUNCTION__ . ' #6'
         );
         $asit->removePkeyTag( $pKey, $tags[0] ); // tag don't exists, no exception
         $this->assertFalse(
             $asit->hasPkeyTag( $pKey, $tags[0] ),
-            'test72-7'
+            __FUNCTION__ . ' #7'
         );
         $this->assertEquals(
             ( $tCnt - 1 ),
             $asit->tagCount( $tags[0] ),
-            'test72-8'
+            __FUNCTION__ . ' #8'
         );
 
         $asit->last()->next()->next()->next()->next();
@@ -749,7 +766,7 @@ class Asit2Test extends TestCase
         } catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test72-9, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #9, exp 2, got ' . $ok );
 
         $asit->seek( array_rand( array_flip( range( 67, 69 ))));
 
@@ -757,21 +774,21 @@ class Asit2Test extends TestCase
         $tCnt = $asit->tagCount( $tags[0] );
         $this->assertTrue(
             $asit->hasCurrentTag( $tags[0] ),
-            'test72-10, exp : ' . $tags[0]
+            __FUNCTION__ . ' #10, exp : ' . $tags[0]
         );
         $asit->removeCurrentTag( $tags[0] );
         $this->assertFalse(
             $asit->hasCurrentTag( $tags[0] ),
-            'test72-11'
+            __FUNCTION__ . ' #11'
         );
         $this->assertEquals(
             ( $tCnt - 1 ),
             $asit->tagCount( $tags[0] ),
-            'test72-12'
+            __FUNCTION__ . ' #12'
         );
         $this->assertTrue(
             $asit->tagExists( $tags[0] ),
-            'test72-13'
+            __FUNCTION__ . ' #13'
         );
 
         foreach( array_keys( $asit->tagGet( $tags[0] )) as $tIx ) {
@@ -781,11 +798,11 @@ class Asit2Test extends TestCase
         $this->assertEquals(
             0,
             $asit->tagCount( $tags[0] ),
-            'test72-14'
+            __FUNCTION__ . ' #14'
         );
         $this->assertFalse(
             $asit->tagExists( $tags[0] ),
-            'test72-15'
+            __FUNCTION__ . ' #15'
         );
 
         $asit = null;
@@ -799,7 +816,7 @@ class Asit2Test extends TestCase
     public function asitTest75() : void
     {
         $asit = new Asittag();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
             $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
@@ -839,24 +856,24 @@ class Asit2Test extends TestCase
         } // end foreach
         $selection = $asit->tagGet( $FAST );
         $this->assertCount(
-            10, $selection, 'test75-1 exp 10 : got : ' . count( $selection )
+            10, $selection, __FUNCTION__ . ' #1 exp 10 : got : ' . count( $selection )
         );
         $selection = $asit->tagGet( $BIG );
         $this->assertCount(
-            17, $selection, 'test75-2 exp 17 : got : ' . count( $selection )
+            17, $selection, __FUNCTION__ . ' #2 exp 17 : got : ' . count( $selection )
         );
         $selection = $asit->tagGet( $BIG, null, $FAST );
         $this->assertCount(
-            13, $selection, 'test75-3 exp 13 : got : ' . count( $selection )
+            13, $selection, __FUNCTION__ . ' #3 exp 13 : got : ' . count( $selection )
         );
         $selection = $asit->tagGet( [$FAST, $ECOLOGIC], true );
         $this->assertCount(
-            10, $selection, 'test75-4 exp 10 : got : ' . count( $selection )
+            10, $selection, __FUNCTION__ . ' #4 exp 10 : got : ' . count( $selection )
         );
 
         $selection = $asit->tagGet( [ $FAST, $ECOLOGIC ], true, $BIG );
         $this->assertCount(
-            6, $selection, 'test75-5 exp 6 : got : ' . count( $selection )
+            6, $selection, __FUNCTION__ . ' #5 exp 6 : got : ' . count( $selection )
         );
 
         /*
@@ -868,18 +885,66 @@ class Asit2Test extends TestCase
 
         $selection = $asit->tagGet( [ $FAST, $ECOLOGIC ], false );
         $this->assertCount(
-            50, $selection, 'test75-7 exp 50 : got : ' . count( $selection )
+            50, $selection, __FUNCTION__ . ' #7 exp 50 : got : ' . count( $selection )
         );
         $selection = $asit->tagGet( [ $FAST, $ECOLOGIC ], false, [ $BIG, $CHEAP ] );
         $this->assertCount(
-            27, $selection, 'test75-8 exp 17 : got : ' . count( $selection )
+            27, $selection, __FUNCTION__ . ' #8 exp 17 : got : ' . count( $selection )
         );
 
         $asit = null;
     }
 
     /**
-     * Test Asittag append Pkey + InvalidArgumentException, invaid tag
+     * Testing Asittag remove, last, previous....
+     *
+     * @test
+     */
+    public function asitTest76() : void
+    {
+        $asit = new Asittag();
+        foreach( self::arrayLoader( 5 ) as $key => $value ) {
+            $asit->append( $value, $key );
+            $asit->addPkeyTag( $key, 'tag' . $key );
+        } // end for
+
+        $asit->last();
+        $asit->previous();
+        $asit->previous();
+        $key = $asit->key();
+        $this->assertEquals( 2, $key, __FUNCTION__ . '-1, exp 2, got: ' . $key );
+
+        $pKey = $asit->getCurrentPkey();
+        $tags = $asit->getCurrentTags();
+
+        $asit->remove();
+        // check that pkey NOT exists
+        $this->assertEmpty(
+            $asit->pKeyGet( $pKey ),
+            __FUNCTION__ . '-2, pkey: ' . $pKey . ', exp none, got ' . var_export( $asit->pKeyGet( $pKey ), true )
+        );
+        // check that tag NOT exists
+        foreach( $tags as $tag ) {
+            $this->assertFalse(
+                $asit->tagExists( $tag ),
+                __FUNCTION__ . '-3, exp none, got true'
+            );
+        }
+        // remove all from the end
+        $this->assertEquals( 4, $asit->count(), __FUNCTION__ . '-3, exp 4, got: ' . $asit->count());
+        $asit->last();
+        $asit->remove();
+        $asit->previous();
+        $asit->remove();
+        $asit->previous();
+        $asit->remove();
+        $asit->previous();
+        $asit->remove();
+        $this->assertEquals( 0, $asit->count(), __FUNCTION__ . '-4, exp 0, got: ' . $asit->count());
+    }
+
+    /**
+     * Test Asittag append Pkey + InvalidArgumentException, invalid tag
      *
      * @test
      */
@@ -888,22 +953,19 @@ class Asit2Test extends TestCase
         $asit = Asittag::factory( [ 'key' => 'value' ] );
 
         $pKey = 'key2';
-        $xTag = [ 'tag1', 'tag2', [], 1.2345 ];
+        $xTag = [ 'tag1', 'tag2', true, 1.2345 ];
         $ok = 0;
         try {
             $asit->append( 'element2', $pKey, $xTag ); // invalid tag array + float
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( InvalidArgumentException $e ) { // i.e. PkeyException|TagException
             $ok = 2;
-        }
-        catch( RuntimeException $e ) {
-            $ok = 3;
         }
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test82-3, exp 2, got ' . $ok );
+        $this->assertEquals( 1, $ok, __FUNCTION__ . ' #1, exp 1, got ' . $ok );
 
         $asit = null;
     }

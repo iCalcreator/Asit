@@ -54,7 +54,7 @@ trait TypeTrait
      *
      * @var string|null
      */
-    protected ?string $valueType = null;
+    protected ? string $valueType = null;
 
     /**
      * Assert collection element value type, extended 'gettype'
@@ -187,7 +187,7 @@ trait TypeTrait
      */
     public static function assertValueType( string $valueType ) : void
     {
-        static $TYPES = [
+        static $STDTYPES = [
             self::BOOL,
             self::BOOLEAN,
             self::INT,
@@ -202,10 +202,8 @@ trait TypeTrait
             self::TRAVERSABLE,
         ];
         switch( true ) {
-            case ( $valueType === self::ARRAY2 ) :
-                return;
-            case in_array( $valueType, $TYPES, true ) :
-                return;
+            case ( $valueType === self::ARRAY2 ) : // fall through
+            case in_array( $valueType, $STDTYPES, true ) : // fall through
             case ( class_exists( $valueType ) || interface_exists( $valueType )) :
                 return;
             default :

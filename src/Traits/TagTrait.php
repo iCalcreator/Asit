@@ -52,7 +52,7 @@ trait TagTrait
      * Named 'tag' here to avoid mixup with Iterator method 'key'
      * Each tag may exist on multiple collection elements
      *
-     * @var array
+     * @var int[][]|string[][]
      */
     protected array $tags = [];
 
@@ -72,11 +72,11 @@ trait TagTrait
     /**
      * Assert tag, int and string allowed
      *
-     * @param  mixed $tag
+     * @param  int|string $tag
      * @return void
      * @throws TagException
      */
-    public static function assertTag( mixed $tag ) : void
+    public static function assertTag( int|string $tag ) : void
     {
         static $TMPL = "Invalid tag : (%s) %s";
         try {
@@ -91,7 +91,7 @@ trait TagTrait
      * Return key and tags as string
      *
      * @param string $key
-     * @param array  $tags
+     * @param int[]|string[]  $tags
      * @return string
      */
     protected static function tags2String( string $key, array $tags ) : string
@@ -108,10 +108,10 @@ trait TagTrait
     /**
      * Return bool true if single or any tag in array is set
      *
-     * @param array|int|string $tag
+     * @param int|string|int[]|string[] $tag
      * @return bool
      */
-    public function tagExists( array | int | string $tag ) : bool
+    public function tagExists( int | string | array $tag ) : bool
     {
         $found = false;
         foreach((array) $tag as $theTag ) {
@@ -128,7 +128,7 @@ trait TagTrait
      *
      * To be used in parallel with the Iterator 'current' method, below
      *
-     * @return array
+     * @return int[]|string[]
      * @throws RuntimeException
      */
     public function getCurrentTags() : array
@@ -140,20 +140,24 @@ trait TagTrait
     /**
      * Return bool true if element (identified by index) has tag(s)
      *
-     * Not found index return false
+     * Not found index return false (also invalid tag)
      *
      * @param int              $index
-     * @param array|int|string $tag
+     * @param int|string|int[]|string[] $tag
      * @return bool
      */
-    private function hasTag( int $index, array | int | string $tag ) : bool
+    private function hasTag( int $index, int | string | array $tag ) : bool
     {
-        if( empty( $tag ) || ! isset( $this->collection[$index] )) {
-            return false;
-        }
+        switch( true ) {
+            case is_int( $tag ) :
+                break;
+            case ( is_string( $tag ) && empty( trim( $tag ))) : // false through
+            case ( empty( $tag ) || ! isset( $this->collection[$index] )) :
+                return false;
+        } // end switch
         foreach((array) $tag as $theTag ) {
             if( $this->tagExists( $theTag ) &&
-                in_array( $index, $this->tags[$theTag], true ) ) {
+                in_array( $index, $this->tags[$theTag], true )) {
                 return true;
             }
         } // end foreach
@@ -165,11 +169,11 @@ trait TagTrait
      *
      * To be used in parallel with the Iterator 'current' method
      *
-     * @param array|int|string $tag
+     * @param int|string|int[]|string[] $tag
      * @return bool
      * @throws RuntimeException
      */
-    public function hasCurrentTag( array | int | string $tag ) : bool
+    public function hasCurrentTag( int | string | array $tag ) : bool
     {
         $this->assertCurrent();
         return $this->hasTag( $this->position, $tag );
@@ -198,16 +202,16 @@ trait TagTrait
      * @return void
      * @throws TagException
      */
-    private function addTag( int | string $tag, int $index ) : void
+    protected function addTag( int | string $tag, int $index ) : void
     {
         self::assertTag( $tag );
         if( ! $this->tagExists( $tag )) {
             $this->tags[$tag] = [];
-            ksort( $this->tags, SORT_REGULAR );
+            ksort( $this->tags );
         }
-        if( ! in_array( $index, $this->tags[$tag], true ) ) {
+        if( ! in_array( $index, $this->tags[$tag], true )) {
             $this->tags[$tag][] = $index;
-            ksort( $this->tags[$tag], SORT_REGULAR );
+            ksort( $this->tags[$tag] );
         }
     }
 
@@ -244,7 +248,8 @@ trait TagTrait
     public function removeCurrentTag( int | string $tag ) : static
     {
         $this->assertCurrent();
-        $this->removePkeyTag( $this->getCurrentPkey(), $tag );
+        $pKey = $this->getCurrentPkey(); // return int|string
+        $this->removePkeyTag(( is_int($pKey ) ? $pKey : (string) $pKey ), $tag );
         return $this;
     }
 
@@ -260,16 +265,16 @@ trait TagTrait
      *     false match any tag.
      * Convenient get method alias
      *
-     * @param array|int|string $tags
-     * @param bool|null $union
-     * @param  int|string|array  $exclTags
-     * @param  int|callable      $sortParam    asort sort_flags or uasort callable
-     * @return array
+     * @param int|string|int[]|string[]  $tags
+     * @param bool|null          $union
+     * @param  int|string|int[]|string[] $exclTags
+     * @param  null|int|callable $sortParam    asort sort_flags or uasort callable
+     * @return mixed[]
      * @throws SortException
      */
     public function tagGet(
         array | int | string $tags,
-        ?bool                $union = true,
+        ? bool               $union = true,
         mixed                $exclTags = [],
         mixed                $sortParam = null
     ) : array

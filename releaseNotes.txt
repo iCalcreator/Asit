@@ -1,9 +1,13 @@
 
+2.2.1 Code rewrites
+2.2.2 Added iterator last, previous and remove methods
+2.2.3 Updated tests
+
 2.2   PHP 8.0
 
 2.0   PHP 7.4
 
-1.8    Rewrites due to strict type and inheritance issues
+1.8   Rewrites due to strict type and inheritance issues
          method Asit::get() renamed to Asit::pKeyGet()
          method Asmit::get() renamed to Asmit::pKeyGet()
          method Asittag::get() renamed to Asittag::pKeyTagGet()

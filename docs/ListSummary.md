@@ -1,4 +1,4 @@
-[comment]: # (This file is part of Asit, manages array collections. Copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
+[comment]: # (This file is part of Asit, manages array collections. Copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 ## List Summary
 
 > Class **ItList** extends [It]
@@ -12,7 +12,7 @@
 > Class **AsmittagList** extends [Asmittag]
 
 * assert collection elements of expected valueType 
-  * one of TypeInterface constants or FQCN (for class or interface)
+  * one of ListTypeInterface constants or FQCN (for class or interface)
 
 
 #### Shared methods
@@ -46,11 +46,17 @@
 * Throws CollectionException, TypeException
 * Static
 
+```*List::getInstance( [ collection, [ valueType ]] )```
+* List::singleton() alias
+
 ```*List::singleton( valueType )```
 * ```valueType``` _string_
 * Return _static_
 * Throws TypeException
 * Static
+
+```*List::getInstance( [ valueType ] )```
+* List::singleton() alias
 
 #### Inherited methods
 
@@ -68,7 +74,7 @@ Inherited methods from [It] - [Asit] - [Asmit] - [Asittag] - [Asmittag]
 
 ```*List::assertValueType( valueType )```
 * Assert value type
-  * one of TypeInterface constants or FQCN (for class or interface)
+  * one of ListTypeInterface constants or FQCN (for class or interface)
 * ```valueType``` _string_
 * Throws TypeException
 * Static
@@ -87,7 +93,7 @@ Inherited methods from [It] - [Asit] - [Asmit] - [Asittag] - [Asmittag]
 
 ```*List::setValueType( valueType )```
 * ```valueType``` _string_
-  * one of TypeInterface constants or FQCN (for class or interface)
+  * one of ListTypeInterface constants or FQCN (for class or interface)
 * Return _static_
 * Throws TypeException
 

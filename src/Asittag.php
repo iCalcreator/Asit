@@ -5,8 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @link      https://kigkonsult.se
+ * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -54,4 +53,24 @@ class Asittag extends Asit
     use TagTrait;
 
     use PkeyTagTrait;
+
+    /**
+     * Overriden It/Asit methods
+     */
+
+    /**
+     * Remove the current element
+     *
+     * @override
+     * @return $this
+     * @since 2.2.1 2024-01-08
+     */
+    public function remove() : static
+    {
+        foreach( $this->getCurrentTags() as $tag ) {
+            $this->removeCurrentTag( $tag );
+        }
+        parent::remove();
+        return $this;
+    }
 }

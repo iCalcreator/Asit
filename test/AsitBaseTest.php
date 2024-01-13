@@ -4,12 +4,8 @@
  *
  * This file is part of Asit.
  *
- * Support <https://github.com/iCalcreator/Asit>
- *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @link      https://kigkonsult.se
- * @version   2.0
+ * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -28,30 +24,51 @@
  *            You should have received a copy of the GNU Lesser General Public License
  *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
+declare( strict_types = 1 );
 namespace Kigkonsult\Asit;
 
-/**
- * Interface TypeInterface
- *
- * Type constants
- *
- * @package Kigkonsult\Asit
- */
-interface TypeInterface
+use PHPUnit\Framework\TestCase;
+
+class AsitBaseTest extends TestCase
 {
+    /**
+     * @param int $max
+     * @return array
+     */
+    public static function arrayLoader( int $max = 100 ) : array
+    {
+        $output = [];
+        for( $ix=0; $ix < $max; $ix++ ) {
+            $output['key' . $ix] = 'element' . $ix;
+        } // end for
+        return $output;
+    }
 
     /**
-     * Asit constants, OBJECT && RESOURCE in class It
+     * @var array|string[]
      */
-    public const ARR_Y       = "array";
-    public const ARRAY2      = "[]";
-    public const BOOL        = "bool";
-    public const BOOLEAN     = "boolean";
-    public const CALL_BLE    = "callable";
-    public const DOUBLE      = "double";
-    public const INT         = "int";
-    public const INTEGER     = "integer";
-    public const FLOAT       = "float";
-    public const STRING      = "string";
-    public const TRAVERSABLE = "Traversable";
+    public static array $COLORS = [
+        0 => 'Black',
+        1 => 'Gray',
+        2 => 'Blue',
+        3 => 'Green',
+        4 => 'Yellow',
+        5 => 'Brown',
+        6 => 'Orange',
+        7 => 'Red',
+        8 => 'Pink',
+        9 => 'Purple'
+    ];
+
+    /**
+     * Return colour
+     *
+     * @param int $index
+     * @return string
+     */
+    public static function getAttribute( int $index ) : string
+    {
+        $cIx = $index % 10;
+        return self::$COLORS[$cIx];
+    }
 }

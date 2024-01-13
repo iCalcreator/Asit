@@ -15,7 +15,6 @@
     ],
     "minimum-stability": "stable",
     "type": "library",
-    "time" : "2021-06-07",
     "license": "LGPL-3.0-or-later",
     "authors": [
         {
@@ -24,6 +23,10 @@
         }
     ],
     "funding": [
+        {
+            "type": "other",
+            "url": "https://www.buymeacoffee.com/kigkonsult"
+        },
         {
             "type": "other",
             "url": "https://paypal.me/kigkonsult"
@@ -40,6 +43,7 @@
         "php": ">=8.0"
     },
     "require-dev": {
+        "degraciamathieu/php-arguments-detector": ">=0.5.0",
         "phpunit/phpunit": ">=6.5.14",
         "phpcompatibility/php-compatibility": ">=9.3.5",
         "phpstan/phpstan": ">=0.9.3",

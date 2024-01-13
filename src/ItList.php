@@ -5,8 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @link      https://kigkonsult.se
+ * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -49,7 +48,7 @@ class ItList extends It implements ListTypeInterface
      * @override
      * @param mixed $element
      * @param null|int|string       $pKey  not used here
-     * @param null|int|string|array $tags  not used here
+     * @param null|int|string|int[]|string[] $tags  not used here
      * @return static
      * @throws TypeException
      */

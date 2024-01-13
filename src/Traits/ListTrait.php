@@ -42,7 +42,7 @@ trait ListTrait
     /**
      * Extended constructor, accepts value type as single or second argument
      *
-     * @override
+     * @override It::__construct()
      * @param mixed|null $collection
      * @param string|null $valueType
      * @throws CollectionException
@@ -65,32 +65,40 @@ trait ListTrait
     /**
      * Extended factory method, accepts value type as single or second argument
      *
-     * @override
+     * @override It::factory()
      * @param mixed|null $collection
-     * @param mixed|null $dummy
+     * @param mixed $valueType
      * @return static
      */
-    public static function factory( mixed $collection = null, mixed $dummy = null ) : static
+    public static function factory( mixed $collection = null, mixed $valueType = null ) : static
     {
-        return new static( $collection, $dummy );
+        return new static( $collection, $valueType );
     }
 
     /**
      * Extended class singleton method
      *
-     * @override
+     * @override it::singleton()
      * @param mixed|null $collection
-     * @param mixed|null $dummy
+     * @param mixed|null $valueType
      * @return static
      * @throws CollectionException
      * @throws TypeException
      */
-    public static function singleton( mixed $collection = null, mixed $dummy = null ) : static
+    public static function singleton( mixed $collection = null, mixed $valueType = null ) : static
     {
-        static $instance = null;
-        if( null === $instance ) {
-            $instance = new static( $collection, $dummy );
-        }
-        return $instance;
+        return parent::singleton( $collection, $valueType );
+    }
+
+    /**
+     * Instance method alias, return singleton instance
+     *
+     * @param mixed|null $collection
+     * @param mixed|null $valueType
+     * @return static
+     */
+    public static function getInstance( mixed $collection = null, mixed $valueType = null ) : static
+    {
+        return static::singleton( $collection, $valueType );
     }
 }

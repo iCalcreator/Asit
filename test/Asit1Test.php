@@ -5,8 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @link      https://kigkonsult.se
+ * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -31,54 +30,11 @@ namespace Kigkonsult\Asit;
 use Exception;
 use InvalidArgumentException;
 use Kigkonsult\Asit\Exceptions\PkeyException;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Traversable;
 
-class Asit1Test extends TestCase
+class Asit1Test extends AsitBaseTest
 {
-
-    /**
-     * @param null|int $max
-     * @return array
-     */
-    public function arrayLoader( null|int $max = 1000 ) : array
-    {
-
-        $output = [];
-        for( $ix=0; $ix < $max; $ix++ ) {
-            $output['key' . $ix] = 'element' . $ix;
-        } // end for
-
-        return $output;
-    }
-
-    /**
-     * @var array|string[]
-     */
-    public static array $COLORS = [
-        0 => 'Black',
-        1 => 'Gray',
-        2 => 'Blue',
-        3 => 'Green',
-        4 => 'Yellow',
-        5 => 'Brown',
-        6 => 'Orange',
-        7 => 'Red',
-        8 => 'Pink',
-        9 => 'Purple'
-    ];
-
-    /**
-     * @param int $index
-     * @return string
-     */
-    public static function getAttribute( int $index ) : string
-    {
-        $cIx = $index % 10;
-        return self::$COLORS[$cIx];
-    }
-
     /**
      * @test Asit exists, count,
      *
@@ -86,38 +42,17 @@ class Asit1Test extends TestCase
     public function asitTest1() : void
     {
         $asit = new Asit();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
         } // end for
 
-        $this->assertEquals(
-            100, $asit->count(), 'test11'
-        );
-
-        $this->assertTrue(
-            $asit->exists( 0 ),
-            'test12'
-        );
-        $this->assertFalse(
-            $asit->exists( -1 ),
-            'test13'
-        );
-        $this->assertFalse(
-            $asit->exists( -1111 ),
-            'test14'
-        );
-        $this->assertTrue(
-            $asit->exists( 99 ),
-            'test15'
-        );
-        $this->assertFalse(
-            $asit->exists( 100 ),
-            'test16'
-        );
-        $this->assertFalse(
-            $asit->exists( 100000 ),
-            'test7'
-        );
+        $this->assertEquals( 100, $asit->count(), __FUNCTION__ . ' #1' );
+        $this->assertTrue(  $asit->exists( 0 ), __FUNCTION__ . ' #2' );
+        $this->assertFalse( $asit->exists( -1 ), __FUNCTION__ . ' #3' );
+        $this->assertFalse( $asit->exists( -1111 ), __FUNCTION__ . ' #4' );
+        $this->assertTrue(  $asit->exists( 99 ), __FUNCTION__ . ' #5' );
+        $this->assertFalse( $asit->exists( 100 ), __FUNCTION__ . ' #6' );
+        $this->assertFalse( $asit->exists( 100000 ), __FUNCTION__ . ' #7' );
         $asit = null;
     }
 
@@ -130,96 +65,77 @@ class Asit1Test extends TestCase
     {
 
         $asit = new Asit();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
         } // end for
 
         $asit->rewind();               // test rewind
         $this->assertEquals(
-            0, $asit->key(), 'test21-1'
+            0, $asit->key(), __FUNCTION__ . ' #1'
         );
         $this->assertEquals(
-            'element0', $asit->current(), 'test21-2'
+            'element0', $asit->current(), __FUNCTION__ . ' #2'
         );
         $pKey = $asit->getCurrentPkey();
         $this->assertEquals(
-            'key0', $pKey, 'test21-3'
+            'key0', $pKey, __FUNCTION__ . ' #3'
         );
 
         $asit->next();             // test next
         $this->assertEquals(
-            1, $asit->key(), 'test21-4'
+            1, $asit->key(), __FUNCTION__ . ' #4'
         );
         $this->assertEquals(
-            'element1', $asit->current(), 'test21-5'
+            'element1', $asit->current(), __FUNCTION__ . ' #5'
         );
         $this->assertEquals(
-            'key1', $asit->getCurrentPkey(), 'test21-6'
+            'key1', $asit->getCurrentPkey(), __FUNCTION__ . ' #6'
         );
 
         $asit->last();           // test last
         $this->assertEquals(
-            99, $asit->key(), 'test21-7'
+            99, $asit->key(), __FUNCTION__ . ' #7'
         );
         $this->assertEquals(
-            'element99', $asit->current(), 'test21-8'
+            'element99', $asit->current(), __FUNCTION__ . ' #8'
         );
         $this->assertEquals(
-            'key99', $asit->getCurrentPkey(), 'test21-9'
+            'key99', $asit->getCurrentPkey(), __FUNCTION__ . ' #9'
         );
 
         $asit->previous();    // test previous
         $this->assertEquals(
-            98, $asit->key(), 'test21-10'
+            98, $asit->key(), __FUNCTION__ . ' #10'
         );
         $this->assertEquals(
-            'element98', $asit->current(), 'test21-11'
+            'element98', $asit->current(), __FUNCTION__ . ' #11'
         );
         $this->assertEquals(
-            'key98', $asit->getCurrentPkey(), 'test21-12'
+            'key98', $asit->getCurrentPkey(), __FUNCTION__ . ' #12'
         );
 
         $asit->last();
         $asit->next();
         $this->assertEquals(
-            100, $asit->key(), 'test21-13'
+            100, $asit->key(), __FUNCTION__ . ' #13'
         );
-        $this->assertFalse(
-            $asit->valid(),
-            'test21-14'
-        );
+        $this->assertFalse( $asit->valid(), __FUNCTION__ . ' #14' );
 
         $asit->rewind();
         $asit->previous();
-        $this->assertEquals(
-            -1, $asit->key(), 'test21-15'
-        );
-        $this->assertFalse(
-            $asit->valid(),
-            'test21-16'
-        );
+        $this->assertEquals(-1, $asit->key(), __FUNCTION__ . ' #15' );
+        $this->assertFalse( $asit->valid(), __FUNCTION__ . ' #16' );
 
         $asit->seek( 0 );   // test seek
-        $this->assertEquals(
-            0, $asit->key(), 'test21-17'
-        );
-        $this->assertEquals(
-            'element0', $asit->current(), 'test21-18'
-        );
-        $this->assertEquals(
-            'key0', $asit->getCurrentPkey(), 'test21-19'
-        );
+        $this->assertEquals(0, $asit->key(), __FUNCTION__ . ' #17' );
+        $this->assertEquals( 'element0', $asit->current(), __FUNCTION__ . ' #18' );
+        $this->assertEquals( 'key0', $asit->getCurrentPkey(), __FUNCTION__ . ' #19' );
 
         $asit->seek( 50 );
-        $this->assertEquals(
-            50, $asit->key(), 'test21-20'
+        $this->assertEquals( 50, $asit->key(), __FUNCTION__ . ' #20' );
+        $this->assertEquals( 'element50', $asit->current(), __FUNCTION__ . ' #21'
         );
-        $this->assertEquals(
-            'element50', $asit->current(), 'test21-21'
-        );
-        $this->assertEquals(
-            'key50', $asit->getCurrentPkey(), 'test21-22'
-        );
+        $this->assertEquals('key50', $asit->getCurrentPkey(), __FUNCTION__ . ' #22' );
 
         $asit = null;
     }
@@ -236,17 +152,17 @@ class Asit1Test extends TestCase
 
         foreach( [ new Asit(), new Asmit() ] as $asit ) {
 
-            foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+            foreach( self::arrayLoader( 100 ) as $key => $value ) {
                 $asit->append( $value, $key );
             }
 
             $this->assertTrue(
                 ( $asit->GetIterator() instanceof Traversable ),   // test GetIterator - Traversable
-                'test22-1'
+                __FUNCTION__ . ' #1'
             );
             $this->assertTrue(
                 ( $asit instanceof Traversable ),  // test Asit - Traversable
-                'test22-2'
+                __FUNCTION__ . ' #2'
             );
 
             // testing Traversable, i.e. makes the class traversable using foreach
@@ -256,17 +172,17 @@ class Asit1Test extends TestCase
                 ++$cnt;
             }
             $this->assertEquals(
-                100, $cnt, 'test92-3'
+                100, $cnt, __FUNCTION__ . ' #3'
             );
             $this->assertEquals(
-                99, $key, 'test22-4'
+                99, $key, __FUNCTION__ . ' #4'
             );
             $this->assertEquals(
-                'element99', $value, 'test22-5'
+                'element99', $value, __FUNCTION__ . ' #5'
             );
             $asit->seek( $key ); // position iterator last
             $this->assertEquals(
-                'key99', $asit->getCurrentPkey(), 'test22-6, exp: key99, got: ' . $asit->getCurrentPkey()
+                'key99', $asit->getCurrentPkey(), __FUNCTION__ . ' #6, exp: key99, got: ' . $asit->getCurrentPkey()
             );
 
             $this->assertTrue(
@@ -281,7 +197,7 @@ class Asit1Test extends TestCase
                         $element,
                         $asit->pKeySeek( $pKey )
                             ->current(),   // test pKeySeek
-                        'test22-12'
+                        __FUNCTION__ . ' #12 (' . $cnt . ')'
                     );
                 }
             } // end foreach
@@ -297,8 +213,9 @@ class Asit1Test extends TestCase
      */
     public function asmitTest23() : void
     {
+        // invalid key
         try {
-            Asmit::factory()->pKeySeek( 'key23' ); // don't exist
+            Asmit::assertPkey( '' );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -307,10 +224,11 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test23-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
 
+        // don't exist
         try {
-            Asmit::factory()->countPkey( 'key23' ); // don't exist
+            Asmit::factory()->pKeySeek( 'key23' );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -319,10 +237,11 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test23-2, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #2, exp 2, got ' . $ok );
 
+        // don't exist
         try {
-            Asmit::factory( $this->arrayLoader( 10 ))->removePkey( 'test23-3' ); // remove but don't exist
+            Asmit::factory()->countPkey( 'key23' );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -331,10 +250,24 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test23-3, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #3, exp 2, got ' . $ok );
 
+        // remove but don't exist
         try {
-            Asmit::factory()->getCurrentPkey(); // no current
+            Asmit::factory( self::arrayLoader( 10 ))->removePkey( 'test23-3' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #4, exp 2, got ' . $ok );
+
+        // no current
+        try {
+            Asmit::factory()->getCurrentPkey();
             $ok = 1;
         }
         catch( RuntimeException $e ) {
@@ -343,12 +276,13 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test23-4, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #5, exp 2, got ' . $ok );
 
+        // set the same primary key again, allowed
         $asmit = Asmit::factory()->append( 'value', 'key' );
         $pKey  = $asmit->getCurrentPkey();
         try {
-            $asmit->setCurrentPkey( $pKey ); // set the same primary key again, allowed
+            $asmit->setCurrentPkey( $pKey );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -357,8 +291,24 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 1, $ok, 'test23-4, exp 1, got ' . $ok );
+        $this->assertEquals( 1, $ok, __FUNCTION__ . ' #5, exp 1, got ' . $ok );
 
+        // set another key for value1 BUT same as for value2, exception exp
+        $asmit = Asmit::factory()
+            ->append( 'value1', 'key1' )
+            ->append( 'value2', 'key2' );
+        $asmit->rewind(); // current is 1
+        try {
+            $asmit->setCurrentPkey( 'key2' );
+            $ok = 1;
+        }
+        catch( InvalidArgumentException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #6, exp 2, got ' . $ok );
     }
 
     /**
@@ -369,73 +319,71 @@ class Asit1Test extends TestCase
     public function asmitTest24() : void
     {
         $asmit = new Asmit();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asmit->append( $value, $key );
         }
 
-        $asmit->seek( array_rand( array_flip( range( 2, 92 )))); // set current
+        $asmit->seek( array_rand( array_flip( range( 2, 92 )))); // set random current
 
         $pKey1 = $asmit->getCurrentPkey();
         $this->assertEquals(
             1,
             $asmit->countPkey( $pKey1 ),
-            'test24-1, exp 1, got ' . $asmit->countPkey( $pKey1 )
+            __FUNCTION__ . ' #1, exp 1, got ' . $asmit->countPkey( $pKey1 )
         );
 
         $asmit->removePkey( $pKey1 );
         $this->assertEquals(
             1,
             $asmit->countPkey( $pKey1 ),
-            'test24-2, exp 1, got ' . $asmit->countPkey( $pKey1 )
+            __FUNCTION__ . ' #2, exp 1, got ' . $asmit->countPkey( $pKey1 )
         );
 
-        $pKey2 = 'test24';
-        $asmit->addCurrentPkey( 'test24' );
+        $pKey2 = __FUNCTION__ . 2;
+        $asmit->addCurrentPkey( $pKey2 );
         $this->assertEquals(
             2,
             $asmit->countPkey( $pKey2 ),
-            'test24-3, exp 2, got ' . $asmit->countPkey( $pKey2 )
+            __FUNCTION__ . ' #3, exp 2, got ' . $asmit->countPkey( $pKey2 )
         );
 
         $asmit->removePkey( $pKey1 );
         $this->assertEquals(
             1,
             $asmit->countPkey( $pKey2 ),  // <-------
-            'test24-4, exp 1, got ' . $asmit->countPkey( $pKey2 )
+            __FUNCTION__ . ' #4, exp 1, got ' . $asmit->countPkey( $pKey2 )
         );
         $this->assertFalse(
             $asmit->pKeyExists( $pKey1 ),
-            'test24-5, found : ' . $pKey1
+            __FUNCTION__ . ' #5, found : ' . $pKey1
         );
 
-        $pKey3 = 'test24-3';
+        $pKey3 = __FUNCTION__ . 3;
         $asmit->addCurrentPkey( $pKey3 );
         $exp   = [ $pKey2, $pKey3 ];
-        $pKeys = $asmit->getCurrentPkey( false);
+        $pKeys = $asmit->getCurrentPkey( false );
         $this->assertEquals(
             $exp,
             $pKeys,
-            'test24-5, exp : ' . implode( ',', $exp ) . ',  got : ' . implode( ',', $pKeys )
+            __FUNCTION__ . ' #6, exp : ' . implode( ',', $exp ) . ',  got : ' . implode( ',', $pKeys )
         );
 
         $iterator = $asmit->getPkeyIterator();
         $this->assertTrue(
             ( $iterator instanceof Traversable ),   // test getPkeyIterator - Traversable
-            'test24-6'
+            __FUNCTION__ . ' #7'
         );
         $this->assertEquals(
             100,
             $iterator->count(),
-            'test24-7, exp : 100,  got : ' . $iterator->count()
+            __FUNCTION__ . ' #8, exp : 100,  got : ' . $iterator->count()
         );
 
         $pKeys = [];
         foreach( $iterator as $key => $value ) {
             $pKeys[] = $key;
         }
-        $this->assertContains(
-            $pKey2, $pKeys, 'test24-8'
-        );
+        $this->assertContains( $pKey2, $pKeys, __FUNCTION__ . ' #9 exp ' . $pKey2 . ' in ' . implode( ', ', $pKeys ));
 
         $asmit = null;
     }
@@ -448,7 +396,7 @@ class Asit1Test extends TestCase
     public function asmitTest25() : void
     {
         $asmit = new Asmit();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asmit->append( $value, $key );
         }
 
@@ -458,7 +406,7 @@ class Asit1Test extends TestCase
         $this->assertEquals(
             [ $asmit->key() => $resultC ],
             $resultP,
-            'test25-1, exp : ' . $resultC . ', got ' . reset( $resultP )
+            __FUNCTION__ . ' #1, exp : ' . $resultC . ', got ' . reset( $resultP )
         );
 
         $key = 'TEST';
@@ -468,7 +416,7 @@ class Asit1Test extends TestCase
             $this->assertEquals(
                 $resultP,
                 $resultX,
-                'test25-2-' . $x . ', exp : ' . reset( $resultP ) . ', got ' . reset( $resultX )
+                __FUNCTION__ . ' #2-' . $x . ', exp : ' . reset( $resultP ) . ', got ' . reset( $resultX )
             );
         } // end for
         $asmit = null;
@@ -493,7 +441,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test28, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
     }
 
     /**
@@ -506,20 +454,20 @@ class Asit1Test extends TestCase
     {
 
         foreach( [ new Asit(), new Asittag() ] as $aIx => $asit ) {
-            foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+            foreach( self::arrayLoader( 100 ) as $key => $value ) {
                 $asit->append( $value );
             } // end for
             $this->assertEquals(
                 $asit->key(),
                 $asit->getCurrentPkey(),
-                'test301-' . $aIx . ', exp ' . $asit->key() . ', got ' . $asit->getCurrentPkey()
+                __FUNCTION__ . ' #1-' . $aIx . ', exp ' . $asit->key() . ', got ' . $asit->getCurrentPkey()
             );
 
             $asit->seek( array_rand( array_flip( range( 1, 88 ) ) ) ); // set current
             $this->assertEquals(
                 $asit->key(),
                 $asit->getCurrentPkey(),
-                'test302-' . $aIx . 'exp ' . $asit->key() . ', got ' . $asit->getCurrentPkey()
+                __FUNCTION__ . ' #2-' . $aIx . 'exp ' . $asit->key() . ', got ' . $asit->getCurrentPkey()
             );
 
             $asit = null;
@@ -537,7 +485,7 @@ class Asit1Test extends TestCase
     {
 
         $asit = new Asit();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
         } // end for
 
@@ -553,7 +501,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test311, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
 
         $ok = 0;
         try {
@@ -566,7 +514,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test312, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #2, exp 2, got ' . $ok );
 
         $asit->seek( array_rand( array_flip( range( 31, 39 )))); // set current
 
@@ -574,7 +522,7 @@ class Asit1Test extends TestCase
         $this->assertEquals(
             'key' . $asit->key(),
             $asit->getCurrentPkey(),
-            'test31'
+            __FUNCTION__ . ' #3'
         );
 
         $pKey1  = $asit->getCurrentPkey();
@@ -594,7 +542,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 4;
         }
-        $this->assertEquals( 3, $ok, 'test314, exp 3, got ' . $ok );
+        $this->assertEquals( 3, $ok, __FUNCTION__ . ' #4, exp 3, got ' . $ok );
 
         $index1  = $asit->key();
         $newPkey = 'newPkey';
@@ -602,16 +550,16 @@ class Asit1Test extends TestCase
         $this->assertEquals(
             $newPkey,
             $asit->getCurrentPkey(),
-            'test315'
+            __FUNCTION__ . ' #5'
         );
         $this->assertEquals(
             $index1,
             $asit->key(),
-            'test316'
+            __FUNCTION__ . ' #6'
         );
         $this->assertTrue(
             $asit->pKeyExists( $pKey1 ),
-            'test317'
+            __FUNCTION__ . ' #7'
         );
 
         $asit = null;
@@ -624,10 +572,9 @@ class Asit1Test extends TestCase
      */
     public function asitTest33() : void
     {
-
         $element = 'element';
         $asit = new Asit();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
         } // end for
         $asit->seek( array_rand( array_flip( range( 30, 34 ))));
@@ -637,19 +584,19 @@ class Asit1Test extends TestCase
 
         $this->assertEquals(
             [ $ix1 => $element . $ix1 ], $asit->pKeyGet( $pKey1 ),  // test get( $pKey )
-            'test33-1'
+            __FUNCTION__ . ' #1'
         );
         $this->assertEquals(
             [ $ix1 => $element . $ix1 ], $asit->pKeyGet( [ $pKey1 ] ),  // test get( [ $pKey ] )
-            'test33-3'
+            __FUNCTION__ . ' #3'
         );
         $this->assertEquals(
             [ $ix1 => $element . $ix1 ], $asit->pKeyGet( [ $pKey1, 'noExists' ] ),  // test get( [ $pKey, 'noExists' ] )
-            'test33-5'
+            __FUNCTION__ . ' #5'
         );
         $this->assertEquals(
             [], $asit->pKeyGet( [ 'noExists1', 'noExists2' ] ),  // test get( [ 'noExists1', 'noExists2' ] ) i.e. pKey not found
-            'test33-6'
+            __FUNCTION__ . ' #6'
         );
 
         $asit->seek( array_rand( array_flip( range( 35, 39 ))));
@@ -659,11 +606,11 @@ class Asit1Test extends TestCase
         $this->assertCount(
             2,
             $asit->pKeyGet( $search ),
-            'test33-8'
+            __FUNCTION__ . ' #8'
         );
         $this->assertEquals(
             [ $ix1 => $element . $ix1, $ix2 => 'element' . $ix2 ], $asit->pkeyGet( $search ),  // pkeyGet, alias of get()
-            'test33-9 : '
+            __FUNCTION__ . ' #9 : '
         );
 
         $asit = null;
@@ -676,37 +623,43 @@ class Asit1Test extends TestCase
      */
     public function asitTest34() : void
     {
-
         $asit = new Asit();
         for( $pIx = 0; $pIx < 10; $pIx++ ) {
-            $asit->append(
-                'element',
-                (( 0 === ( $pIx % 2 )) ? 'KEY' : 'key' ) . $pIx
-            );
+            $pKey = (( 0 === ( $pIx % 2 )) ? 'KEY' : 'key' ) . $pIx;
+            $asit->append( 'element', $pKey );
+//          echo ' 0 set (' . $pIx . ') : ' . $pKey . PHP_EOL; // test ###
         } // end for
 
         $this->assertCount(
-            $asit->count(), $asit->getPkeys(), 'test34-1'
+            $asit->count(), $asit->getPkeys(), __FUNCTION__ . ' #1'
         );
 
-        foreach( $asit->getPkeys( SORT_FLAG_CASE | SORT_STRING ) as $pIx => $pKey ) {
+        $pKeys = $asit->getPkeys( null, SORT_FLAG_CASE | SORT_STRING );
+//      echo 'pKeys : ' . implode( ', ', $pKeys ) . PHP_EOL; // test ###
+        $pIx = -1;
+        foreach( $pKeys as $pKey ) { // will now have new keys
+            ++$pIx;
             // case-insensitively sort
             $exp = ( 0 === ( $pIx % 2 )) ? 'KEY' :  'key';
-//          echo ' 1 got : ' . $pKey . PHP_EOL;
+//          echo ' 1 got (' . $pIx . ') : ' . $pKey . PHP_EOL; // test ###
+            $act = substr( $pKey, 0, 3 );
             $this->assertEquals(
                 $exp,
-                substr( $pKey, 0, 3 ),
-                'test34-2-' . $pIx . ', exp : ' . $exp . ', got : ' . $pKey
+                $act,
+                __FUNCTION__ . ' #2-' . $pIx . ', exp : ' . $exp . ', got : ' . $act . ' for ' . $pKey
             );
         }
-        foreach( $asit->getPkeys() as $pIx => $pKey ) {
+        $pKeys = $asit->getPkeys();
+        $pIx = -1;
+        foreach( $pKeys as $pKey ) {
+            ++$pIx;
             // case-sensitively sort
             $exp = ( $pIx < 5 ) ? 'KEY' : 'key';
-//          echo ' 2 got : ' . $pKey . PHP_EOL;
+//          echo ' 2 got (' . $pIx . ') : ' . $pKey . PHP_EOL; // test ###
             $this->assertEquals(
                 $exp,
                 substr( $pKey, 0, 3 ),
-                'test34-3-' . $pIx . ', exp : ' . $exp . ', got : ' . $pKey
+                __FUNCTION__ . ' #3-' . $pIx . ', exp : ' . $exp . ', got : ' . $pKey
             );
         }
         $asit = null;
@@ -719,9 +672,8 @@ class Asit1Test extends TestCase
      */
     public function asitTest35() : void
     {
-
         $asit = new AsittagList();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
             $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
@@ -731,13 +683,13 @@ class Asit1Test extends TestCase
 
         $newKey = 'otherKey';
         $asit->setCurrentPkey( $newKey );
-        $this->assertTrue(  $asit->pKeyExists( $newKey ),'test35-1' );
-        $this->assertFalse( $asit->pKeyExists( $pKey1 ), 'test35-2' );
+        $this->assertTrue(  $asit->pKeyExists( $newKey ),__FUNCTION__ . ' #1' );
+        $this->assertFalse( $asit->pKeyExists( $pKey1 ), __FUNCTION__ . ' #2' );
         $asit->setCurrentPkey( $newKey );
-        $this->assertTrue(  $asit->pKeyExists( $newKey ),'test35-3' );
+        $this->assertTrue(  $asit->pKeyExists( $newKey ),__FUNCTION__ . ' #3' );
         $asit->setCurrentPkey( $pKey1 );
-        $this->assertTrue(  $asit->pKeyExists( $pKey1 ),'test35-4' );
-        $this->assertFalse( $asit->pKeyExists( $newKey ), 'test35-5' );
+        $this->assertTrue(  $asit->pKeyExists( $pKey1 ),__FUNCTION__ . ' #4' );
+        $this->assertFalse( $asit->pKeyExists( $newKey ), __FUNCTION__ . ' #5' );
 
         $asit = null;
     }
@@ -749,38 +701,33 @@ class Asit1Test extends TestCase
      */
     public function asitTest36() : void
     {
-
         $asit = new AsmittagList();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
             $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
         } // end for
 
         $asit->seek( array_rand( array_flip( range( 0, 99 ))));
         $pKey1 = $asit->getCurrentPkey();
-        $this->assertTrue( $asit->pKeyExists( $pKey1 ), 'test36-1' );
+        $this->assertTrue( $asit->pKeyExists( $pKey1 ), __FUNCTION__ . ' #1' );
 
         $result = $asit->current();
 
         $newKey1 = 'otherKey1';
         $asit->setCurrentPkey( $newKey1 );
-        $this->assertTrue( $asit->pKeyExists( $newKey1 ),'test36-2' );
+        $this->assertTrue( $asit->pKeyExists( $newKey1 ),__FUNCTION__ . ' #2' );
         $asit->setCurrentPkey( $newKey1 );
-        $this->assertTrue( $asit->pKeyExists( $newKey1 ),'test36-3' );
-        $this->assertEquals( 2, $asit->countPkey( $newKey1 ), 'test36-4' );
+        $this->assertTrue( $asit->pKeyExists( $newKey1 ),__FUNCTION__ . ' #3' );
+        $this->assertEquals( 2, $asit->countPkey( $newKey1 ), __FUNCTION__ . ' #4' );
 
         $newKey2 = 'otherKey2';
         $asit->setCurrentPkey( $newKey2 );
-        $this->assertTrue( $asit->pKeyExists( $newKey2 ),'test36-5' );
-        $this->assertEquals( 3, $asit->countPkey( $newKey2 ), 'test36-6' );
+        $this->assertTrue( $asit->pKeyExists( $newKey2 ),__FUNCTION__ . ' #5' );
+        $this->assertEquals( 3, $asit->countPkey( $newKey2 ), __FUNCTION__ . ' #6' );
 
         $asit->rewind()->previous()->previous()->previous(); // make current invalid
         $asit->pKeySeek( $newKey2 );
-        $this->assertEquals(
-            $result,
-            $asit->current(),
-            'test26-7'
-        );
+        $this->assertEquals( $result, $asit->current(), __FUNCTION__ . ' #7' );
 
         $asit = null;
     }
@@ -792,7 +739,7 @@ class Asit1Test extends TestCase
      */
     public function asitTest38() : void
     {
-        $asit    = new Asittag( $this->arrayLoader( 10));
+        $asit    = new Asittag( self::arrayLoader( 10));
         $newPkey = 'testbcdefg';
         $ok = 0;
         try {
@@ -805,7 +752,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test38-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -817,7 +764,7 @@ class Asit1Test extends TestCase
      */
     public function asitTest39() : void
     {
-        $asit      = new Asittag( $this->arrayLoader( 10));
+        $asit      = new Asittag( self::arrayLoader( 10));
         $otherPkey = 'testbcdefg';
         $ok = 0;
         try {
@@ -830,7 +777,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test39-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -842,7 +789,7 @@ class Asit1Test extends TestCase
      */
     public function asitTest40() : void
     {
-        $asit      = new Asittag( $this->arrayLoader( 10));
+        $asit      = new Asittag( self::arrayLoader( 10));
         $asit->rewind();
         $onePkey   = $asit->getCurrentPkey();
         $otherPkey = $asit->next()->next()->next()->next()->getCurrentPkey();
@@ -858,7 +805,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test40-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -870,7 +817,7 @@ class Asit1Test extends TestCase
      */
     public function asitTest41() : void
     {
-        $asit     = new Asittag( $this->arrayLoader( 10));
+        $asit     = new Asittag( self::arrayLoader( 10));
         $duplPkey = $asit->last()->previous()->previous()->previous()->getCurrentPkey();
         $asit->previous()->previous()->previous()->previous(); // set another current
         $ok = 0;
@@ -884,7 +831,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test37-26, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -896,7 +843,6 @@ class Asit1Test extends TestCase
      */
     public function asitTest61() : void
     {
-
         $asit = new Asittag();
         for( $pIx = 0; $pIx < 10; $pIx++ ) {
             $asit->append(
@@ -906,7 +852,7 @@ class Asit1Test extends TestCase
         } // end for
 
         $this->assertCount(
-            $asit->count(), $asit->getPkeys(), 'test61-1'
+            $asit->count(), $asit->getPkeys(), __FUNCTION__ . ' #1'
         );
 
         $asit = null;
@@ -919,7 +865,7 @@ class Asit1Test extends TestCase
      */
     public function asitTest73() : void
     {
-        $data = $this->arrayLoader( 100 );
+        $data = self::arrayLoader( 100 );
         $asit = new Asittag();
         foreach( $data as $element ) {
             $asit->append( $element );
@@ -927,12 +873,12 @@ class Asit1Test extends TestCase
         $this->assertEquals(
             [],
             $asit->pKeyTagGet( 'fakePkey' ),
-            'test73-1'
+            __FUNCTION__ . ' #1'
         );
         $this->assertEquals(
             array_values( $data ),
             $asit->pKeyTagGet(),
-            'test73-2'
+            __FUNCTION__ . ' #2'
         );
 
         $asit = null;
@@ -959,7 +905,7 @@ class Asit1Test extends TestCase
                 $ok = 3;
             }
             $this->assertEquals(
-                2, $ok, 'test81-1-' . $aIx . ', exp 2, got ' . $ok  . ' ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString()
+                2, $ok, __FUNCTION__ . ' #1-' . $aIx . ', exp 2, got ' . $ok  . ' ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString()
             );
 
             $asit = null;
@@ -987,7 +933,7 @@ class Asit1Test extends TestCase
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test9-1, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #1, exp 2, got ' . $ok );
 
         $asit = null;
     }
@@ -1000,13 +946,13 @@ class Asit1Test extends TestCase
     public function asitTest10() : void
     {
         $asit = new Asit();
-        foreach( $this->arrayLoader( 100 ) as $key => $value ) {
+        foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
         } // end for
         $this->assertSameSize(
             $asit->getPkeys(),
             $asit->get(),
-            'test 10-1'
+            __FUNCTION__ . ' #1'
         );
 
         $asit = null;
@@ -1019,13 +965,13 @@ class Asit1Test extends TestCase
      */
     public function asitTest11() : void
     {
-        $asit    = new AsitList( $this->arrayLoader( 10 ), AsitList::STRING );
+        $asit    = new AsitList( self::arrayLoader( 10 ), AsitList::STRING );
         $result  = $asit->pKeyGet( null, [ self::class, 'cmp' ] );
         $result1 = reset( $result );
         $this->assertEquals(
             'element9',
             $result1,
-            'test 11-1 exp "element9", got : ' . $result1
+            __FUNCTION__ . ' #1 exp "element9", got : ' . $result1
         );
 
         $asit = null;
@@ -1038,13 +984,13 @@ class Asit1Test extends TestCase
      */
     public function asittagTest12() : void
     {
-        $asit    = new AsittagList( $this->arrayLoader( 10 ), AsitList::STRING );
+        $asit    = new AsittagList( self::arrayLoader( 10 ), AsitList::STRING );
         $result  = $asit->pKeyTagGet( null, null, null, null, [ self::class, 'cmp' ] );
         $result1 = reset( $result );
         $this->assertEquals(
             'element9',
             $result1,
-            'test 12-1 exp "element9", got : ' . $result1
+            __FUNCTION__ . ' #1 exp "element9", got : ' . $result1
         );
 
         $asit = null;

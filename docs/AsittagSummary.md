@@ -1,4 +1,4 @@
-[comment]: # (This file is part of Asit, manages array collections. Copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
+[comment]: # (This file is part of Asit, manages array collections. Copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 ## Asittag/Asmittag Summary
 
 > Class Asittag 
@@ -22,10 +22,10 @@ For non-assoc arrays,
 * primary key is the (numeric) array index
 * may also have tags
 
-Asittag class extends :
+The Asittag class extends :
 * [AsittagList], assert collection elements of expected valueType
 
-Asmittag class extends :
+The Asmittag class extends :
 * [AsmittagList], assert collection elements of expected valueType
 
 #### Inherited methods
@@ -104,7 +104,7 @@ Inherited methods from [It] - [Asit]
 * ```tags``` _int_|_string_|_array_   none-used tag is skipped
 * ```union``` _bool_ default true
 * ```exclTags``` _int_|_string_|_array_ tags to exclude
-* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
+* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable, null=>ksort
 * Return _array_
 * Throws SortException
 
@@ -115,7 +115,7 @@ Inherited methods from [It] - [Asit]
 * ```tags``` _int_|_string_|_array_   none-used tag is skipped
 * ```union``` _bool_ default true
 * ```exclTags``` _int_|_string_|_array_ tags to exclude
-* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
+* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable, null=>ksort
 * Return _array_
 * Throws SortException
 

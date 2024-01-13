@@ -25,47 +25,34 @@
  *            along with Asit. If not, see <https://www.gnu.org/licenses/>.
  */
 declare( strict_types = 1 );
-namespace Kigkonsult\Asit;
-
-use Kigkonsult\Asit\Exceptions\PkeyException;
-use Kigkonsult\Asit\Exceptions\TagException;
-use Kigkonsult\Asit\Exceptions\TypeException;
-use Kigkonsult\Asit\Traits\TypeTrait;
-use Kigkonsult\Asit\Traits\ListTrait;
-
 /**
- * Class AsittagList extends Asittag, assert collection elements of preset valueType
+ * Kigkonsult\Asit test autoloader
  *
- * @package Kigkonsult\Asit
+ * @param string $class
  */
-class AsittagList extends Asittag implements ListTypeInterface
-{
-    use TypeTrait;
-
-    use ListTrait;
-
-    /**
-     * Append typed element to (array) collection, opt with primary key
-     *
-     * @override
-     * @param mixed      $element
-     * @param null|int|string $pKey        MUST be unique
-     * @param null|int|string|int[]|string[] $tags  only int or string allowed
-     * @return static
-     * @throws PkeyException
-     * @throws TagException
-     * @throws TypeException
-     */
-    public function append(
-        mixed           $element,
-        null|int|string $pKey = null,
-        null|int|string|array $tags = null
-    ) : static
-    {
-        if( $this->isValueTypeSet()) {
-            $this->assertElementType( $element );
+spl_autoload_register(
+    function( string $class ) {
+        static $PREFIX   = 'Kigkonsult\\Asit\\';
+        static $BS       = '\\';
+        static $SRC      = 'src';
+        static $TEST     = 'test';
+        static $PHP      = '.php';
+        if ( 0 != strncmp( $PREFIX, $class, 16 )) {
+            return;
         }
-        parent::append( $element, $pKey, $tags );
-        return $this;
+        $class = substr( $class, 16 );
+        if ( false !== strpos( $class, $BS )) {
+            $class = str_replace( $BS, DIRECTORY_SEPARATOR, $class );
+        }
+        $file = dirname( __DIR__ ) . DIRECTORY_SEPARATOR . $SRC . DIRECTORY_SEPARATOR . $class . $PHP;
+        if( is_file( $file )) {
+            include $file;
+        }
+        else {
+            $file = dirname( __DIR__ ) . DIRECTORY_SEPARATOR . $TEST . DIRECTORY_SEPARATOR . $class . $PHP;
+            if( is_file( $file )) {
+                include $file;
+            }
+        }
     }
-}
+);

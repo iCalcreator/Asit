@@ -1,16 +1,16 @@
-[comment]: # (This file is part of Asit, manages array collections. Copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
+[comment]: # (This file is part of Asit, manages array collections. Copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 ## Asit/Asmit Summary
 
 >Class **Asit** 
 * Extends [It]
-* implements assoc array collection element get-/set-methods
+* implements _assoc_ array collection element get-/set-methods
 
 The assoc element array key is used as (unique) primary key.
 A primary key may be replaced by another (unique) key.
 
 >Class **Asmit**
 * extends Asit 
-* accepts multiple (unique) primary keys for (each) collection element
+* accepts multiple (_assoc_) (unique) primary keys for (each) collection element
 
 Collection elements are searchable using
 * Iterator (et al.) methods
@@ -19,11 +19,11 @@ Collection elements are searchable using
 For non-assoc arrays,
 * primary key is the (numeric) array index
 
-Asit class extends :
+The Asit class is extended by :
 * [Asittag], secondary keys, additional (non-unique) tags (aka attributes?) may be set for each element
 * [AsitList], assert collection elements of expected valueType
 
-Asmit class extends :
+The Asmit class is extended by :
 * [Asmittag], secondary keys, additional (non-unique) tags (aka attributes?) may be set for each element
 * [AsmitList], assert collection elements of expected valueType
 
@@ -73,7 +73,7 @@ Inherited methods from [It]
 ```Asit::get( [ pKeys [, sortParam ]] )```
 * Return (non-assoc) array of element(s) in collection, using the opt. primary keys for selection.
 * ```pKeys``` _int_|_string_|_array_
-* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
+* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable, null=>ksort
 * Return _array_
 * Throws SortException
 
@@ -81,7 +81,7 @@ Inherited methods from [It]
 * Return (non-assoc array) sub-set of element(s) in collection using primary keys
 * Convenient ```get``` method alias
 * ```pKeys``` _int_|_string_|_array_
-* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable
+* ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable, null=>ksort
 * Return _array_
 * Throws SortException
 

@@ -5,8 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @link      https://kigkonsult.se
+ * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -28,21 +27,14 @@
 declare( strict_types = 1 );
 namespace Kigkonsult\Asit;
 
+use DateTime;
+use DateTimeInterface;
 use Exception;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
-interface testIfc
+interface TestIfc
 {
     public const HALLO_WORLD = 'Hallo world';
-}
-class testClass1
-    implements testIfc
-{
-    public function __invoke() : string
-    {
-        return self::HALLO_WORLD;
-    }
 }
 
 class testClass2
@@ -54,7 +46,7 @@ class testClass2
 }
 
 
-class AsitListTest extends TestCase
+class AsitListTest extends AsitBaseTest
 {
     public static string $file1 = 'file1';
     public static string $file2 = 'file1';
@@ -103,25 +95,25 @@ class AsitListTest extends TestCase
         $this->assertEquals(
             $list1->get(),
             $list2->get(),
-            'test11-1-12'
+            __FUNCTION__ . ' #1'
         );
 
         $this->assertEquals(
             $list1->pKeyGet(),
             $list3->pKeyGet(),
-            'test11-1-13'
+            __FUNCTION__ . ' #2'
         );
 
         $this->assertEquals(
             $list1->getPkeyIterator(),
             $list2->getPkeyIterator(),
-            'test11-2-12'
+            __FUNCTION__ . ' #3'
         );
 
         $this->assertEquals(
             $list1->getPkeyIterator(),
             $list3->getPkeyIterator(),
-            'test11-2-13'
+            __FUNCTION__ . ' #4'
         );
     }
 
@@ -130,23 +122,23 @@ class AsitListTest extends TestCase
      */
     public function ListTest2() : void
     {
-        $list1  = AsmittagList::singleton(
-            $this->arrayLoader( AsmittagList::STRING ),
+        $list1  = AsmittagList::getInstance(
+            $this->arrayListLoader( AsmittagList::STRING ),
             AsmittagList::STRING
         );
         $cnt1   = $list1->count();
 
-        $list2  = AsmittagList::singleton();
+        $list2  = AsmittagList::getInstance();
 
         $this->assertEquals(
             $cnt1,
             $list2->count(),
-            'test2-1'
+            __FUNCTION__ . ' #1'
         );
         $this->assertEquals(
             AsmittagList::STRING,
             $list2->getValueType(),
-            'test2-2'
+            __FUNCTION__ . ' #2'
         );
     }
 
@@ -155,7 +147,7 @@ class AsitListTest extends TestCase
      *
      * @return array
      */
-    public function listLoader() : array
+    public static function listLoader() : array
     {
         $testData = [];
 
@@ -212,7 +204,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test12-1-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #1-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -237,7 +229,7 @@ class AsitListTest extends TestCase
             $ok = 2;
         }
         $this->assertEquals(
-            1, $ok, 'test20-' . $case . ', exp 1, got ' . $ok
+            1, $ok, __FUNCTION__ . ' #' . $case . ', exp 1, got ' . $ok
         );
     }
 
@@ -266,7 +258,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test21-1-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #1-' . $case . ', exp 2, got ' . $ok
         );
         $ok = 0;
         try {
@@ -281,7 +273,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test21-2-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #2-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -310,7 +302,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test22-1-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #1-' . $case . ', exp 2, got ' . $ok
         );
         $ok = 0;
         try {
@@ -325,7 +317,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test22-2-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #2-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -354,7 +346,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test23-1-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #1-' . $case . ', exp 2, got ' . $ok
         );
         $ok = 0;
         try {
@@ -369,7 +361,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test23-2-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #2-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -398,7 +390,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test24-1-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #1-' . $case . ', exp 2, got ' . $ok
         );
         $ok = 0;
         try {
@@ -413,7 +405,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test24-2-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #2-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -442,7 +434,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test25-1-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #1-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -471,7 +463,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test26-1-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #1-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -500,7 +492,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test27-1-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #1-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -529,7 +521,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test28-1-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #1-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -547,20 +539,20 @@ class AsitListTest extends TestCase
         $case += 290;
         $ok   = 0;
         try {
-            $list->setValueType( testIfc::class )
-                 ->assertElementType( new testClass1() );
+            $list->setValueType( DateTimeInterface::class )
+                 ->assertElementType( new DateTime() );
             $ok = 1;
         }
         catch( Exception $e ) {
             $ok = 2;
         }
         $this->assertEquals(
-            1, $ok, 'test29-1-' . $case . ', exp 1, got ' . $ok
+            1, $ok, __FUNCTION__ . ' #1-' . $case . ', exp 1, got ' . $ok
         );
 
         $ok = 0;
         try {
-            $list->setValueType( testIfc::class )
+            $list->setValueType( TestIfc::class )
                  ->assertElementType( new testClass2());
             $ok = 1;
         }
@@ -571,7 +563,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test29-2-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #2-' . $case . ', exp 2, got ' . $ok
         );
 
         $ok = 0;
@@ -587,13 +579,13 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test29-3-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #3-' . $case . ', exp 2, got ' . $ok
         );
 
         $ok = 0;
         try {
             $list->setValueType( AsittagList::class )
-                 ->assertElementType( new testClass1() );
+                 ->assertElementType( new DateTime() );
             $ok = 1;
         }
         catch( InvalidArgumentException $e ) {
@@ -603,7 +595,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test29-4-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #4-' . $case . ', exp 2, got ' . $ok
         );
 
         $ok = 0;
@@ -619,7 +611,7 @@ class AsitListTest extends TestCase
             $ok = 3;
         }
         $this->assertEquals(
-            2, $ok, 'test29-5-' . $case . ', exp 2, got ' . $ok
+            2, $ok, __FUNCTION__ . ' #5-' . $case . ', exp 2, got ' . $ok
         );
     }
 
@@ -646,26 +638,27 @@ class AsitListTest extends TestCase
                 AsitList::OBJECT,
                 AsitList::RESOURCE,
                 AsitList::CALL_BLE,
+                AsitList::TRAVERSABLE,
             ]
             as $vIx => $valueType ) {
             $list->setValueType( $valueType );
             $this->assertEquals(
                 $valueType,
                 $list->getValueType(),
-                'test' . $case . '-1-' . $vIx . ', exp : ' . $valueType . ', got : ' . $list->getValueType()
+                __FUNCTION__ . ' #' . $case . '-1-' . $vIx . ', exp : ' . $valueType . ', got : ' . $list->getValueType()
             );
 
             $ok = 0;
             try {
                 $list->init();
-                $list->setCollection( $this->arrayLoader( $valueType ) );
+                $list->setCollection( $this->arrayListLoader( $valueType ) );
                 $ok = 1;
             }
             catch( Exception $e ) {
                 $ok = $e->getMessage();
             }
             $this->assertEquals(
-                1, $ok, 'test' . $case . '-2-' . $vIx . ' - ' . get_class( $list ) . ' - ' . $valueType . ', exp 1, got ' . $ok
+                1, $ok, __FUNCTION__ . ' #' . $case . '-2-' . $vIx . ' - ' . get_class( $list ) . ' - ' . $valueType . ', exp 1, got ' . $ok
             );
 
         } // end foreach
@@ -683,16 +676,16 @@ class AsitListTest extends TestCase
     public function ListTest4( int $case, mixed $list ) : void
     {
         $case += 400;
-        $list->setValueType( testClass1::class );
+        $list->setValueType( DateTime::class );
 
         for( $ix = 0; $ix < 3; $ix++ ) {
-            $list->append( new testClass1() );
+            $list->append( new DateTime() );
         }
 
         foreach( $list as $element ) {
             $this->asserttrue(
-                ( $element instanceof testClass1 ),
-                'test4-1-' . $case . '-' . $ix
+                ( $element instanceof DateTime ),
+                __FUNCTION__ . ' #1-' . $case . '-' . $ix
             );
         }
     }
@@ -728,7 +721,7 @@ class AsitListTest extends TestCase
             $list->setValueType( $valueType );
             $list->init();
             for( $x = 0; $x < 99; $x++  ) {
-                foreach( $this->arrayLoader( $valueType ) as $pKey => $element ) {
+                foreach( $this->arrayListLoader( $valueType ) as $pKey => $element ) {
                     $list->append( $element, $x . $pKey );
                     if( $class === ItList::class ) {
                         continue;
@@ -746,7 +739,7 @@ class AsitListTest extends TestCase
             $string = $list->toString();
             $list->seek( array_rand( array_flip( range( 2, 192 )))); // set current
             $this->assertNotFalse(
-                strpos( $string, (string)$list->key() ), 'test' . $case . '-' . 1 . ' key:' . $list->key() . ' ' . get_class( $list ) . PHP_EOL . $string
+                strpos( $string, (string)$list->key() ), __FUNCTION__ . ' #' . $case . '-' . 1 . ' key:' . $list->key() . ' ' . get_class( $list ) . PHP_EOL . $string
             );
         } // end foreach
         /*
@@ -754,6 +747,99 @@ class AsitListTest extends TestCase
             echo $class . ' : ' . PHP_EOL . $string . PHP_EOL; // the very last
         }
         */
+    }
+
+    /**
+     * Test AsmitList and remove
+     *
+     * Same as Asit2Test::asitTest76() but on AsmitList
+     *
+     * @test
+     */
+    public function ListTest7() : void
+    {
+        $asit = AsmitList::factory( AsmitList::STRING )
+            ->append( 'value1', 'key1' )
+            ->append( 'value2', 'key2' )
+            ->append( 'value3', 'key3' )
+            ->append( 'value4', 'key4' )
+            ->append( 'value5', 'key5' );
+        $asit->last();
+        $asit->previous();
+        $asit->previous();
+        $key = $asit->key();
+        $this->assertEquals( 2, $key, __FUNCTION__ . '-1, exp 2, got: ' . $key );
+
+        $pKey = $asit->getCurrentPkey();
+
+        $asit->remove();
+        // check that pkey NOT exists
+        $this->assertEmpty(
+            $asit->pKeyGet( $pKey ),
+            __FUNCTION__ . '-2, pkey: ' . $pKey . ', exp none, got ' . var_export( $asit->pKeyGet( $pKey ), true )
+        );
+        // remove all from the end
+        $this->assertEquals( 4, $asit->count(), __FUNCTION__ . '-3, exp 4, got: ' . $asit->count());
+        $asit->last();
+        $asit->remove();
+        $asit->previous();
+        $asit->remove();
+        $asit->previous();
+        $asit->remove();
+        $asit->previous();
+        $asit->remove();
+        $this->assertEquals( 0, $asit->count(), __FUNCTION__ . '-4, exp 0, got: ' . $asit->count());
+    }
+
+    /**
+     * Test AsmittagList and remove, last and previous
+     *
+     * Same as Asit2Test::asitTest76() but on AsmitList
+     *
+     * @test
+     *
+     */
+    public function ListTest8() : void
+    {
+        $asit = AsmittagList::factory( AsmitList::STRING )
+            ->append( 'value1', 'key1', 'tag1' )
+            ->append( 'value2', 'key2', 'tag2' )
+            ->append( 'value3', 'key3', 'tag3' )
+            ->append( 'value4', 'key4', 'tag4' )
+            ->append( 'value5', 'key5', 'tag5' );
+        $asit->last();
+        $asit->previous();
+        $asit->previous();
+        $key = $asit->key();
+        $this->assertEquals( 2, $key, __FUNCTION__ . '-1, exp 2, got: ' . $key );
+
+        $pKey = $asit->getCurrentPkey();
+        $tags = $asit->getCurrentTags();
+
+        $asit->remove();
+        // check that pkey NOT exists
+        $this->assertEmpty(
+            $asit->pKeyGet( $pKey ),
+            __FUNCTION__ . '-2, pkey: ' . $pKey . ', exp none, got ' . var_export( $asit->pKeyGet( $pKey ), true )
+        );
+        // check that tag NOT exists
+        foreach( $tags as $tag ) {
+            $this->assertFalse(
+                $asit->tagExists( $tag ),
+                __FUNCTION__ . '-3, exp none, got true'
+            );
+        }
+        // remove all from the end
+        $this->assertEquals( 4, $asit->count(), __FUNCTION__ . '-3, exp 4, got: ' . $asit->count());
+        $asit->last();
+        $asit->remove();
+        $asit->previous();
+        $asit->remove();
+        $asit->previous();
+        $asit->remove();
+        $asit->previous();
+        $asit->remove();
+        $this->assertEquals( 0, $asit->count(), __FUNCTION__ . '-4, exp 0, got: ' . $asit->count());
     }
 
     /**
@@ -788,7 +874,7 @@ class AsitListTest extends TestCase
                 return $strings[$ix];
             case AsitList::OBJECT :
                 $objects =  [
-                    new testClass1(),
+                    new DateTime(),
                     new testClass2()
                 ];
                 return $objects[$ix];
@@ -805,13 +891,15 @@ class AsitListTest extends TestCase
                 static $callables = [];
                 if( empty( $callables )) {
                     $callables = [
-                        new testClass1(),
+                        new testClass2(),
                         new testClass2()
                     ];
                 }
                 return $callables[$ix];
+            case AsitList::TRAVERSABLE :
+                return It::factory( [ 1, 2 ] );
             default :
-                $fqcns = [ testClass1::class, testClass2::class ];
+                $fqcns = [ DateTime::class, testClass2::class ];
                 return $fqcns[$ix];
         } // end switch
 
@@ -821,7 +909,7 @@ class AsitListTest extends TestCase
      * @param mixed $valueType
      * @return array
      */
-    public function arrayLoader( mixed $valueType ) : array
+    public function arrayListLoader( mixed $valueType ) : array
     {
 
         $output = [];
@@ -830,31 +918,5 @@ class AsitListTest extends TestCase
         } // end for
 
         return $output;
-    }
-
-    /**
-     * @var array|string[]
-     */
-    public static array $COLORS = [
-        0 => 'Black',
-        1 => 'Gray',
-        2 => 'Blue',
-        3 => 'Green',
-        4 => 'Yellow',
-        5 => 'Brown',
-        6 => 'Orange',
-        7 => 'Red',
-        8 => 'Pink',
-        9 => 'Purple'
-    ];
-
-    /**
-     * @param int $index
-     * @return string
-     */
-    public static function getAttribute( int $index ) : string
-    {
-        $cIx = $index % 10;
-        return self::$COLORS[$cIx];
     }
 }

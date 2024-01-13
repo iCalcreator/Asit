@@ -25,14 +25,7 @@
            You should have received a copy of the GNU Lesser General Public License
            along with Asit. If not, see <https://www.gnu.org/licenses/>.
 -->
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="true"
-         bootstrap="autoload.php">
+<phpunit bootstrap="test/autoload.php">
     <testsuites>
         <testsuite name="It Tests">
             <file>./test/ItTest.php</file>
@@ -43,37 +36,19 @@
         </testsuite>
         <testsuite name="Asit List Tests">
             <file>./test/AsitListTest.php</file>
+            <file>./test/AsitListTest2.php</file>
         </testsuite>
     </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
     <coverage
             includeUncoveredFiles="true"
-            processUncoveredFiles="true"
             pathCoverage="false"
             ignoreDeprecatedCodeUnits="false"
             disableCodeCoverageIgnore="true">
-        <include>
-            <file>./src/Asit.php</file>
-            <file>./src/AsitList.php</file>
-            <file>./src/Asittag.php</file>
-            <file>./src/AsittagList.php</file>
-            <file>./src/Asmit.php</file>
-            <file>./src/AsmitList.php</file>
-            <file>./src/Asmittag.php</file>
-            <file>./src/AsmittagList.php</file>
-            <file>./src/BaseInterface.php</file>
-            <file>./src/Exceptions/CollectionException.php</file>
-            <file>./src/Exceptions/PkeyException.php</file>
-            <file>./src/Exceptions/SortException.php</file>
-            <file>./src/Exceptions/TagException.php</file>
-            <file>./src/Exceptions/TypeException.php</file>
-            <file>./src/It.php</file>
-            <file>./src/ItList.php</file>
-            <file>./src/ListTypeInterface.php</file>
-            <file>./src/Traits/ListTrait.php</file>
-            <file>./src/Traits/PkeyTagTrait.php</file>
-            <file>./src/Traits/TagTrait.php</file>
-            <file>./src/Traits/TypeTrait.php</file>
-        </include>
         <!-- Require the PHP Xdebug (2.7.0 or later) and tokenizer extensions-->
         <!-- Remove or comment after your own choice-->
         <!-- Note, all output in report/logging will be saved in 'testDocs' folder -->
@@ -81,7 +56,7 @@
             <!-- clover outputFile="testDocs/clover.xml"/ -->
             <!-- crap4j outputFile="testDocs/crap4j.xml" threshold="50"/ -->
             <html outputDirectory="testDocs/PHPUnitCoverage" lowUpperBound="60" highLowerBound="80"/>
-            <php outputFile="testDocs/coverage.php"/>
+            <!-- php outputFile="testDocs/coverage.php"/ -->
             <text outputFile="testDocs/coverage.txt" showUncoveredFiles="false" showOnlySummary="false"/>
             <!-- xml outputDirectory="testDocs/xml-coverage"/ -->
         </report>
@@ -95,6 +70,5 @@
         <!-- testdoxHtml outputFile="testDocs/testdox.html"/ -->
         <!-- testdoxText outputFile="testDocs/testdox.txt"/ -->
         <!-- testdoxXml outputFile="testDocs/testdox.xml"/ -->
-        <text outputFile="testDocs/logfile.txt"/>
     </logging>
 </phpunit>

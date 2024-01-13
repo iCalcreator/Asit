@@ -5,8 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @link      https://kigkonsult.se
+ * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -51,7 +50,7 @@ class AsmittagList extends Asmittag implements ListTypeInterface
      * @override
      * @param mixed                 $element
      * @param null|int|string       $pKey    MUST be unique
-     * @param null|int|string|array $tags    only int or string allowed
+     * @param null|int|string|int[]|string[] $tags    only int or string allowed
      * @return static
      * @throws PkeyException
      * @throws TagException
