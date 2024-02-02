@@ -36,6 +36,7 @@
         "issues": "https://github.com/iCalcreator/Asit/issues"
     },
     "autoload": {
+        "classmap": ["src/"],
         "files": ["autoload.php"],
         "psr-4": { "Kigkonsult\\Asit\\": ["src/"] }
     },
@@ -49,7 +50,12 @@
         "phpstan/phpstan": ">=0.9.3",
         "squizlabs/php_codesniffer": ">=3.5.5"
     },
+    "config": {
+        "classmap-authoritative": true,
+        "sort-packages": true
+    },
     "scripts": {
         "post-install-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/phpcompatibility/php-compatibility",
         "post-update-cmd" : "\"vendor/bin/phpcs\" --config-set installed_paths vendor/phpcompatibility/php-compatibility"
-    }}
+    }
+}

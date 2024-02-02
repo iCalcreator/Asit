@@ -27,10 +27,15 @@
 declare( strict_types = 1 );
 namespace Kigkonsult\Asit;
 
+use ArrayIterator;
 use DateTime;
 use DateTimeInterface;
 use Exception;
 use InvalidArgumentException;
+use IteratorAggregate;
+use Kigkonsult\Asit\Exceptions\TypeException;
+use stdClass;
+use Traversable;
 
 interface TestIfc
 {
@@ -45,6 +50,17 @@ class testClass2
     }
 }
 
+
+class TestClass3 implements IteratorAggregate
+{
+    /**
+     * @return Traversable
+     */
+    public function getIterator() : Traversable
+    {
+        return new ArrayIterator( [ 1, 2, 3 ] );
+    }
+}
 
 class AsitListTest extends AsitBaseTest
 {
@@ -73,7 +89,7 @@ class AsitListTest extends AsitBaseTest
      * @test
      *
      */
-    public function ListTest11() : void
+    public function listTest11() : void
     {
         $data1  = [ 'key1' => 'value1' ];
         $data24 = [ 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', ];
@@ -118,9 +134,80 @@ class AsitListTest extends AsitBaseTest
     }
 
     /**
+     * test not set valueType (assertValueType)
+     *
+     * @test
+     */
+    public function listTest2() : void
+    {
+        $ok    = 0;
+        try {
+            AsmittagList::factory();
+            $ok = 1;
+        }
+        catch( TypeException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertEquals(
+            2, $ok, __FUNCTION__ . ' #1 exp 2, got ' . $ok
+        );
+    }
+
+    /**
+     * test not set valueType (assertValueType)
+     *
+     * @test
+     */
+    public function listTest3() : void
+    {
+        $ok    = 0;
+        try {
+            AsmittagList::factory( AsmittagList::INT )
+                ->assertElementType( 'value' );
+            $ok = 1;
+        }
+        catch( TypeException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertEquals(
+            2, $ok, __FUNCTION__ . ' #2 exp 2, got ' . $ok
+        );
+    }
+
+    /**
+     * test not set valueType (assertValueType)
+     *
+     * @test
+     */
+    public function listTest4() : void
+    {
+        $ok    = 0;
+        try {
+            AsmittagList::factory( AsmittagList::INT )
+                ->append( 'value' );
+            $ok = 1;
+        }
+        catch( TypeException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertEquals(
+            2, $ok, __FUNCTION__ . ' #3 exp 2, got ' . $ok
+        );
+    }
+
+    /**
      * @test *List singleton
      */
-    public function ListTest2() : void
+    public function listTest9() : void
     {
         $list1  = AsmittagList::getInstance(
             $this->arrayListLoader( AsmittagList::STRING ),
@@ -128,7 +215,7 @@ class AsitListTest extends AsitBaseTest
         );
         $cnt1   = $list1->count();
 
-        $list2  = AsmittagList::getInstance();
+        $list2  = AsmittagList::getInstance( AsmittagList::STRING );
 
         $this->assertEquals(
             $cnt1,
@@ -153,27 +240,27 @@ class AsitListTest extends AsitBaseTest
 
         $testData[] = [
             1,
-            new ItList()
+            new ItList( ItList::STRING )
         ];
 
         $testData[] = [
             2,
-            new AsitList()
+            new AsitList( ItList::STRING )
         ];
 
         $testData[] = [
             3,
-            new AsmitList()
+            new AsmitList( ItList::STRING )
         ];
 
         $testData[] = [
             4,
-            AsittagList::factory()
+            AsittagList::factory( ItList::STRING )
         ];
 
         $testData[] = [
             5,
-            AsmittagList::factory()
+            AsmittagList::factory( ItList::STRING )
         ];
 
         return $testData;
@@ -188,7 +275,7 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest12( int $case, mixed $list ) : void
+    public function listTest12( int $case, mixed $list ) : void
     {
         $case += 10;
         $ok    = 0;
@@ -217,7 +304,7 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest20( int $case, mixed $list ) : void
+    public function listTest20( int $case, mixed $list ) : void
     {
         $case += 200;
         $ok    = 0;
@@ -242,7 +329,7 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest21( int $case, mixed $list ) : void
+    public function listTest21( int $case, mixed $list ) : void
     {
         $case += 210;
         $ok   = 0;
@@ -286,7 +373,7 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest22( int $case, mixed $list ) : void
+    public function listTest22( int $case, mixed $list ) : void
     {
         $case += 220;
         $ok   = 0;
@@ -330,7 +417,7 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest23( int $case, mixed $list ) : void
+    public function listTest23( int $case, mixed $list ) : void
     {
         $case += 230;
         $ok   = 0;
@@ -374,7 +461,7 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest24( int $case, mixed $list ) : void
+    public function listTest24( int $case, mixed $list ) : void
     {
         $case += 240;
         $ok   = 0;
@@ -418,7 +505,7 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest25( int $case, mixed $list ) : void
+    public function listTest25( int $case, mixed $list ) : void
     {
         $case += 250;
         $ok   = 0;
@@ -447,7 +534,7 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest26( int $case, mixed $list ) : void
+    public function listTest26( int $case, mixed $list ) : void
     {
         $case += 260;
         $ok   = 0;
@@ -476,7 +563,7 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest27( int $case, mixed $list ) : void
+    public function listTest27( int $case, mixed $list ) : void
     {
         $case += 270;
         $ok   = 0;
@@ -505,7 +592,7 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest28( int $case, mixed $list ) : void
+    public function listTest28( int $case, mixed $list ) : void
     {
         $case += 280;
         $ok   = 0;
@@ -526,6 +613,52 @@ class AsitListTest extends AsitBaseTest
     }
 
     /**
+     * test assertElementType Traversable
+     *
+     * @test
+     */
+    public function listTest29() : void
+    {
+        $asmittagList = AsmittagList::factory(Traversable::class );
+
+        $ok   = 0;
+        try {
+            $asmittagList->assertElementType( new TestClass3());
+            $ok = 1;
+        }
+        catch( Exception $e ) {
+            $ok = 2;
+        }
+        $this->assertEquals(
+            1, $ok, __FUNCTION__ . ' #1 exp 1, got ' . $ok
+        );
+
+        $ok   = 0;
+        try {
+            $asmittagList->append( new TestClass3());
+            $ok = 1;
+        }
+        catch( Exception $e ) {
+            $ok = 2;
+        }
+        $this->assertEquals(
+            1, $ok, __FUNCTION__ . ' #2 exp 1, got ' . $ok
+        );
+
+        $ok   = 0;
+        try {
+            $asmittagList->append( new stdClass());
+            $ok = 1;
+        }
+        catch( TypeException $e ) {
+            $ok = 2;
+        }
+        $this->assertEquals(
+            2, $ok, __FUNCTION__ . ' #3 exp 2, got ' . $ok
+        );
+    }
+
+    /**
      * test assertElementType
      *
      * @test
@@ -534,13 +667,13 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest29( int $case, mixed $list ) : void
+    public function listTest30( int $case, mixed $list ) : void
     {
-        $case += 290;
+        $case += 300;
         $ok   = 0;
         try {
             $list->setValueType( DateTimeInterface::class )
-                 ->assertElementType( new DateTime() );
+                ->assertElementType( new DateTime() );
             $ok = 1;
         }
         catch( Exception $e ) {
@@ -622,9 +755,9 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest3( int $case, mixed $list ) : void
+    public function listTest400( int $case, mixed $list ) : void
     {
-        $case += 300;
+        $case += 400;
         foreach(
             [
                 AsitList::BOOL,
@@ -673,9 +806,9 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest4( int $case, mixed $list ) : void
+    public function listTest500( int $case, mixed $list ) : void
     {
-        $case += 400;
+        $case += 500;
         $list->setValueType( DateTime::class );
 
         for( $ix = 0; $ix < 3; $ix++ ) {
@@ -697,9 +830,9 @@ class AsitListTest extends AsitBaseTest
      * @param int $case
      * @param mixed $list
      */
-    public function ListTest5( int $case, mixed $list ) : void
+    public function listTest600( int $case, mixed $list ) : void
     {
-        $case  += 500;
+        $case  += 600;
         $string = '';
         $class  = get_class( $list );
 
@@ -756,7 +889,7 @@ class AsitListTest extends AsitBaseTest
      *
      * @test
      */
-    public function ListTest7() : void
+    public function listTest700() : void
     {
         $asit = AsmitList::factory( AsmitList::STRING )
             ->append( 'value1', 'key1' )
@@ -799,7 +932,7 @@ class AsitListTest extends AsitBaseTest
      * @test
      *
      */
-    public function ListTest8() : void
+    public function listTest800() : void
     {
         $asit = AsmittagList::factory( AsmitList::STRING )
             ->append( 'value1', 'key1', 'tag1' )

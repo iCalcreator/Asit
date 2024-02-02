@@ -5,7 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
@@ -42,7 +42,8 @@ class PkeyException extends InvalidArgumentException
      *
      * @var string
      */
-    public static string $PKEYERR1     = 'null|false|int|string expected, got bool true';
-    public static string $PKEYFOUND    = "The new primary key : '%s' exists for position %d";
-    public static string $PKEYNOTFOUND = 'Primary key : %s not found';
+    public static string $PKEYERR1      = 'null|false|int|string expected, got bool true';
+    public static string $PKEYFOUND     = "The new primary key : '%s' exists with position %d";
+    public static string $PKEYNOTFOUND1 = 'Primary key : %s not found';
+    public static string $PKEYNOTFOUND2 = 'Primary key for position %d not found';
 }

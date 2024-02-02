@@ -5,7 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
@@ -28,16 +28,20 @@
 namespace Kigkonsult\Asit\Traits;
 
 use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\PkeyException;
+use Kigkonsult\Asit\Exceptions\PositionException;
 use Kigkonsult\Asit\Exceptions\SortException;
 use Kigkonsult\Asit\Exceptions\TagException;
-use RuntimeException;
 
 use function array_key_exists;
 use function count;
 use function implode;
 use function in_array;
+use function is_int;
+use function is_string;
 use function ksort;
 use function sprintf;
+use function trim;
 
 /**
  * Trait TagTrait, property and methods for tags
@@ -52,7 +56,7 @@ trait TagTrait
      * Named 'tag' here to avoid mixup with Iterator method 'key'
      * Each tag may exist on multiple collection elements
      *
-     * @var int[][]|string[][]
+     * @var mixed[]    ( tag => int[]|string[] )
      */
     protected array $tags = [];
 
@@ -72,18 +76,18 @@ trait TagTrait
     /**
      * Assert tag, int and string allowed
      *
-     * @param  int|string $tag
+     * @param  mixed $tag
      * @return void
      * @throws TagException
      */
-    public static function assertTag( int|string $tag ) : void
+    public static function assertTag( mixed $tag ) : void
     {
         static $TMPL = "Invalid tag : (%s) %s";
         try {
             self::assertKey( $tag, $TMPL );
         }
         catch( InvalidArgumentException $e ) {
-            throw new TagException( $e->getMessage(), 20, $e );
+            throw new TagException( $e->getMessage(), 20 );
         }
     }
 
@@ -129,7 +133,7 @@ trait TagTrait
      * To be used in parallel with the Iterator 'current' method, below
      *
      * @return int[]|string[]
-     * @throws RuntimeException
+     * @throws PositionException
      */
     public function getCurrentTags() : array
     {
@@ -171,7 +175,7 @@ trait TagTrait
      *
      * @param int|string|int[]|string[] $tag
      * @return bool
-     * @throws RuntimeException
+     * @throws PositionException
      */
     public function hasCurrentTag( int | string | array $tag ) : bool
     {
@@ -222,7 +226,7 @@ trait TagTrait
      *
      * @param int|string $tag  0 (zero) allowed also duplicates
      * @return static
-     * @throws RuntimeException
+     * @throws PositionException
      * @throws TagException
      */
     public function addCurrentTag( int | string $tag ) : static
@@ -243,13 +247,14 @@ trait TagTrait
      *
      * @param int|string $tag  0 (zero) allowed also duplicates
      * @return static
-     * @throws RuntimeException
+     * @throws PkeyException
+     * @throws PositionException
      */
     public function removeCurrentTag( int | string $tag ) : static
     {
         $this->assertCurrent();
-        $pKey = $this->getCurrentPkey(); // return int|string
-        $this->removePkeyTag(( is_int($pKey ) ? $pKey : (string) $pKey ), $tag );
+        $pKey = $this->getCurrentPkey();
+        $this->removePkeyTag( $pKey, $tag );
         return $this;
     }
 

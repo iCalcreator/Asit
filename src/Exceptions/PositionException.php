@@ -31,18 +31,16 @@ namespace Kigkonsult\Asit\Exceptions;
 use InvalidArgumentException;
 
 /**
- * Class TypeException
+ * Class PositionException
  *
  * @package Kigkonsult\Asit\Exceptions
  */
-class TypeException extends InvalidArgumentException
+class PositionException extends InvalidArgumentException
 {
     /**
      * Error text templates
      *
      * @var string
      */
-    public static string $ERR1 = "Invalid value type (#%d) : %s, expects %s";
-    public static string $ERR2 = "Invalid value type : %s";
-    public static string $ERR3 = "Value type NOT set";
+    public static string $ERR1 = "Invalid current (array) position: %s";
 }

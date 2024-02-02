@@ -148,45 +148,45 @@ class ItTest extends AsitBaseTest
         ++$case;
 
         $this->assertEquals(
-            100, $it->count(), 'test21-0-' . $case . ' exp: 100, got: ' . $it->count()
+            100, $it->count(), __FUNCTION__ . ' #1-' . $case . ' exp: 100, got: ' . $it->count()
         );
 
         $it->rewind();               // test rewind
         $this->assertEquals(
-            0, $it->key(), 'test21-1-' . $case
+            0, $it->key(), __FUNCTION__ . ' #2-' . $case
         );
         $this->assertEquals(
-            'element0', $it->current(), 'test21-2-' . $case
+            'element0', $it->current(), __FUNCTION__ . ' #3-' . $case
         );
 
         $it->next();             // test next
         $this->assertEquals(
-            1, $it->key(), 'test21-4-' . $case . ' exp: 1. got: ' . $it->key()
+            1, $it->key(), __FUNCTION__ . ' #4-' . $case . ' exp: 1. got: ' . $it->key()
         );
         $this->assertEquals(
-            'element1', $it->current(), 'test21-5-' . $case
+            'element1', $it->current(), __FUNCTION__ . ' #5-' . $case
         );
 
         $it->last();           // test last
         $this->assertEquals(
-            99, $it->key(), 'test21-7-' . $case . ' exp: 999, got: ' . $it->key()
+            99, $it->key(), __FUNCTION__ . ' #7-' . $case . ' exp: 999, got: ' . $it->key()
         );
         $this->assertEquals(
-            'element99', $it->current(), 'test21-8-' . $case
+            'element99', $it->current(), __FUNCTION__ . ' #8-' . $case
         );
 
         $it->previous();    // test previous
         $this->assertEquals(
-            98, $it->key(), 'test21-10-' . $case
+            98, $it->key(), __FUNCTION__ . ' #10-' . $case
         );
         $this->assertEquals(
-            'element98', $it->current(), 'test21-11-' . $case
+            'element98', $it->current(), __FUNCTION__ . ' #11-' . $case
         );
 
         $it->last();
         $it->next();
         $this->assertEquals(
-            100, $it->key(), 'test21-13-' . $case
+            100, $it->key(), __FUNCTION__ . ' #14-' . $case
         );
         $this->assertFalse(
             $it->valid(),
@@ -196,27 +196,31 @@ class ItTest extends AsitBaseTest
         $it->rewind();
         $it->previous();
         $this->assertEquals(
-            -1, $it->key(), 'test21-15-' . $case
+            -1, $it->key(), __FUNCTION__ . ' #15-' . $case
         );
         $this->assertFalse(
             $it->valid(),
-            'test21-16-' . $case
+            __FUNCTION__ . ' #16-' . $case
         );
 
         $it->seek( 0 );   // test seek
         $this->assertEquals(
-            0, $it->key(), 'test21-17-' . $case
+            0, $it->key(), __FUNCTION__ . ' #17-' . $case
         );
         $this->assertEquals(
-            'element0', $it->current(), 'test21-18-' . $case
+            'element0', $it->current(), __FUNCTION__ . ' #18-' . $case
+        );
+
+        $this->assertEquals(
+            'element49', $it->seek( 49 )->current(), __FUNCTION__ . ' #19-' . $case
         );
 
         $it->seek( 50 );
         $this->assertEquals(
-            50, $it->key(), 'test21-20-' . $case
+            50, $it->key(), __FUNCTION__ . ' #20-' . $case
         );
         $this->assertEquals(
-            'element50', $it->current(), 'test21-21-' . $case
+            'element50', $it->current(), __FUNCTION__ . ' #21-' . $case
         );
 
     }
@@ -233,15 +237,15 @@ class ItTest extends AsitBaseTest
         foreach( [ It::factory( $payLoad1 ) , Asit::factory( $payLoad1 ) ] as $it ) {
             $it->setCollection( $payLoad2 );
             $this->assertEquals(     // test count
-                200, $it->count(), 'test22-1 exp: 200, got: ' . $it->count()
+                200, $it->count(), __FUNCTION__ . ' #1 exp: 200, got: ' . $it->count()
             );
             $it->rewind();         // test rewind
             $this->assertEquals(
-                0, $it->key(), 'test22-2'
+                0, $it->key(), __FUNCTION__ . ' #2'
             );
             $it->last();           // test last
             $this->assertEquals(
-                199, $it->key(), 'test22-3'
+                199, $it->key(), __FUNCTION__ . ' #3'
             );
         }
     }
@@ -263,11 +267,11 @@ class ItTest extends AsitBaseTest
 
         $this->assertTrue(
             ( $it->GetIterator() instanceof Traversable ),   // test GetIterator - Traversable
-            'test25-1'
+            __FUNCTION__ . ' #1'
         );
         $this->assertTrue(
             ( $it instanceof Traversable ),  // test Asit - Traversable
-            'test25-2'
+            __FUNCTION__ . ' #2'
         );
 
         // testing Traversable, i.e. makes the class traversable using foreach
@@ -276,12 +280,12 @@ class ItTest extends AsitBaseTest
         foreach(   $it   as $key => $value ) { // 'internal key', NOT pKey
             ++$cnt;
         }
-        $this->assertEquals( 100, $cnt, 'test92-3' );
+        $this->assertEquals( 100, $cnt, __FUNCTION__ . ' #3' );
         $this->assertEquals(
-            99, $key, 'test25-4'
+            99, $key, __FUNCTION__ . ' #4'
         );
         $this->assertEquals(
-            'element99', $value, 'test25-5'
+            'element99', $value, __FUNCTION__ . ' #5'
         );
 
     }
@@ -305,7 +309,7 @@ class ItTest extends AsitBaseTest
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, 'test26, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' exp 2, got ' . $ok );
     }
 
     protected static array $collection = [ 'value9-2', 'value1-3', 'Value3-1' ];
@@ -324,7 +328,7 @@ class ItTest extends AsitBaseTest
         $this->assertEquals(
             'value9-2',
             $result1,
-            'test 32-1 exp "value9-2",  got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
+            __FUNCTION__ . ' #1 exp "value9-2",  got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
         );
 
         $result  = $it->get( SORT_FLAG_CASE | SORT_STRING );
@@ -332,7 +336,7 @@ class ItTest extends AsitBaseTest
         $this->assertEquals(
             'value1-3',
             $result1,
-            'test 32-2 exp "value1-3", got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
+            __FUNCTION__ . ' #2 exp "value1-3", got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
         );
 
         $result  = $it->get( [ self::class, 'cmp' ] );
@@ -340,7 +344,7 @@ class ItTest extends AsitBaseTest
         $this->assertEquals(
             'Value3-1',
             $result1,
-            'test 32-2 exp "value3-1", got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
+            __FUNCTION__ . ' #3 exp "value3-1", got : ' . str_replace( PHP_EOL, '', var_export( $result, true  ))
         );
     }
 

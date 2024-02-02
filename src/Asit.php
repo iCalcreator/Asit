@@ -5,7 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -29,16 +29,18 @@ namespace Kigkonsult\Asit;
 
 use ArrayIterator;
 use InvalidArgumentException;
-use Kigkonsult\Asit\Exceptions\CollectionException;
 use Kigkonsult\Asit\Exceptions\PkeyException;
+use Kigkonsult\Asit\Exceptions\PositionException;
 use Kigkonsult\Asit\Exceptions\SortException;
-use RuntimeException;
 use Traversable;
 
 use function array_key_exists;
 use function array_keys;
+use function array_search;
+use function get_debug_type;
 use function is_int;
 use function is_string;
+use function intval;
 use function ksort;
 use function sprintf;
 use function strlen;
@@ -82,7 +84,7 @@ class Asit extends It
     /**
      * Primary keys for collection element
      *
-     * @var array<string|int, int>
+     * @var mixed[]
      */
     protected array $pKeys = [];
 
@@ -111,10 +113,7 @@ class Asit extends It
         $this->rewind();
         while( $this->valid()) {
             $key     = self::prepKeyString( $this->key(), $pLen );
-            $string .= self::pKey2String(
-                $key,
-                (string) ( $this->getCurrentPkey() ?: self::$SP0 )
-            );
+            $string .= self::pKey2String( $key, $this->getCurrentPkey());
             $string .= self::element2String( $key, $this->current());
             $this->next();
         }
@@ -150,7 +149,7 @@ class Asit extends It
         parent::remove();
         $key  = $this->position;
         $pKey = array_search( $key, $this->pKeys, true );
-        unset( $this->pKeys[ $pKey] );
+        unset( $this->pKeys[$pKey] );
         return $this;
     }
 
@@ -159,7 +158,7 @@ class Asit extends It
      */
 
     /**
-     * Assert key/tag, int and string allowed
+     * Assert key/tag, int and string allowed, incl 0/'0'
      *
      * @param  mixed  $key
      * @param  string $tmpl
@@ -168,12 +167,14 @@ class Asit extends It
      */
     protected static function assertKey( mixed $key, string $tmpl ) : void
     {
-        if( is_int( $key ) || ( is_string( $key ) && ! empty( $key ))) {
+        if( is_int( $key ) && ( intval( $key ) === $key )) {
             return;
         }
-        throw new InvalidArgumentException(
-            sprintf( $tmpl, self::getErrType( $key ), self::getDispVal( $key ))
-        );
+        if( ! is_string( $key ) || ( empty( $key ) && ( 0 != $key ))) { // note ==
+            throw new InvalidArgumentException(
+                sprintf( $tmpl, get_debug_type( $key ), self::getDispVal( $key ) )
+            );
+        }
     }
 
     /**
@@ -190,12 +191,12 @@ class Asit extends It
             self::assertKey( $pKey, $TMPL );
         }
         catch( InvalidArgumentException $e ) {
-            throw new PkeyException( $e->getMessage(), 10, $e );
+            throw new PkeyException( $e->getMessage(), 10 );
         }
     }
 
     /**
-     * Return bool true if single primary key is set
+     * Return bool true if a primary key is found
      *
      * @param int|string $pKey
      * @return bool
@@ -210,13 +211,13 @@ class Asit extends It
      *
      * @param int|string $pKey 0 (zero) allowed
      * @return void
-     * @throw PkeyException
+     * @throws PkeyException
      */
     protected function assertPkeyExists( int | string $pKey ) : void
     {
         if( ! $this->pKeyExists( $pKey )) {
             throw new PkeyException(
-                sprintf( PkeyException::$PKEYNOTFOUND, $pKey )
+                sprintf( PkeyException::$PKEYNOTFOUND1, $pKey )
             );
         }
     }
@@ -226,7 +227,7 @@ class Asit extends It
      *
      * @param int|string $pKey 0 (zero) allowed
      * @return void
-     * @throw PkeyException
+     * @throws PkeyException
      */
     protected function assertPkeyNotExists( int | string $pKey ) : void
     {
@@ -252,28 +253,30 @@ class Asit extends It
     /**
      * Set (or reset) unique primary key for a collection element
      *
-     * @param int|string $pKey 0 (zero) allowed
-     * @param int        $index
+     * @param int|string $pKey      0 (zero) allowed
+     * @param int        $position  exist as key in collection
      * @return static
      * @throws PkeyException
      */
-    protected function setPkey( int | string $pKey, int $index ) : static
+    protected function setPkey( int | string $pKey, int $position ) : static
     {
         self::assertPkey( $pKey );
         switch( true ) {
             case ( ! $this->pKeyExists( $pKey )) :
                 break;
-            case ( $index === $this->pKeys[$pKey] ) :
+            case ( $position === $this->pKeys[$pKey] ) :
                 return $this;
             default :
                 throw new PkeyException(
                     sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] )
                 );
         } // end switch
-        if( false !== ( $foundKey = self::search( $index, $this->pKeys ))) {
-            unset( $this->pKeys[$foundKey] );
+        try {
+            $oldKey = self::search( $position, $this->pKeys ); // find the old pKey
+            unset( $this->pKeys[$oldKey] );                    // remove the old pKey
         }
-        $this->pKeys[$pKey] = $index;
+        catch( PositionException ) {} // not found
+        $this->pKeys[$pKey] = $position;
         ksort( $this->pKeys );
         return $this;
     }
@@ -288,11 +291,11 @@ class Asit extends It
      */
     public function replacePkey( int | string $oldPkey, int | string $newPkey ) : static
     {
-        $this->assertPkeyExists( $oldPkey );
-        self::assertPkey( $newPkey );
         if( $oldPkey === $newPkey ) {
             return $this;
         }
+        $this->assertPkeyExists( $oldPkey );
+        self::assertPkey( $newPkey );
         $this->assertPkeyNotExists( $newPkey );
         $this->setPkey( $newPkey, $this->pKeys[$oldPkey] );
         unset( $this->pKeys[$oldPkey] );
@@ -300,13 +303,12 @@ class Asit extends It
     }
 
     /**
-     * Return pKey for 'current'
+     * Return (first found) pKey for 'current' element
      *
-     * To be used in parallel with the Iterator 'current' method, below
-     *
-     * @return bool|int|string
+     * @return int|string
+     * @throws PositionException
      */
-    public function getCurrentPkey() : mixed
+    public function getCurrentPkey() : int|string
     {
         $this->assertCurrent();
         return self::search( $this->position, $this->pKeys );
@@ -320,7 +322,7 @@ class Asit extends It
      * @param int|string $pKey   0 (zero) allowed
      * @return static
      * @throws PkeyException
-     * @throws RuntimeException
+     * @throws PositionException
      */
     public function setCurrentPkey( int | string $pKey ) :static
     {
@@ -334,7 +336,7 @@ class Asit extends It
      * Return empty array on not found
      *
      * @param  int[]|string[] $pKeys
-     * @return int[]|string[]
+     * @return int[]
      */
     public function getPkeyIndexes( array $pKeys ) : array
     {
@@ -360,10 +362,10 @@ class Asit extends It
      * @param int|string|int[]|string[] $pKeys
      * @param null|int|callable $sortParam asort sort_flags or uasort callable
      *                                     (null, default, ksort)
-     * @return mixed[]
+     * @return int[]|string[]
      * @throws SortException
      */
-    public function pKeyGet( mixed $pKeys = null, mixed $sortParam = null ) : array
+    public function pKeyGet( int|string|array $pKeys = null, mixed $sortParam = null ) : array
     {
         if( empty( $pKeys )) {
             return self::sort( $this->collection, $sortParam );
@@ -406,9 +408,9 @@ class Asit extends It
             self::assertPkey( $pKey );
             $this->assertPkeyNotExists( $pKey );
         }
-        $this->setPkey( $pKey, $index );
         $this->collection[$index] = $element;
         $this->position = $index;
+        $this->setPkey( $pKey, $index );
         return $this;
     }
 
@@ -418,7 +420,6 @@ class Asit extends It
      * @override
      * @param mixed[] $collection
      * @return static
-     * @throws CollectionException
      * @throws PkeyException
      */
     public function setCollection( iterable $collection ) : static
@@ -449,7 +450,7 @@ class Asit extends It
     /**
      * Return an external iterator ( pKey => element ), Traversable
      *
-     * @return mixed[]|Traversable
+     * @return Traversable   mixed[]
      */
     public function getPkeyIterator() : Traversable
     {
@@ -470,7 +471,7 @@ class Asit extends It
     public function pKeySeek( int | string $pKey ) : static
     {
         $this->assertPkeyExists( $pKey );
-        $this->position = $this->pKeys[$pKey];
+        $this->position = (int) $this->pKeys[$pKey];
         return $this;
     }
 }

@@ -30,6 +30,7 @@ namespace Kigkonsult\Asit;
 use Exception;
 use InvalidArgumentException;
 use Kigkonsult\Asit\Exceptions\PkeyException;
+use Kigkonsult\Asit\Exceptions\PositionException;
 use RuntimeException;
 use Traversable;
 
@@ -39,7 +40,7 @@ class Asit1Test extends AsitBaseTest
      * @test Asit exists, count,
      *
      */
-    public function asitTest1() : void
+    public function asitTest101() : void
     {
         $asit = new Asit();
         foreach( self::arrayLoader( 100 ) as $key => $value ) {
@@ -61,7 +62,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest21() : void
+    public function asitTest102() : void
     {
 
         $asit = new Asit();
@@ -147,7 +148,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest22() : void
+    public function asitTest103() : void
     {
 
         foreach( [ new Asit(), new Asmit() ] as $asit ) {
@@ -195,8 +196,7 @@ class Asit1Test extends AsitBaseTest
                 if( 0 === ( $cnt % 50 ) ) {
                     $this->assertEquals(
                         $element,
-                        $asit->pKeySeek( $pKey )
-                            ->current(),   // test pKeySeek
+                        $asit->pKeySeek( $pKey )->current(),   // test pKeySeek
                         __FUNCTION__ . ' #12 (' . $cnt . ')'
                     );
                 }
@@ -211,14 +211,14 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asmitTest23() : void
+    public function asmitTest104() : void
     {
         // invalid key
         try {
             Asmit::assertPkey( '' );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( PkeyException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -231,7 +231,7 @@ class Asit1Test extends AsitBaseTest
             Asmit::factory()->pKeySeek( 'key23' );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( PkeyException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -244,7 +244,7 @@ class Asit1Test extends AsitBaseTest
             Asmit::factory()->countPkey( 'key23' );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( PkeyException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -257,7 +257,7 @@ class Asit1Test extends AsitBaseTest
             Asmit::factory( self::arrayLoader( 10 ))->removePkey( 'test23-3' );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( PkeyException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -270,7 +270,7 @@ class Asit1Test extends AsitBaseTest
             Asmit::factory()->getCurrentPkey();
             $ok = 1;
         }
-        catch( RuntimeException $e ) {
+        catch( PositionException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -285,13 +285,13 @@ class Asit1Test extends AsitBaseTest
             $asmit->setCurrentPkey( $pKey );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( InvalidArgumentException $e ) {  //  PkeyException | PositionException
             $ok = 2;
         }
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 1, $ok, __FUNCTION__ . ' #5, exp 1, got ' . $ok );
+        $this->assertEquals( 1, $ok, __FUNCTION__ . ' #6, exp 1, got ' . $ok );
 
         // set another key for value1 BUT same as for value2, exception exp
         $asmit = Asmit::factory()
@@ -302,13 +302,13 @@ class Asit1Test extends AsitBaseTest
             $asmit->setCurrentPkey( 'key2' );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( PkeyException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
             $ok = 3;
         }
-        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #6, exp 2, got ' . $ok );
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #7, exp 2, got ' . $ok );
     }
 
     /**
@@ -316,7 +316,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asmitTest24() : void
+    public function asmitTest105() : void
     {
         $asmit = new Asmit();
         foreach( self::arrayLoader( 100 ) as $key => $value ) {
@@ -361,7 +361,7 @@ class Asit1Test extends AsitBaseTest
         $pKey3 = __FUNCTION__ . 3;
         $asmit->addCurrentPkey( $pKey3 );
         $exp   = [ $pKey2, $pKey3 ];
-        $pKeys = $asmit->getCurrentPkey( false );
+        $pKeys = $asmit->getCurrentPkeys();
         $this->assertEquals(
             $exp,
             $pKeys,
@@ -393,7 +393,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asmitTest25() : void
+    public function asmitTest106() : void
     {
         $asmit = new Asmit();
         foreach( self::arrayLoader( 100 ) as $key => $value ) {
@@ -402,7 +402,7 @@ class Asit1Test extends AsitBaseTest
 
         $asmit->seek( array_rand( array_flip( range( 1, 99 )))); // set current
         $resultC = $asmit->current();
-        $resultP = $asmit->pKeyGet( $asmit->getCurrentPkey());
+        $resultP = $asmit->pKeyGet( $asmit->getCurrentPkeys());
         $this->assertEquals(
             [ $asmit->key() => $resultC ],
             $resultP,
@@ -427,7 +427,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest28() : void
+    public function asitTest107() : void
     {
         $asit = Asit::factory( [ 'key1' => 'value' ] );
         $ok = 0;
@@ -435,7 +435,7 @@ class Asit1Test extends AsitBaseTest
             $asit->pKeySeek( 'key28' );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( PkeyException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -450,7 +450,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest30() : void
+    public function asitTest108() : void
     {
 
         foreach( [ new Asit(), new Asittag() ] as $aIx => $asit ) {
@@ -481,7 +481,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest31() : void
+    public function asitTest109() : void
     {
 
         $asit = new Asit();
@@ -495,7 +495,7 @@ class Asit1Test extends AsitBaseTest
             $asit->getCurrentPkey(); // no current exists
             $ok = 1;
         }
-        catch( RuntimeException $e ) {
+        catch( PositionException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -508,7 +508,7 @@ class Asit1Test extends AsitBaseTest
             $asit->setCurrentPkey( 'fake' ); // no current exists
             $ok = 1;
         }
-        catch( RuntimeException $e ) {
+        catch( PositionException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -536,7 +536,7 @@ class Asit1Test extends AsitBaseTest
         catch( RuntimeException $e ) {
             $ok = 2;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( PkeyException $e ) {
             $ok = 3;
         }
         catch( Exception $e ) {
@@ -570,7 +570,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest33() : void
+    public function asitTest110() : void
     {
         $element = 'element';
         $asit = new Asit();
@@ -621,7 +621,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest34() : void
+    public function asitTest111() : void
     {
         $asit = new Asit();
         for( $pIx = 0; $pIx < 10; $pIx++ ) {
@@ -670,9 +670,9 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest35() : void
+    public function asitTest112() : void
     {
-        $asit = new AsittagList();
+        $asit = new AsittagList( AsittagList::STRING );
         foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
             $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
@@ -699,9 +699,9 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest36() : void
+    public function asitTest113() : void
     {
-        $asit = new AsmittagList();
+        $asit = new AsmittagList( AsmittagList::STRING );
         foreach( self::arrayLoader( 100 ) as $key => $value ) {
             $asit->append( $value, $key );
             $asit->addPkeyTag( $key, self::getAttribute( $asit->key() ) );
@@ -726,8 +726,12 @@ class Asit1Test extends AsitBaseTest
         $this->assertEquals( 3, $asit->countPkey( $newKey2 ), __FUNCTION__ . ' #6' );
 
         $asit->rewind()->previous()->previous()->previous(); // make current invalid
-        $asit->pKeySeek( $newKey2 );
-        $this->assertEquals( $result, $asit->current(), __FUNCTION__ . ' #7' );
+
+        $this->assertEquals(
+            $result,
+            $asit->pKeySeek( $newKey2 )->current(),
+            __FUNCTION__ . ' #7'
+        );
 
         $asit = null;
     }
@@ -737,7 +741,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest38() : void
+    public function asitTest114() : void
     {
         $asit    = new Asittag( self::arrayLoader( 10));
         $newPkey = 'testbcdefg';
@@ -746,7 +750,7 @@ class Asit1Test extends AsitBaseTest
             $asit->last()->next()->next()->next()->setCurrentPkey( $newPkey );
             $ok = 1;
         }
-        catch( RuntimeException $e ) {
+        catch( PositionException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -762,7 +766,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest39() : void
+    public function asitTest115() : void
     {
         $asit      = new Asittag( self::arrayLoader( 10));
         $otherPkey = 'testbcdefg';
@@ -787,7 +791,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest40() : void
+    public function asitTest116() : void
     {
         $asit      = new Asittag( self::arrayLoader( 10));
         $asit->rewind();
@@ -815,7 +819,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest41() : void
+    public function asitTest117() : void
     {
         $asit     = new Asittag( self::arrayLoader( 10));
         $duplPkey = $asit->last()->previous()->previous()->previous()->getCurrentPkey();
@@ -841,7 +845,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest61() : void
+    public function asitTest118() : void
     {
         $asit = new Asittag();
         for( $pIx = 0; $pIx < 10; $pIx++ ) {
@@ -863,7 +867,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest73() : void
+    public function asitTest119() : void
     {
         $data = self::arrayLoader( 100 );
         $asit = new Asittag();
@@ -889,7 +893,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest81() : void
+    public function asitTest120() : void
     {
         $data = [ 'key' => 'value' ];
         foreach( [ Asit::factory( $data ), Asittag::factory( $data ) ] as $aIx => $asit ) {
@@ -898,7 +902,7 @@ class Asit1Test extends AsitBaseTest
                 $asit->append( 'value2', 'key' );  // duplicate pKey
                 $ok = 1;
             }
-            catch( InvalidArgumentException $e ) {
+            catch( PkeyException $e ) {
                 $ok = 2;
             }
             catch( Exception $e ) {
@@ -914,11 +918,11 @@ class Asit1Test extends AsitBaseTest
     }
 
     /**
-     * Test Asit getCurrentPkey + RuntimeException
+     * Test Asit getCurrentPkey + PkeyException
      *
      * @test
      */
-    public function asitTest9() : void
+    public function asitTest121() : void
     {
         $asit = Asit::factory( [ 1 => 'value' ] );
         $asit->next();
@@ -927,7 +931,7 @@ class Asit1Test extends AsitBaseTest
             $asit->getCurrentPkey();
             $ok = 1;
         }
-        catch( RuntimeException $e ) {
+        catch( PositionException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -943,7 +947,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest10() : void
+    public function asitTest122() : void
     {
         $asit = new Asit();
         foreach( self::arrayLoader( 100 ) as $key => $value ) {
@@ -963,7 +967,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asitTest11() : void
+    public function asitTest123() : void
     {
         $asit    = new AsitList( self::arrayLoader( 10 ), AsitList::STRING );
         $result  = $asit->pKeyGet( null, [ self::class, 'cmp' ] );
@@ -982,7 +986,7 @@ class Asit1Test extends AsitBaseTest
      *
      * @test
      */
-    public function asittagTest12() : void
+    public function asittagTest124() : void
     {
         $asit    = new AsittagList( self::arrayLoader( 10 ), AsitList::STRING );
         $result  = $asit->pKeyTagGet( null, null, null, null, [ self::class, 'cmp' ] );

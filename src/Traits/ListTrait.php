@@ -5,7 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
@@ -30,6 +30,7 @@ namespace Kigkonsult\Asit\Traits;
 use Kigkonsult\Asit\Exceptions\CollectionException;
 use Kigkonsult\Asit\Exceptions\TypeException;
 
+use function is_object;
 use function is_string;
 
 /**
@@ -40,7 +41,9 @@ use function is_string;
 trait ListTrait
 {
     /**
-     * Extended constructor, accepts value type as single or second argument
+     * Extended constructor
+     *
+     * Value type (required) as single or second argument
      *
      * @override It::__construct()
      * @param mixed|null $collection
@@ -50,25 +53,38 @@ trait ListTrait
      */
     public function __construct( mixed $collection = null, ? string $valueType = null )
     {
-        switch( true ) {
-            case ( is_string( $collection ) && ( null === $valueType )) :
-                $this->setValueType( $collection );
-                $collection = null;
-                break;
-            case ( null !== $valueType ) :
-                $this->setValueType( $valueType );
-                break;
-        } // end switch
-        parent::__construct( $collection );
+        parent::__construct();
+        [ $collection, $valueType ] = self::getCollectionValueType( $collection, $valueType );
+        self::assertValueType( $valueType );
+        $this->setValueType((string) $valueType );
+        if( null !== $collection ) {
+            $this->setCollection( $collection );
+        }
     }
 
     /**
-     * Extended factory method, accepts value type as single or second argument
+     * @param mixed|null  $collection
+     * @param string|null $valueType
+     * @return array|null[]
+     */
+    protected static function getCollectionValueType( mixed $collection = null, ? string $valueType = null ) : array
+    {
+        return ( is_string( $collection ) && ( null === $valueType ))
+            ? [ null, $collection ]
+            : [ $collection, $valueType ];
+    }
+
+    /**
+     * Extended factory method
+     *
+     * Value type (required) as single or second argument
      *
      * @override It::factory()
      * @param mixed|null $collection
      * @param mixed $valueType
      * @return static
+     * @throws CollectionException
+     * @throws TypeException
      */
     public static function factory( mixed $collection = null, mixed $valueType = null ) : static
     {
@@ -76,7 +92,9 @@ trait ListTrait
     }
 
     /**
-     * Extended class singleton method
+     * Extended class singleton method on list-type and valueType
+     *
+     * Value type (required) as single or second argument
      *
      * @override it::singleton()
      * @param mixed|null $collection
@@ -87,11 +105,20 @@ trait ListTrait
      */
     public static function singleton( mixed $collection = null, mixed $valueType = null ) : static
     {
-        return parent::singleton( $collection, $valueType );
+        $cx  = static::class;
+        [ $collection, $valueType ] = self::getCollectionValueType( $collection, $valueType );
+        self::assertValueType( $valueType );
+        $cx .= $valueType;
+        if( ! isset( self::$instances[$cx] )) {
+            self::$instances[$cx] = new static( $collection, $valueType );
+        }
+        return self::$instances[$cx];
     }
 
     /**
-     * Instance method alias, return singleton instance
+     * Instance method alias, return singleton instance on list-type and valueType
+     *
+     * Value type (required) as single or second argument
      *
      * @param mixed|null $collection
      * @param mixed|null $valueType
@@ -100,5 +127,23 @@ trait ListTrait
     public static function getInstance( mixed $collection = null, mixed $valueType = null ) : static
     {
         return static::singleton( $collection, $valueType );
+    }
+
+    /**
+     * Class clone method
+     *
+     * @return void
+     */
+    public function __clone() : void
+    {
+        if(( self::OBJECT !== $this->valueType ) && self::isStdType( $this->valueType )) {
+            return;
+        }
+        for( $this->rewind(); $this->valid(); $this->next()) {
+            $ix = $this->key();
+            if( is_object( $this->collection[$ix] )) {
+                $this->collection[$ix] = clone $this->collection[$ix];
+            }
+        }
     }
 }

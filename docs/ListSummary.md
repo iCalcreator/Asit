@@ -14,6 +14,14 @@
 * assert collection elements of expected valueType 
   * one of ListTypeInterface constants or FQCN (for class or interface)
 
+ItList example:
+
+```
+use Kigkonsult\Asit\ItList;
+class MyClass extend ItList {}
+$myClass = MyClass::factory( ElementValueClass::class );
+...
+```
 
 #### Shared methods
 

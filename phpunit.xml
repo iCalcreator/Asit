@@ -25,8 +25,17 @@
            You should have received a copy of the GNU Lesser General Public License
            along with Asit. If not, see <https://www.gnu.org/licenses/>.
 -->
-<phpunit bootstrap="test/autoload.php">
+<phpunit backupGlobals="false"
+         bootstrap="test/autoload.php"
+         cacheResult="false"
+         executionOrder="default"
+         processIsolation="true"
+         resolveDependencies="false"
+         displayDetailsOnTestsThatTriggerWarnings="true">
     <testsuites>
+        <testsuite name="Demo/smoke Tests">
+            <file>./test/DemoTest.php</file>
+        </testsuite>
         <testsuite name="It Tests">
             <file>./test/ItTest.php</file>
         </testsuite>
@@ -38,6 +47,9 @@
             <file>./test/AsitListTest.php</file>
             <file>./test/AsitListTest2.php</file>
         </testsuite>
+        <testsuite name="Concurrency Tests">
+            <file>./test/ConcurrentTest.php</file>
+        </testsuite>
     </testsuites>
     <source>
         <include>
@@ -45,26 +57,23 @@
         </include>
     </source>
     <coverage
-            includeUncoveredFiles="true"
-            pathCoverage="false"
-            ignoreDeprecatedCodeUnits="false"
-            disableCodeCoverageIgnore="true">
-        <!-- Require the PHP Xdebug (2.7.0 or later) and tokenizer extensions-->
-        <!-- Remove or comment after your own choice-->
+        includeUncoveredFiles="true"
+        disableCodeCoverageIgnore="true">
+        <!-- Require the PHP Xdebug (2.7.0 or later) and tokenizer extensions -->
+        <!-- Remove or comment after your own choice -->
         <!-- Note, all output in report/logging will be saved in 'testDocs' folder -->
         <report>
             <!-- clover outputFile="testDocs/clover.xml"/ -->
             <!-- crap4j outputFile="testDocs/crap4j.xml" threshold="50"/ -->
-            <html outputDirectory="testDocs/PHPUnitCoverage" lowUpperBound="60" highLowerBound="80"/>
+            <!-- html outputDirectory="testDocs/PHPUnitCoverage" lowUpperBound="60" highLowerBound="80"/ -->
             <!-- php outputFile="testDocs/coverage.php"/ -->
-            <text outputFile="testDocs/coverage.txt" showUncoveredFiles="false" showOnlySummary="false"/>
+            <!-- text outputFile="testDocs/coverage.txt" showUncoveredFiles="false" showOnlySummary="false"/ -->
             <!-- xml outputDirectory="testDocs/xml-coverage"/ -->
         </report>
     </coverage>
     <logging>
         <!-- Remove or comment after your own choice-->
         <!-- All logs will be saved in 'testDocs' folder -->
-
         <!-- junit outputFile="testDocs/junit.xml"/ -->
         <!-- teamcity outputFile="testDocs/teamcity.txt"/ -->
         <!-- testdoxHtml outputFile="testDocs/testdox.html"/ -->

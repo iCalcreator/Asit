@@ -29,11 +29,84 @@ namespace Kigkonsult\Asit;
 
 use Exception;
 use InvalidArgumentException;
+use Kigkonsult\Asit\Exceptions\PkeyException;
+use Kigkonsult\Asit\Exceptions\PositionException;
+use Kigkonsult\Asit\Exceptions\TagException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 class Asit2Test extends AsitBaseTest
 {
+    /**
+     * dataProvider
+     *
+     * @return array
+     */
+    public static function pKeyTagProvider() : array
+    {
+        $testData = [];
+
+        $testData[] = [ __FUNCTION__ . 1, 'tag1', true ];
+        $testData[] = [ __FUNCTION__ . 2, '0', true ];
+        $testData[] = [ __FUNCTION__ . 3, 0, true ];
+        $testData[] = [ __FUNCTION__ . 4, true, false ];
+        $testData[] = [ __FUNCTION__ . 5, 5.5, false ];
+
+        return $testData;
+    }
+
+    /**
+     * Test Asit assertPkey
+     *
+     * @test
+     * @dataProvider pKeyTagProvider
+     *
+     * @param string $case
+     * @param mixed $pKey
+     * @param bool $exp
+     */
+    public function asitTest21Pkey( string $case, mixed $pKey, bool $exp ) : void
+    {
+        $ok = false;
+        try {
+            Asit::assertPkey( $pKey );
+            $ok = true;
+        }
+        catch( PkeyException $e ) {
+            $ok = false;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertEquals( $exp, $ok, __FUNCTION__ . ' #' . $case . ' exp 2, got ' . $ok );
+    }
+
+    /**
+     * Test Asittag assertTag
+     *
+     * @test
+     * @dataProvider pKeyTagProvider
+     *
+     * @param string $case
+     * @param mixed  $tag
+     * @param bool   $exp
+     */
+    public function asitTest24Tag( string $case, mixed $tag, bool $exp ) : void
+    {
+        $ok = false;
+        try {
+            Asittag::assertTag( $tag );
+            $ok = true;
+        }
+        catch( TagException ) {
+            $ok = false;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertEquals( $exp, $ok, __FUNCTION__ . ' #' . $case . ' exp 2, got ' . $ok );
+    }
+
     /**
      * Testing Asittag 'current' methods :
      *    getCurrentTags, hasCurrentTag, addCurrentTag,
@@ -56,7 +129,7 @@ class Asit2Test extends AsitBaseTest
             $asit->getCurrentTags();
             $ok = 1;
         }
-        catch( RuntimeException $e ) {
+        catch( PositionException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -70,7 +143,7 @@ class Asit2Test extends AsitBaseTest
             $asit->hasCurrentTag( 'fake ');
             $ok = 1;
         }
-        catch( RuntimeException $e ) {
+        catch( PositionException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -78,16 +151,19 @@ class Asit2Test extends AsitBaseTest
         }
         $this->assertEquals( 2, $ok, __FUNCTION__ . ' #2, exp 2, got ' . $ok );
 
-        // invalid tag
+        // no current + invalid tag
         $ok = 0;
         try {
             $asit->addCurrentTag( '' );
             $ok = 1;
         }
-        catch( RuntimeException $e ) {
+        catch( PositionException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
+
+            echo __METHOD__ . ' got : ' . $e::class . PHP_EOL; // test ###
+
             $ok = 3;
         }
         $this->assertEquals( 2, $ok, __FUNCTION__ . ' #3, exp 2, got ' . $ok );
@@ -98,7 +174,7 @@ class Asit2Test extends AsitBaseTest
             $asit->addCurrentTag( 'fake ' );
             $ok = 1;
         }
-        catch( RuntimeException $e ) {
+        catch( PositionException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -148,6 +224,8 @@ class Asit2Test extends AsitBaseTest
     /**
      * Testing Asittag other primary key + tag methods
      *
+     * Asittag::pKeyTagGet() tests with no pKeys but tag and union IN asitTest38
+     *
      * @test
      */
     public function asitTest37() : void
@@ -168,6 +246,7 @@ class Asit2Test extends AsitBaseTest
 
         $search = [ $pKey1, $pKey2 ];
 
+        // pKeyTagGet + pKey/tag tests
         $tags1 = $asit->getTags( $pKey1 );
         $this->assertEquals(
             [ $ix1 => 'element' . $ix1 ],
@@ -252,6 +331,60 @@ class Asit2Test extends AsitBaseTest
         );
 
         $asit = null;
+    }
+
+    /**
+     * Testing Asittag::pKeyTagGet() with no pKeys but tag and union
+     *
+     * @test
+     */
+    public function asitTest38() : void
+    {
+        static $VALUE = 'value';
+        static $PKEY  = 'pKey';
+        static $TAG   = 'tag';
+        $asit = Asittag::factory()
+            ->append( $VALUE . 1, $PKEY . 1, $TAG )
+            ->append( $VALUE . 2, $PKEY . 2, $TAG . 2 )
+            ->append( $VALUE . 3, $PKEY . 3, $TAG )
+            ->append( $VALUE . 4, $PKEY . 4, $TAG . 4 )
+            ->append( $VALUE . 5, $PKEY . 5, [ $TAG, $TAG . 5 ] );
+
+        $this->assertEquals(  // not found
+            [],
+            $asit->PkeyTagGet( null, $TAG . 6 ),
+            __METHOD__ . ' #1'
+        );
+
+        $this->assertEquals( // incompatible tags, union true
+            [],
+            $asit->PkeyTagGet( null, [ $TAG . 2, $TAG . 4 ], true ),
+            __METHOD__ . ' #2'
+        );
+
+        $this->assertEquals( // all with any of the tags, union false
+            [ 1 => $VALUE . 2, 3 => $VALUE . 4 ],
+            $asit->PkeyTagGet( null, [ $TAG . 2, $TAG . 4 ], false ),
+            __METHOD__ . ' #3'
+        );
+
+        $this->assertEquals( // all with tag
+            [ 0 => $VALUE . 1, 2 => $VALUE . 3, 4 => $VALUE . 5 ],
+            $asit->PkeyTagGet( null, $TAG ),
+            __METHOD__ . ' #4'
+        );
+
+        $this->assertEquals(  // all with both tags, union true
+            [ 4 => $VALUE . 5 ],
+            $asit->PkeyTagGet( null, [ $TAG, $TAG . 5 ], true ),
+            __METHOD__ . ' #5'
+        );
+
+        $this->assertEquals(  // all with any of the tags, union false
+            [ 0 => $VALUE . 1, 2 => $VALUE . 3, 3 => $VALUE . 4, 4 => $VALUE . 5 ],
+            $asit->PkeyTagGet( null, [ $TAG, $TAG . 4 ], false ),
+            __METHOD__ . ' #6'
+        );
     }
 
     /**
@@ -355,7 +488,7 @@ class Asit2Test extends AsitBaseTest
             $asit->getCurrentTags();  // getCurrentTags + exception (no current)
             $ok = 1;
         }
-        catch( RunTimeException $e ) {
+        catch( PositionException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -380,7 +513,7 @@ class Asit2Test extends AsitBaseTest
             $asit->addCurrentTag( 'testnyTag' ); // addCurrentTag + exception (no current)
             $ok = 1;
         }
-        catch( RuntimeException $e ) {
+        catch( PositionException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -761,7 +894,7 @@ class Asit2Test extends AsitBaseTest
         try {
             $asit->removeCurrentTag( 'fakeTag' );
             $ok = 1;
-        } catch( RuntimeException $e ) {
+        } catch( PositionException $e ) {
             $ok = 2;
         } catch( Exception $e ) {
             $ok = 3;
@@ -943,30 +1076,4 @@ class Asit2Test extends AsitBaseTest
         $this->assertEquals( 0, $asit->count(), __FUNCTION__ . '-4, exp 0, got: ' . $asit->count());
     }
 
-    /**
-     * Test Asittag append Pkey + InvalidArgumentException, invalid tag
-     *
-     * @test
-     */
-    public function asitTest82() : void
-    {
-        $asit = Asittag::factory( [ 'key' => 'value' ] );
-
-        $pKey = 'key2';
-        $xTag = [ 'tag1', 'tag2', true, 1.2345 ];
-        $ok = 0;
-        try {
-            $asit->append( 'element2', $pKey, $xTag ); // invalid tag array + float
-            $ok = 1;
-        }
-        catch( InvalidArgumentException $e ) { // i.e. PkeyException|TagException
-            $ok = 2;
-        }
-        catch( Exception $e ) {
-            $ok = 3;
-        }
-        $this->assertEquals( 1, $ok, __FUNCTION__ . ' #1, exp 1, got ' . $ok );
-
-        $asit = null;
-    }
 }

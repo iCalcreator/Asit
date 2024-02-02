@@ -5,7 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -29,7 +29,7 @@ namespace Kigkonsult\Asit;
 
 use ArrayIterator;
 use Kigkonsult\Asit\Exceptions\PkeyException;
-use RuntimeException;
+use Kigkonsult\Asit\Exceptions\PositionException;
 use Traversable;
 
 use function array_keys;
@@ -83,7 +83,7 @@ class Asmit extends Asit
         $this->rewind();
         while( $this->valid()) {
             $key = self::prepKeyString( $this->key(), $pLen );
-            foreach((array) $this->getCurrentPkey( false ) as $pKey ) {
+            foreach( $this->getCurrentPkeys() as $pKey ) {
                 $string .= self::pKey2String( $key, (string) $pKey );
             }
             $string .= self::element2String( $key, $this->current());
@@ -104,7 +104,7 @@ class Asmit extends Asit
      */
     public function remove() : static
     {
-        foreach((array) $this->getCurrentPkey( false ) as $pKey ) {
+        foreach( $this->getCurrentPkeys() as $pKey ) {
             unset( $this->pKeys[$pKey] );
         }
         parent::remove();
@@ -120,24 +120,24 @@ class Asmit extends Asit
      *
      * @override
      * @param int|string $pKey 0 (zero) allowed
-     * @param int        $index
+     * @param int        $position   exist as key in collection
      * @return static
      * @throws PkeyException
      */
-    protected function setPkey( int | string $pKey, int $index ) : static
+    protected function setPkey( int | string $pKey, int $position ) : static
     {
         self::assertPkey( $pKey );
         switch( true ) {
             case ( ! $this->pKeyExists( $pKey )) :
                 break;
-            case ( $index === $this->pKeys[$pKey] ) :
+            case ( $position === $this->pKeys[$pKey] ) :
                 return $this;
             default :
                 throw new PkeyException(
                     sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] )
                 );
         } // end switch
-        $this->pKeys[$pKey] = $index;
+        $this->pKeys[$pKey] = $position;
         ksort( $this->pKeys );
         return $this;
     }
@@ -152,9 +152,7 @@ class Asmit extends Asit
     public function countPkey( int | string $pKey ) : int
     {
         $this->assertPkeyExists( $pKey );
-        return count(
-            array_keys( $this->pKeys, $this->pKeys[$pKey], true )
-        );
+        return count( array_keys( $this->pKeys, $this->pKeys[$pKey], true ));
     }
 
     /**
@@ -174,18 +172,15 @@ class Asmit extends Asit
     }
 
     /**
-     * Return pKey(s) for 'current', one (firstFound=true) or all (array), false on not found
+     * Return pKeys for 'current'
      *
-     * @override
-     * @param null|bool $firstFound
-     * @return bool|int|string|int[]|string[]
+     * @return int[]|string[]
+     * @throws PositionException
      */
-    public function getCurrentPkey( ? bool $firstFound = true ) : bool|int|string|array
+    public function getCurrentPkeys() : array
     {
         $this->assertCurrent();
-        return $firstFound
-            ? self::search( $this->position, $this->pKeys )
-            : array_keys( $this->pKeys, $this->position, true );
+        return array_keys( $this->pKeys, $this->position, true );
     }
 
     /**
@@ -196,7 +191,7 @@ class Asmit extends Asit
      * @param int|string $pKey
      * @return static
      * @throws PkeyException
-     * @throws RuntimeException
+     * @throws PositionException
      */
     public function addCurrentPkey( int | string $pKey ) : static
     {
@@ -214,7 +209,7 @@ class Asmit extends Asit
      * In case of multiple primary keys for element, first found is used
      *
      * @override
-     * @return mixed[]|Traversable
+     * @return Traversable  mixed[]
      */
     public function getPkeyIterator() : Traversable
     {

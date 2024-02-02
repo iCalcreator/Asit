@@ -21,6 +21,14 @@ Collection elements are searchable using
 For non-assoc arrays,
 * primary key is the (numeric) array index
 * may also have tags
+ 
+Asittag example:
+```
+use Kigkonsult\Asit\Asittag;
+class MyClass extend Asittag {}
+$myClass = MyClass::factory();
+...
+```
 
 The Asittag class extends :
 * [AsittagList], assert collection elements of expected valueType

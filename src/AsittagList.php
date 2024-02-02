@@ -5,7 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -47,6 +47,8 @@ class AsittagList extends Asittag implements ListTypeInterface
     /**
      * Append typed element to (array) collection, opt with primary key
      *
+     * Note, last appended element is always 'current'
+     *
      * @override
      * @param mixed      $element
      * @param null|int|string $pKey        MUST be unique
@@ -62,9 +64,7 @@ class AsittagList extends Asittag implements ListTypeInterface
         null|int|string|array $tags = null
     ) : static
     {
-        if( $this->isValueTypeSet()) {
-            $this->assertElementType( $element );
-        }
+        $this->assertElementType( $element );
         parent::append( $element, $pKey, $tags );
         return $this;
     }

@@ -9,6 +9,14 @@ The collection element may be of any valueType.
 Collection elements are searchable using
 * Iterator etc methods, below
 
+It example:
+```
+use Kigkonsult\Asit\It;
+class MyClass extend It {}
+$myClass = MyClass::factory();
+...
+```
+
 It class is extended by :
 * [ItList], assert collection elements of expected valueType
 * [Asit], implements assoc array collection element get-/set-methods

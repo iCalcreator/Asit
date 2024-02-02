@@ -1,4 +1,9 @@
 
+2.2.9 argument and logic upd
+2.2.8 concurrency adaptation and tests
+2.2.7 method seek upd
+2.2.6 Readme upd
+2.2.5 new, __clone method for list classes
 
 2.2.4 Readme upd
 2.2.3 Updated tests

@@ -5,7 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-21 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
@@ -31,6 +31,7 @@ use Kigkonsult\Asit\Exceptions\TypeException;
 use Traversable;
 
 use function class_exists;
+use function get_debug_type;
 use function in_array;
 use function interface_exists;
 use function is_array;
@@ -38,6 +39,7 @@ use function is_bool;
 use function is_callable;
 use function is_int;
 use function is_float;
+use function is_object;
 use function is_resource;
 use function is_string;
 use function sprintf;
@@ -52,9 +54,61 @@ trait TypeTrait
     /**
      * The collection element value type
      *
-     * @var string|null
+     * @var string
      */
-    protected ? string $valueType = null;
+    protected string $valueType;
+
+    /**
+     * @var string[]
+     */
+    public static array $STDTYPES = [
+        self::BOOL,
+        self::BOOLEAN,
+        self::INT,
+        self::INTEGER,
+        self::FLOAT,
+        self::ARR_Y,
+        self::DOUBLE,
+        self::STRING,
+        self::OBJECT,
+        self::RESOURCE,
+        self::CALL_BLE,
+        self::TRAVERSABLE,
+    ];
+
+    /**
+     * Return bool true if the class valuetype is a 'stdType'
+     *
+     * @param string $valueType
+     * @return bool
+     */
+    public static function isStdType( string $valueType ) : bool
+    {
+        return (( $valueType === self::ARRAY2 ) ||
+            in_array( $valueType, self::$STDTYPES, true ));
+    }
+
+    /**
+     * Assert value type, extended 'gettype'
+     *
+     * Accept ListTypeInterface constants or FQCN (for class or interface)
+     *
+     * @param null|string $valueType
+     * @return void
+     * @throws TypeException
+     */
+    public static function assertValueType( ? string $valueType ) : void
+    {
+        if( ! empty( $valueType ) &&
+            ( self::isStdType( $valueType ) ||
+                class_exists( $valueType ) ||
+                interface_exists( $valueType ))) {
+            return;
+        }
+        throw new TypeException(
+            sprintf( TypeException::$ERR2, self::getDispVal( $valueType ))
+        );
+    }
 
     /**
      * Assert collection element value type, extended 'gettype'
@@ -65,9 +119,6 @@ trait TypeTrait
      */
     public function assertElementType( mixed $element ) : void
     {
-        if( ! $this->isValueTypeSet()) {
-            return;
-        }
         $errType = 0;
         switch( $this->valueType ) {
             case self::ARR_Y :
@@ -121,7 +172,7 @@ trait TypeTrait
                 break;
             default :
                 if( ! is_object( $element ) ||
-                    ! ( $element instanceof $this->valueType )) {
+                    ! ( $element instanceof $this->valueType)) {
                     $errType = 9;
                     break;
                 }
@@ -132,7 +183,7 @@ trait TypeTrait
                 sprintf(
                     TypeException::$ERR1,
                     $errType,
-                    self::getErrType( $element ),
+                    get_debug_type( $element ),
                     $this->valueType
                 )
             );
@@ -150,16 +201,6 @@ trait TypeTrait
     }
 
     /**
-     * Return bool true if collection is not empty
-     *
-     * @return bool
-     */
-    public function isValueTypeSet() : bool
-    {
-        return ( null !== $this->valueType );
-    }
-
-    /**
      * Set collection element value type
      *
      * @param string $valueType
@@ -174,42 +215,5 @@ trait TypeTrait
         self::assertValueType( $valueType );
         $this->valueType = $valueType;
         return $this;
-    }
-
-    /**
-     * Assert value type, extended 'gettype'
-     *
-     * Accept ListTypeInterface constants or FQCN (for class or interface)
-     *
-     * @param string $valueType
-     * @return void
-     * @throws TypeException
-     */
-    public static function assertValueType( string $valueType ) : void
-    {
-        static $STDTYPES = [
-            self::BOOL,
-            self::BOOLEAN,
-            self::INT,
-            self::INTEGER,
-            self::FLOAT,
-            self::ARR_Y,
-            self::DOUBLE,
-            self::STRING,
-            self::OBJECT,
-            self::RESOURCE,
-            self::CALL_BLE,
-            self::TRAVERSABLE,
-        ];
-        switch( true ) {
-            case ( $valueType === self::ARRAY2 ) : // fall through
-            case in_array( $valueType, $STDTYPES, true ) : // fall through
-            case ( class_exists( $valueType ) || interface_exists( $valueType )) :
-                return;
-            default :
-                throw new TypeException(
-                    sprintf( TypeException::$ERR2, self::getDispVal( $valueType ))
-                );
-        } // end switch
     }
 }

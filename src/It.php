@@ -5,7 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -30,22 +30,25 @@ namespace Kigkonsult\Asit;
 use ArrayIterator;
 use Countable;
 use Kigkonsult\Asit\Exceptions\CollectionException;
+use Kigkonsult\Asit\Exceptions\PositionException;
 use Kigkonsult\Asit\Exceptions\SortException;
 use OutOfBoundsException;
-use RuntimeException;
 use SeekableIterator;
 use Traversable;
 
 use function array_key_exists;
+use function array_key_last;
 use function array_keys;
+use function array_search;
 use function asort;
 use function get_class;
-use function gettype;
+use function get_debug_type;
 use function is_array;
 use function is_bool;
 use function is_callable;
 use function is_int;
 use function is_scalar;
+use function ksort;
 use function sprintf;
 use function str_pad;
 use function str_replace;
@@ -66,14 +69,14 @@ class It implements BaseInterface, SeekableIterator, Countable
     protected static string $SP0 = '';
 
     /**
-     * The collection of elements
+     * The instance collection of elements, stored as collection
      *
      * @var mixed[]
      */
     protected array $collection = [];
 
     /**
-     * Iterator index
+     * The instance iterator index, stored as position
      *
      * @var int
      */
@@ -94,6 +97,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      */
     public function __construct( mixed $collection = null )
     {
+        $this->init();
         if( null !== $collection ) {
             $this->setCollection( $collection );
         }
@@ -113,7 +117,7 @@ class It implements BaseInterface, SeekableIterator, Countable
     }
 
     /**
-     * Class singleton method
+     * Class singleton method on class-type
      *
      * @param mixed|null $collection
      * @param mixed|null $dummy
@@ -122,11 +126,11 @@ class It implements BaseInterface, SeekableIterator, Countable
      */
     public static function singleton( mixed $collection = null, mixed $dummy = null ) : static
     {
-        $key = static::class;
-        if( ! isset( self::$instances[$key] )) {
-            self::$instances[$key] = new static( $collection, $dummy );
+        $cx = static::class;
+        if( ! isset( self::$instances[$cx] )) {
+            self::$instances[$cx] = new static( $collection, $dummy );
         }
-        return self::$instances[$key];
+        return self::$instances[$cx];
     }
 
     /**
@@ -138,7 +142,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      */
     public static function getInstance( mixed $collection = null, mixed $dummy = null ) : static
     {
-        return self::singleton( $collection, $dummy );
+        return static::singleton( $collection, $dummy );
     }
 
     /**
@@ -149,6 +153,7 @@ class It implements BaseInterface, SeekableIterator, Countable
     public function init() : static
     {
         $this->collection = [];
+        $this->position   = 0;
         return $this;
     }
 
@@ -195,7 +200,7 @@ class It implements BaseInterface, SeekableIterator, Countable
     protected static function element2String( string $key, mixed $element ) : string
     {
         static $TMPL = "%s : (%s) ";
-        $type        = gettype( $element );
+        $type        = get_debug_type( $element );
         $string      = sprintf( $TMPL, $key, $type );
         $string .= match ( true ) {
             is_bool( $element )      => self::getDispVal( $element ),
@@ -220,11 +225,11 @@ class It implements BaseInterface, SeekableIterator, Countable
     }
 
     /**
-     * Sort collection|array on values
+     * Return the sorted collection|array
      *
      * For null=sortParam, a ksort is performed
      * For int (sort constants) sortParam, an asort is performed,
-     * for callable, uasort
+     * For callable, uasort
      *
      * @param mixed[]  $collection
      * @param null|callable|int $sortParam
@@ -236,23 +241,29 @@ class It implements BaseInterface, SeekableIterator, Countable
         null | int | callable $sortParam = null
     ) : array
     {
-        if( 1 >= count( $collection )) {
-            return $collection;
+        $output = [];
+        foreach( array_keys( $collection ) as $x ) {
+            if( null !== $collection[$x] ) {
+                $output[$x] = $collection[$x];
+            }
+        }
+        if( 1 >= count( $output )) {
+            return $output;
         }
         $sortOk = match( true ) {
-            ( null === $sortParam )   => ksort( $collection ),
-            is_int( $sortParam )      => asort( $collection, $sortParam ),
-            is_callable( $sortParam ) => uasort( $collection, $sortParam ),
+            ( null === $sortParam )   => ksort( $output ),
+            is_int( $sortParam )      => asort( $output, $sortParam ),
+            is_callable( $sortParam ) => uasort( $output, $sortParam ),
             default                   => throw new SortException(
                 sprintf( SortException::$ERRTXT1, self::getDispVal( $sortParam ))
             ),
         }; // end match
-        if( ! $sortOk ) {
+        if( false === $sortOk ) {
             throw new SortException(
                 sprintf( SortException::$ERRTXT2, self::getDispVal( $sortParam ))
             );
         }
-        return $collection;
+        return $output;
     }
 
     /**
@@ -275,7 +286,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      * Copy collection elements, on index basis, to target array (opt overwrite), no sort
      *
      * @param int[] $fromIxs
-     * @param array $target
+     * @param null|mixed[] $target
      * @return void
      */
     protected function copyElements( array $fromIxs, ? array & $target = [] ) : void
@@ -315,7 +326,7 @@ class It implements BaseInterface, SeekableIterator, Countable
     }
 
     /**
-     * Set (array) collection
+     * Set (array) collection, i.e. append elements
      *
      * @param mixed[] $collection
      * @return static
@@ -334,25 +345,6 @@ class It implements BaseInterface, SeekableIterator, Countable
             }
         }
         return $this;
-    }
-
-    /**
-     * Return value type rendered for display
-     *
-     * @param mixed $value
-     * @return string
-     */
-    protected static function getErrType( mixed $value ) : string
-    {
-        static $UT = 'unknown type';
-        $getType   = gettype( $value );
-        // end switch
-        return match( $getType ) {
-            null           => $UT, // ??
-            self::OBJECT   => get_class( $value ),
-            self::RESOURCE => self::RESOURCE,
-            default        => $getType,
-        };
     }
 
     /**
@@ -423,7 +415,7 @@ class It implements BaseInterface, SeekableIterator, Countable
      * i.e. makes the class traversable using foreach.
      * Usage : "foreach( $class as $value ) { .... }'
      *
-     * @return mixed[]|Traversable
+     * @return Traversable  mixed[]
      */
     public function getIterator() : Traversable
     {
@@ -536,16 +528,19 @@ class It implements BaseInterface, SeekableIterator, Countable
      * Required method implementing the SeekableIterator interface
      *
      * @param  int $offset   position (due to inherit rules, NO typed arg)
-     * @return void
+     * @return static
      * @throws OutOfBoundsException
+     * @since 2.2.7 2024-01-26
      */
-    public function seek( $offset ) : void
+    #[\ReturnTypeWillChange]
+    public function seek( $offset ) : static
     {
         static $TMPL = "Position %d not found!";
         if( ! $this->exists( $offset )) {
             throw new OutOfBoundsException( sprintf( $TMPL, $offset ));
         }
         $this->position = $offset;
+        return $this;
     }
 
     /**
@@ -567,25 +562,28 @@ class It implements BaseInterface, SeekableIterator, Countable
     /**
      * Assert current position is valid
      *
-     * @throws RuntimeException
+     * @throws PositionException
      */
     protected function assertCurrent() : void
     {
-        static $CURRENTNOTVALID = "Invalid current position";
         if( ! $this->valid()) {
-            throw new RuntimeException( $CURRENTNOTVALID );
+            throw new PositionException( sprintf( PositionException::$ERR1, $this->position ));
         }
     }
 
     /**
-     * Return key (pKey/tag) for (first found) value in array, false if not found
+     * Return key (pKey/tag) for (first found) value in array
      *
      * @param int|string $value
      * @param int[]|string[] $array
-     * @return bool|int|string
+     * @return int|string
+     * @throws PositionException
      */
-    protected static function search( int | string $value, array $array ) : bool | int | string
+    protected static function search( int | string $value, array $array ) : int | string
     {
-        return array_search( $value, $array, true );
+        if( is_bool( $return = array_search( $value, $array, true ))) {
+            throw new PositionException( sprintf( PositionException::$ERR1, $value ));
+        }
+        return $return;
     }
 }

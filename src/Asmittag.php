@@ -5,7 +5,7 @@
  * This file is part of Asit.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-24 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @license   Subject matter of licence is the software Asit.
  *            The above copyright, link, package and version notices,
  *            this licence notice shall be included in all copies or substantial
@@ -68,7 +68,7 @@ class Asmittag extends Asmit
         $this->rewind();
         while( $this->valid()) {
             $key = self::prepKeyString( $this->key(), $pLen );
-            foreach((array) $this->getCurrentPkey( false ) as $pKey ) {
+            foreach( $this->getCurrentPkeys() as $pKey ) {
                 $string .= self::pKey2String( $key, (string) $pKey );
             }
             $string .= self::tags2String( $key, $this->getCurrentTags());
