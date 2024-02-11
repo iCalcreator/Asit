@@ -2,8 +2,8 @@
 
 >Overview
 * [It] - collection of elements
-* [Asit/Asmit] - assoc collection of elements, opt multi key
-* [Asittag/Asmittag] - as above but with tags
+* [Asit]/[Asmit] - assoc collection of elements, opt multi key
+* [Asittag]/[Asmittag] - as above but with tags
 * It/Asit/Asmit/Asitag/Asmitag[List] - as above but with spec. collection element valueType
 
 
@@ -237,7 +237,7 @@ Note, review pros and cons not using some PHP built-in iterator class, ex [Array
 ---
 
 
-Go to [README] - [It] summary - [Asit] summary - [Asittag]/[Asmittag] summary - [AsitList]/[AsmitList] summary
+Go to [README] - [It] summary - [Asit]/[Asmit] summary - [Asittag]/[Asmittag] summary - [AsitList]/[AsmitList] summary
 
 [It]:ItSummary.md
 [It summary here]:ItSummary.md
@@ -259,4 +259,5 @@ Go to [README] - [It] summary - [Asit] summary - [Asittag]/[Asmittag] summary - 
 [AsitTagList summary here]:ListSummary.md
 [AsmitTagList]:ListSummary.md
 [AsmitTagList summary here]:ListSummary.md
+[List]:ListSummary.md
 [README]:../README.md

@@ -1,4 +1,5 @@
 
+2.3.06 doc upd
 2.3.05 yield() & pKeyYield() functions
 2.3.04 pKeyFetch() alias for pkeySeek( pkey )->current()
 2.3.01 pKeyGet() bug
