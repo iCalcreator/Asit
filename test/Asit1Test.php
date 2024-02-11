@@ -143,8 +143,8 @@ class Asit1Test extends AsitBaseTest
 
     /**
      * Testing Asit/Asmit IteratorAggregate interface - Traversable
-     *     method GetIterator + getPkeyIterator
-     *
+     *     method GetIterator + getPkeyIterator + pKeyFetch + pKeyYield
+     *            getCurrentPkey
      *
      * @test
      */
@@ -153,61 +153,107 @@ class Asit1Test extends AsitBaseTest
 
         foreach( [ new Asit(), new Asmit() ] as $asit ) {
 
-            foreach( self::arrayLoader( 100 ) as $key => $value ) {
-                $asit->append( $value, $key );
+            foreach( self::arrayLoader( 100 ) as $key => $element ) {
+                $asit->append( $element, $key ); // key = 'key' . $ix
             }
 
+            // testing asit as Traversable
             $this->assertTrue(
-                ( $asit->GetIterator() instanceof Traversable ),   // test GetIterator - Traversable
+                ( $asit instanceof Traversable ),
+                __FUNCTION__ . ' #2'
+            );
+            // testing GetIterator() as Traversable
+            $this->assertTrue(
+                ( $asit->GetIterator() instanceof Traversable ),
                 __FUNCTION__ . ' #1'
             );
+            // testing GetPkeyIterator() as Traversable
             $this->assertTrue(
-                ( $asit instanceof Traversable ),  // test Asit - Traversable
-                __FUNCTION__ . ' #2'
+                ( $asit->GetPkeyIterator() instanceof Traversable ),
+                __FUNCTION__ . ' #7'
             );
 
             // testing Traversable, i.e. makes the class traversable using foreach
-            $cnt = $key = 0;
-            $value = null;
-            foreach( $asit as $key => $value ) { // 'internal key', NOT pKey
+            $cnt = $pos = 0;
+            $element = null;
+            foreach( $asit as $pos => $element ) { // 'internal key', NOT pKey
                 ++$cnt;
             }
             $this->assertEquals(
                 100, $cnt, __FUNCTION__ . ' #3'
             );
             $this->assertEquals(
-                99, $key, __FUNCTION__ . ' #4'
+                99, $pos, __FUNCTION__ . ' #4'
             );
             $this->assertEquals(
-                'element99', $value, __FUNCTION__ . ' #5'
+                'element99', $element, __FUNCTION__ . ' #5'
             );
-            $asit->seek( $key ); // position iterator last
+            $asit->seek( $pos ); // position iterator last
             $this->assertEquals(
-                'key99', $asit->getCurrentPkey(), __FUNCTION__ . ' #6, exp: key99, got: ' . $asit->getCurrentPkey()
+                'key99',
+                $asit->getCurrentPkey(),
+                __FUNCTION__ . ' #6, exp: key99, got: ' . $asit->getCurrentPkey()
             );
 
-            $this->assertTrue(
-                ( $asit->GetPkeyIterator() instanceof Traversable ),   // test GetPkeyIterator - Traversable
-                'test22-11'
-            );
             $cnt = 0;
-            foreach( $asit->GetPkeyIterator() as $pKey => $element ) {
+            foreach( $asit->GetPkeyIterator() as $pKey => $element ) { // here pkey, NOT pos
                 ++$cnt;
-                if( 0 === ( $cnt % 50 ) ) {
-                    $this->assertEquals(
-                        $element,
-                        $asit->pKeySeek( $pKey )->current(),   // test pKeySeek
-                        __FUNCTION__ . ' #12 (' . $cnt . ')'
-                    );
+                if( 0 !== ( $cnt % 50 )) {
+                    continue;
                 }
+                $element2 = $asit->pKeyFetch( $pKey, true );   // test pKeySeek to fetch and make current
+                $this->assertEquals(
+                    $element,
+                    $element2,
+                    __FUNCTION__ . ' #11 (' . $cnt . ')'
+                );
+                $pos      = $asit->key();                      // pos for current
+                $this->assertEquals(
+                    $pos,
+                    $asit->key(),
+                    __FUNCTION__ . ' #12 (' . $cnt . ')'
+                );
+                $asit->rewind();
+                $asit->pKeyFetch( $pKey );          // test pKeySeek to fetch ('current' pKey ) and NOT make current
+                $pos      = $asit->key();           // the 'rewinded' pos, NOT pkey pos
+                $this->assertEquals(
+                    0,
+                    $pos,
+                    __FUNCTION__ . ' #13 (' . $cnt . '), exp 0, got ' . $pos
+                );
             } // end foreach
+
+            $cnt = 0;
+            foreach( $asit->pKeyYield() as $pKey => $element ) { // here pkey, NOT pos
+                if( 0 !== (( $cnt + 1 ) % 50 )) {
+                    continue;
+                }
+                $this->assertEquals(
+                    $cnt,
+                    $asit->key(),
+                    __FUNCTION__ . ' #21 (' . $cnt . ')'
+                );
+                $asit->rewind();
+                $asit->pKeyFetch( $pKey );          // test pKeySeek to fetch and NOT make current
+                $pos      = $asit->key();           // the 'rewinded' pos, NOT pkey pos
+                $this->assertEquals(
+                    0,
+                    $pos,
+                    __FUNCTION__ . ' #22 (' . $cnt . '), exp 0, got ' . $pos
+                );
+                ++$cnt;
+            } // end foreach
+
+            $this->assertEquals(
+                'element99', $element, __FUNCTION__ . ' #23'
+            );
 
             $asit = null;
         } // end foreach  asit/asmit
     }
 
     /**
-     * Test Asmit countPkey/removePkey/getCurrentPkey/setPkey exceptions
+     * Test Asmit assertPkey/pKeyFetch(/pKeySeek)/countPkey/removePkey/getCurrentPkey/setPkey exceptions
      *
      * @test
      */
@@ -228,7 +274,7 @@ class Asit1Test extends AsitBaseTest
 
         // don't exist
         try {
-            Asmit::factory()->pKeySeek( 'key23' );
+            Asmit::factory()->pKeyFetch( 'key23' );
             $ok = 1;
         }
         catch( PkeyException $e ) {
@@ -432,7 +478,7 @@ class Asit1Test extends AsitBaseTest
         $asit = Asit::factory( [ 'key1' => 'value' ] );
         $ok = 0;
         try {
-            $asit->pKeySeek( 'key28' );
+            $asit->pKeySeek( 'key107' );
             $ok = 1;
         }
         catch( PkeyException $e ) {
@@ -729,7 +775,7 @@ class Asit1Test extends AsitBaseTest
 
         $this->assertEquals(
             $result,
-            $asit->pKeySeek( $newKey2 )->current(),
+            $asit->pKeyFetch( $newKey2 ),
             __FUNCTION__ . ' #7'
         );
 
@@ -871,12 +917,13 @@ class Asit1Test extends AsitBaseTest
     {
         $data = self::arrayLoader( 100 );
         $asit = new Asittag();
-        foreach( $data as $element ) {
-            $asit->append( $element );
+        $cnt  = 0;
+        foreach( $data as $pKey => $element ) {
+            $asit->append( $element, $pKey, self::getAttribute( $cnt++ ) );
         }
         $this->assertEquals(
             [],
-            $asit->pKeyTagGet( 'fakePkey' ),
+            $asit->pKeyTagGet( 'fakePkey', [ 'fakeTag', 0 ] ),
             __FUNCTION__ . ' #1'
         );
         $this->assertEquals(

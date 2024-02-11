@@ -9,7 +9,7 @@
 * extends [Asmit]
   * accepts multiple (unique) primary keys for (each) collection element
 
-Also secondary keys, additional (non-unique) tags (aka attributes?)
+Secondary keys, additional (non-uniquelabel/)tags (aka label/attributes)
 may be set for each element. Tags are of int or string valueType.
 
 Collection elements are searchable using
@@ -28,6 +28,8 @@ use Kigkonsult\Asit\Asittag;
 class MyClass extend Asittag {}
 $myClass = MyClass::factory();
 ...
+$myClass->append( $element, $pKey, $tag );
+...
 ```
 
 The Asittag class extends :
@@ -38,7 +40,7 @@ The Asmittag class extends :
 
 #### Inherited methods
 
-Inherited methods from [It] - [Asit]
+Inherit methods from [It] - [Asit]
 
 #### Pkey - Tag methods
 
@@ -87,13 +89,13 @@ Inherited methods from [It] - [Asit]
 ```Asittag::getCurrentTags()```
 * Return tags for ```current```
 * Return _array_
-* Throws RuntimeException
+* Throws PositionException
 
 ```Asittag::hasCurrentTag( tag )```
 * Return bool true if ```current``` has tag(s)
 * ```tag``` _int_|_string_|_array_
 * Return _bool_
-* Throws RuntimeException
+* Throws PositionException
 
 ```Asittag::tagCount( tag )```
 * Return count of collection element using the tag, not found return 0
@@ -109,7 +111,7 @@ Inherited methods from [It] - [Asit]
 * Hits with exclTags are excluded
 * Override parent
 * ```pKeys``` _int_|_string_|_array_
-* ```tags``` _int_|_string_|_array_   none-used tag is skipped
+* ```tags``` _int_|_string_|_array_   none-used/found tag is skipped
 * ```union``` _bool_ default true
 * ```exclTags``` _int_|_string_|_array_ tags to exclude
 * ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable, null=>ksort
@@ -140,47 +142,47 @@ Inherited methods from [It] - [Asit]
 * Throws PkeyException, TagException
 
 ```Asittag::addPkeyTag( pKey, tag )```
-* Add tag (secondary key) for primary key element
+* Add tag (non-unique key/label) for primary key element
 * ```pKey``` _int_|_string_
 * ```tag``` _int_|_string_
 * Return _static_
 * Throws PkeyException, TagException
 
 ```Asittag::addCurrentTag( tag )```
-* Add tag (secondary key) for ```current```
+* Add tag (non-unique key/label) for ```current```
 * ```tag``` _int_|_string_
 * Return _static_
-* Throws RuntimeException, TagException
+* Throws PositionException, TagException
 
 #### Remove methods
 
 ```Asittag::removePkeyTag( pKey, tag )```
-* Remove tag (secondary key) for primary key element
+* Remove tag (non-unique key/label) for primary key element
 * ```pKey``` _int_|_string_
 * ```tag``` _int_|_string_
 * Return _static_
 * Throws PkeyException
 
 ```Asittag::removeCurrentTag( tag )```
-* Remove tag (secondary key) for ```current```
+* Remove tag (non-unique key/label) for ```current```
 * ```tag``` _int_|_string_
 * Return _static_
-* Throws RuntimeException
+* Throws PositionException
     
 
 #### Current element tag methods summary
 
 ```Asittag::hasCurrentTag( tag )```
 * Return bool true if ```current``` has tag(s)
-* Throws RuntimeException
+* Throws PositionException
 
 ```Asittag::addCurrentTag( tag )```
-* Add tag (secondary key) for ```current```
-* Throws RuntimeException, TagException
+* Add tag (non-unique key/label) for ```current```
+* Throws PositionException, TagException
 
 ```Asittag::removeCurrentTag( tag )```
-* Remove tag (secondary key) for ```current```
-* Throws RuntimeException
+* Remove tag (non-unique key/label) for ```current```
+* Throws PositionException
 
 ```Asittag::append( element, pKey, tags )```
 * Append element to (array) collection, with primary key and/or tags (secondary keys)

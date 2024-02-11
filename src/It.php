@@ -283,6 +283,27 @@ class It implements BaseInterface, SeekableIterator, Countable
     }
 
     /**
+     * Implements Generators yield functionality
+     *
+     * a memory minimizer for use in foreach-loops, replaces get(), getIterator() etc
+     *
+     * code>
+     * foreach( $itInstance->yield() as [ $ix => ] $value ) {
+     *     ....
+     * }
+     * </code>
+     *
+     * @return mixed
+     * @since 2.3.05 2024-01-08
+     */
+    public function yield() : mixed
+    {
+        for( $this->rewind(); $this->valid(); $this->next()) {
+            yield $this->key() => $this->current();
+        }
+    }
+
+    /**
      * Copy collection elements, on index basis, to target array (opt overwrite), no sort
      *
      * @param int[] $fromIxs

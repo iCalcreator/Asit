@@ -77,10 +77,10 @@ use function strlen;
  *   assert collection elements of expected valueType
  *
  * @package    Kigkonsult\Asit
+ * @since 2.3.05 2024-01-08
  */
 class Asit extends It
 {
-
     /**
      * Primary keys for collection element
      *
@@ -170,7 +170,7 @@ class Asit extends It
         if( is_int( $key ) && ( intval( $key ) === $key )) {
             return;
         }
-        if( ! is_string( $key ) || ( empty( $key ) && ( 0 != $key ))) { // note ==
+        if( ! is_string( $key ) || ( empty( $key ) && ( 0 != $key ))) { // note !=
             throw new InvalidArgumentException(
                 sprintf( $tmpl, get_debug_type( $key ), self::getDispVal( $key ) )
             );
@@ -355,6 +355,51 @@ class Asit extends It
      */
 
     /**
+     * Implements Generators yield functionality
+     *
+     * A memory minimizer for use in foreach-loops, replaces get(), getIterator() etc
+     * Using (first found) pKey as key
+     *
+     * code>
+     * foreach( $itInstance->yield() as [ $pKey => ] $value ) {
+     *     ....
+     * }
+     * </code>
+     *
+     * @return mixed
+     * @since 2.3.05 2024-01-08
+     */
+    public function pKeyYield() : mixed
+    {
+        for( $this->rewind(); $this->valid(); $this->next()) {
+            yield $this->getCurrentPkey() => $this->current();
+        }
+    }
+
+    /**
+     * Return element for a primary key
+     *
+     * Alias for pKeySeek( pKey )->current()
+     *
+     * @param int|string $pKey
+     * @param null|bool $makeCurrent    default false
+     * @return mixed
+     * @throws PkeyException
+     * @since 2.3.04 2024-02-07
+     */
+    public function pKeyFetch( int|string $pKey, ? bool $makeCurrent = null ) : mixed
+    {
+        if( true !== $makeCurrent ) {
+            $save = $this->position;
+        }
+        $return = $this->pKeySeek( $pKey )->current();
+        if( true !== $makeCurrent ) {
+            $this->position = $save;
+        }
+        return $return;
+    }
+
+    /**
      * Return (non-assoc) array of element(s) in collection
      *
      * Opt using primary keys and/or tag(s) for selection
@@ -362,8 +407,9 @@ class Asit extends It
      * @param int|string|int[]|string[] $pKeys
      * @param null|int|callable $sortParam asort sort_flags or uasort callable
      *                                     (null, default, ksort)
-     * @return int[]|string[]
+     * @return mixed[]
      * @throws SortException
+     * @since 2.3.01 2024-02-07
      */
     public function pKeyGet( int|string|array $pKeys = null, mixed $sortParam = null ) : array
     {

@@ -15,6 +15,7 @@ use Kigkonsult\Asit\It;
 class MyClass extend It {}
 $myClass = MyClass::factory();
 ...
+$myClass->append( $element );
 ```
 
 It class is extended by :
@@ -46,13 +47,18 @@ It class is extended by :
 * It::singleton() alias
 
 
-#### Get method
+#### Get methods
 
 ```It::get( [ sortParam ] )```
 * Return (non-assoc) array of element(s) in collection
 * ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable, null=>ksort
 * Return _array_
 * Throws SortException
+
+```It::yield()```
+* Implements Generators yield functionality, Return collection [ position => ] element 
+* A memory minimizer for use in foreach-loops, replaces get(), getIterator() etc
+* Return _mixed_
 
     
 #### Set methods
@@ -131,7 +137,7 @@ It class is extended by :
 * Seeks to a given position in the iterator
 * Required method implementing the SeekableIterator interface
 * ```position``` _int_
-* Return void
+* Return _static_
 * Throws OutOfBoundsException
 
 ```It::valid()```

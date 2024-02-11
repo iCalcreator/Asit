@@ -27,6 +27,8 @@ use Kigkonsult\Asit\Asit;
 class MyClass extend Asit {}
 $myClass = MyClass::factory();
 ...
+$myClass->append( $element, $pKey );
+...
 ```
 
 
@@ -40,7 +42,7 @@ The Asmit class is extended by :
 
 #### Inherited methods
 
-Inherited methods from [It]
+Inherit methods from [It]
 
 #### Primary key methods
 
@@ -66,11 +68,10 @@ Inherited methods from [It]
 * ```sortFlag``` _int_ default _SORT_REGULAR_
 * Return _array_  all primary keys
 
-```Asit::getCurrentPkey( [ firstFound ] )```
+```Asit::getCurrentPkey()```
 * Return primary key for ```current```
-* ```firstFound``` _bool_ ```Asmit``` only, one (firstFound=true, default) or (array) all
-* Return _int_|_string_|_array_
-* Throws RuntimeException
+* Return _int_|_string_
+* Throws PositionException
 
 ```Asmit::removePkey( pKey )```
 * ```Asmit``` only
@@ -79,14 +80,25 @@ Inherited methods from [It]
 * Throws PkeyException
 * Return _int_
 
-#### Get-methods
+#### Get methods
+
+```Asit::pKeyFetch( pKey )```
+* Return element for a primary key
+* ```pKey``` _int_|_string_
+* Return _mixed_
+* Throws PkeyException
 
 ```Asit::get( [ pKeys [, sortParam ]] )```
 * Return (non-assoc) array of element(s) in collection, using the opt. primary keys for selection.
 * ```pKeys``` _int_|_string_|_array_
 * ```sortParam``` _int_|_callable_  asort sort_flags or uasort callable, null=>ksort
-* Return _array_
+* Return _array_ 
 * Throws SortException
+
+```Asit::pKeyYield()```
+* Implements Generators yield functionality, Return collection [ pKey => ] element
+* A memory minimizer for use in foreach-loops, replaces get(), getIterator() etc
+* Return _mixed_
 
 ```Asit::pKeyGet( pKeys [, sortParam ] )```
 * Return (non-assoc array) sub-set of element(s) in collection using primary keys
@@ -127,36 +139,49 @@ Inherited methods from [It]
 * To be used in parallel with the Iterator ```current``` method, below
 * ```pKey``` _int_|_string_
 * Return _static_
-* Throws RuntimeException, PkeyException
+* Throws PositionException, PkeyException
 
 ```Asmit::addCurrentPkey( pKey )```
 * ```Asmit``` : add primary key for ```current``` element
 * To be used in parallel with the Iterator ```current``` method, below
 * ```pKey``` _int_|_string_
 * Return _static_
-* Throws RuntimeException, PkeyException
+* Throws PositionException, PkeyException
 
 #### Current element primary key methods summary
 
 ```Asit::getCurrentPkey()```
 * Return primary key for ```current```
-* Throws RuntimeException
+* Throws PositionException
+
+```Asmit::getCurrentPkey()```
+* Return first found primary key for ```current```
+* Throws PositionException
+
+```Asmit::getCurrentPkeys()```
+* Return primary keys for ```current```
+* Throws PositionException
 
 ```Asit::setCurrentPkey( pKey )```
 * ```Asit``` : alter primary key for ```current``` element
-* Throws PkeyException, RuntimeException
+* Return _static_
+* Throws PkeyException, PositionException
 
 ```Asmit::addCurrentPkey( pKey )```
 * ```Asmit``` : add primary key for ```current``` element
-* Throws PkeyException, RuntimeException
+* Return _static_
+* Throws PkeyException, PositionException
 
 ```Asit::append( element, pKey )```
 * Append element to (array) collection, opt with primary key (pKey)
 * Note, last appended element is always ```current```
+* Return _static_
 * Throws PkeyException
 
 ```Asit::pKeySeek( pKey )```
 * Seeks to a given position in the iterator using primary key
+* ```pKey``` _int_|_string_
+* Return _static_
 * Throws PkeyException
 
 #### Iterator et al. related methods
@@ -165,12 +190,6 @@ Inherited methods from [It]
 * Return an external iterator ( pKey => element )
 * For ```Asmit``` and in case of multiple primary keys for element, first found is used
 * Return _Traversable_
-
-```Asit::pKeySeek( pKey )```
-* Seeks to a given position in the iterator using primary key
-* ```pKey``` _int_|_string_
-* Return _static_
-* Throws PkeyException
 
 ---
 Go to [README] - [It] summary - [Asittag]/[Asmittag] summary - [AsitList]/[AsmitList] summary

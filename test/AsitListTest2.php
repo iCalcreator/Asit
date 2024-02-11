@@ -156,5 +156,9 @@ class AsitListTest2 extends TestCase
         // pkey search with tag exclude and sort
         $act = $list->pKeyTagGet( $pkeySearch, null, null, $TAG4, $sort2 );
         $this->assertEquals( $exp4, $act, __FUNCTION__ . ', error 8' );
+
+        // pkey search with tagS exclude and sort
+        $act = $list->pKeyTagGet( $pkeySearch, null, null, [ $TAG4, 'fakeTag' ], $sort2 );
+        $this->assertEquals( $exp4, $act, __FUNCTION__ . ', error 8' );
     }
 }

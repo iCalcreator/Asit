@@ -65,7 +65,7 @@
         <report>
             <!-- clover outputFile="testDocs/clover.xml"/ -->
             <!-- crap4j outputFile="testDocs/crap4j.xml" threshold="50"/ -->
-            <!-- html outputDirectory="testDocs/PHPUnitCoverage" lowUpperBound="60" highLowerBound="80"/ -->
+            <html outputDirectory="testDocs/PHPUnitCoverage" lowUpperBound="60" highLowerBound="80"/>
             <!-- php outputFile="testDocs/coverage.php"/ -->
             <!-- text outputFile="testDocs/coverage.txt" showUncoveredFiles="false" showOnlySummary="false"/ -->
             <!-- xml outputDirectory="testDocs/xml-coverage"/ -->

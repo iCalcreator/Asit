@@ -1,5 +1,12 @@
 [comment]: # (This file is part of Asit, manages array collections. Copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 
+>Overview
+* [It] - collection of elements
+* [Asit/Asmit] - assoc collection of elements, opt multi key
+* [Asittag/Asmittag] - as above but with tags
+* It/Asit/Asmit/Asitag/Asmitag[List] - as above but with spec. collection element valueType
+
+
 > Class [It] manages array collection
 * Implement _SeekableIterator_, _Countable_ and _IteratorAggregate_ methods
 * Collection elements are searchable using
@@ -15,13 +22,14 @@ class MyClass extends It {}
 
 $myClass = MyClass::factory();
 ...
-$myClass->append( $element );
+$myClass->setCollection( $arrayOfElements );
 ...
-$myClass->setCollection( $elementArray );
+$myClass->append( $element );
 ...
 ...
 $myClass->rewind();
 while( $myClass->valid()) {
+    $element = $myClass->current();
     ...
     $MyClass->next();
 } // end while
@@ -29,10 +37,23 @@ while( $myClass->valid()) {
 ...
 $myClass->last();
 while( $myClass->valid()) {
+    $element = $myClass->current();
     ...
     $MyClass->previous();
 } // end while
 ...
+...
+
+// shorter rewind/next code..
+for( $myClass->rewind(); $myClass->valid(); $MyClass->next()) {
+    $element = $myClass->current();
+    ...
+} // end for
+
+// shortest rewind/next code..
+foreach( $myClass->yield() as $pos => $element ) {
+    ...
+} // end foreach
 ```
 
 [It summary here].

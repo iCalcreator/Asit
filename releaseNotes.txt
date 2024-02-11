@@ -1,4 +1,8 @@
 
+2.3.05 yield() & pKeyYield() functions
+2.3.04 pKeyFetch() alias for pkeySeek( pkey )->current()
+2.3.01 pKeyGet() bug
+
 2.2.9 argument and logic upd
 2.2.8 concurrency adaptation and tests
 2.2.7 method seek upd

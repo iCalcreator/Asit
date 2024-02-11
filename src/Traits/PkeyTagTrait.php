@@ -225,12 +225,18 @@ trait PkeyTagTrait
             $union = true;
         }
         foreach((array) $tags as $tag ) {
+            try {
+                self::assertTag( $tag );
+            }
+            catch( TagException ) {
+                continue;
+            }
             switch( true ) {
                 case ! $this->tagExists( $tag ) :
-                    continue 2;
+                    break;
                 case ( 0 === count( $elementIxs )) :
                     $elementIxs = $this->tags[$tag];
-                    continue 2;
+                    break;
                 case $union :
                     $elementIxs = array_intersect(
                         $elementIxs,
@@ -239,7 +245,7 @@ trait PkeyTagTrait
                     if( 0 === count( $elementIxs )) {
                         return []; // incompatible tags
                     }
-                    continue 2;
+                    break;
                 default :
                     foreach( $this->tags[$tag] as $ix ) {
                         $elementIxs[] = (int) $ix;
@@ -264,11 +270,11 @@ trait PkeyTagTrait
      *
      * @override
      * @param null|int|string|int[]|string[] $pKeys
-     * @param null|int|string|int[]|string[] $tags       none-used tag(s) are skipped
-     * @param null|bool             $union      true=all tag must match, false=NOT
+     * @param null|int|string|int[]|string[] $tags       none-used/found tag(s) are skipped
+     * @param null|bool             $union               true=all tag must match, false=NOT
      * @param null|int|string|int[]|string[] $exclTags   tags to exclude
-     * @param null|int|callable     $sortParam  asort sort_flags or uasort callable
-     *                                          (null=default, ksort))
+     * @param null|int|callable     $sortParam           asort sort_flags or uasort callable
+     *                                                  (null=default, ksort))
      * @return mixed[]   with collection indexes as keys
      * @throws SortException
      */

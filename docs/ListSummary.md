@@ -21,35 +21,38 @@ use Kigkonsult\Asit\ItList;
 class MyClass extend ItList {}
 $myClass = MyClass::factory( ElementValueClass::class );
 ...
+$myClass->append( $element );
+...
 ```
+
 
 #### Shared methods
 
 ```*List::__construct( [ collection, [ valueType ]] )```
 * ```collection``` _array_ / _Traversable_
-* ```valueType``` _string_
+* ```valueType``` _string_ required
 * Throws CollectionException, TypeException
 
 ```*List::__construct( valueType )```
-* ```valueType``` _string_
-* Throws TypeException
+* ```valueType``` _string_ required
+* Throws CollectionException, TypeException
 
 ```*List::factory( [ collection, [ valueType ]] )```
 * ```collection``` _array_ / _Traversable_
-* ```valueType``` _string_
+* ```valueType``` _string_  required
 * Return _static_
 * Throws CollectionException, TypeException
 * Static
 
 ```*List::factory( valueType )```
-* ```valueType``` _string_
+* ```valueType``` _string_  required
 * Return _static_
-* Throws TypeException
+* Throws CollectionException, TypeException
 * Static
 
 ```*List::singleton( [ collection, [ valueType ]] )```
 * ```collection``` _array_ / _Traversable_
-* ```valueType``` _string_
+* ```valueType``` _string_  required
 * Return _static_
 * Throws CollectionException, TypeException
 * Static
@@ -60,16 +63,52 @@ $myClass = MyClass::factory( ElementValueClass::class );
 ```*List::singleton( valueType )```
 * ```valueType``` _string_
 * Return _static_
-* Throws TypeException
+* Throws CollectionException, TypeException
 * Static
 
-```*List::getInstance( [ valueType ] )```
+```*List::getInstance( valueType )```
 * List::singleton() alias
 
 #### Inherited methods
 
-Inherited methods from [It] - [Asit] - [Asmit] - [Asittag] - [Asmittag]
+Inherit methods from [It] - [Asit] - [Asmit] - [Asittag] - [Asmittag]
 
+A strong recommendation is to override the [It]::current(), [It]::get() and [It]::getIterator() methods
+to specify the return types.
+
+```
+    /**
+     * @override
+     * @return MyClass
+     */
+    #[\ReturnTypeWillChange]
+    public function current() : MyClass
+    {
+        return parent::current();
+    }
+
+    /**
+     * @override
+     * @param callable|int|null $sortParam
+     * @return MyClass[]
+     */
+    #[\ReturnTypeWillChange]
+    public function get( null|callable|int $sortParam = null ) : array
+    {
+        return parent::get( $sortParam );
+    }
+
+    /**
+     * @override
+     * @return MyClass[]|Traversable
+     */
+    #[\ReturnTypeWillChange]
+    public function getIterator() : array|Traversable
+    {
+        return parent::getIterator();
+    }
+
+```
 
 #### Element value type methods
 

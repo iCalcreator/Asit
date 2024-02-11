@@ -334,7 +334,7 @@ class AsitListTest extends AsitBaseTest
         $case += 210;
         $ok   = 0;
         try {
-            $list->setValueType( AsitList::ARR_Y )
+            $list->setValueType( AsitList::ARRAY2 )
                  ->assertElementType( ItList::STRING );
             $ok = 1;
         }
@@ -766,6 +766,7 @@ class AsitListTest extends AsitBaseTest
                 AsitList::INTEGER,
                 AsitList::FLOAT,
                 AsitList::ARR_Y,
+                AsitList::ARRAY2,
                 AsitList::DOUBLE,
                 AsitList::STRING,
                 AsitList::OBJECT,
@@ -776,7 +777,7 @@ class AsitListTest extends AsitBaseTest
             as $vIx => $valueType ) {
             $list->setValueType( $valueType );
             $this->assertEquals(
-                $valueType,
+                (( AsitList::ARRAY2 === $valueType ) ? AsitList::ARR_Y : $valueType ),
                 $list->getValueType(),
                 __FUNCTION__ . ' #' . $case . '-1-' . $vIx . ', exp : ' . $valueType . ', got : ' . $list->getValueType()
             );
@@ -844,6 +845,7 @@ class AsitListTest extends AsitBaseTest
                 AsitList::INTEGER,
                 AsitList::FLOAT,
                 AsitList::ARR_Y,
+                AsitList::ARRAY2,
                 AsitList::DOUBLE,
                 AsitList::STRING,
                 AsitList::OBJECT,

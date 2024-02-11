@@ -275,18 +275,27 @@ class ItTest extends AsitBaseTest
         );
 
         // testing Traversable, i.e. makes the class traversable using foreach
-        $cnt = 0;
-        $key = $value = null;
-        foreach(   $it   as $key => $value ) { // 'internal key', NOT pKey
+        $cnt   = 0;
+        $value = null;
+        foreach(   $it   as $value ) {
             ++$cnt;
         }
         $this->assertEquals( 100, $cnt, __FUNCTION__ . ' #3' );
         $this->assertEquals(
-            99, $key, __FUNCTION__ . ' #4'
-        );
-        $this->assertEquals(
             'element99', $value, __FUNCTION__ . ' #5'
         );
+
+        // testing yield() as a foreach $instance
+        $cnt   = 0;
+        $value = null;
+        foreach( $it->yield() as $value ) {
+            ++$cnt;
+        }
+        $this->assertEquals( 100, $cnt, __FUNCTION__ . ' #7' );
+        $this->assertEquals(
+            'element99', $value, __FUNCTION__ . ' #9'
+        );
+
 
     }
 
