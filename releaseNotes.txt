@@ -1,4 +1,10 @@
 
+2.3.11 remove CollectionException, exp int. Exceptions errTxts
+2.3.10 new PkeyTagInterface
+2.3.09 new PkeyInterface
+2.3.08 new TagInterface
+2.3.07 upd ListTypeInterface
+
 2.3.06 doc upd
 2.3.05 yield() & pKeyYield() functions
 2.3.04 pKeyFetch() alias for pkeySeek( pkey )->current()

@@ -34,14 +34,15 @@ use InvalidArgumentException;
  * Class SortException
  *
  * @package Kigkonsult\Asit\Exceptions
+ * @since 2.3.11 2024-03-12
  */
-class SortException extends InvalidArgumentException
+class SortException extends BaseException
 {
     /**
      * Error text templates
      *
      * @var string
      */
-    public static string $ERRTXT1 = "Invalid sortParam %s";
-    public static string $ERRTXT2 = "Sort error with sortParam %s";
+    public static string $ERRTXT1 = "%s : Invalid sortParam %s";
+    public static string $ERRTXT2 = "%s : Sort error with sortParam %s";
 }

@@ -82,13 +82,9 @@ trait TagTrait
      */
     public static function assertTag( mixed $tag ) : void
     {
-        static $TMPL = "Invalid tag : (%s) %s";
-        try {
-            self::assertKey( $tag, $TMPL );
-        }
-        catch( InvalidArgumentException $e ) {
-            throw new TagException( $e->getMessage(), 20 );
-        }
+        static $TMPL = "%s : Invalid tag : (%%s) %%s";
+        $tmpl = sprintf( $TMPL, TagException::getClassName( static::class ));
+        self::assertKey( $tag, TagException::class, $tmpl );
     }
 
     /**
@@ -155,7 +151,7 @@ trait TagTrait
         switch( true ) {
             case is_int( $tag ) :
                 break;
-            case ( is_string( $tag ) && empty( trim( $tag ))) : // false through
+            case ( is_string( $tag ) && empty( trim( $tag ))) : // fall through
             case ( empty( $tag ) || ! isset( $this->collection[$index] )) :
                 return false;
         } // end switch

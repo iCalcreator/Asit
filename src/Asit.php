@@ -28,10 +28,10 @@ declare( strict_types = 1 );
 namespace Kigkonsult\Asit;
 
 use ArrayIterator;
-use InvalidArgumentException;
 use Kigkonsult\Asit\Exceptions\PkeyException;
 use Kigkonsult\Asit\Exceptions\PositionException;
 use Kigkonsult\Asit\Exceptions\SortException;
+use Kigkonsult\Asit\Exceptions\TagException;
 use Traversable;
 
 use function array_key_exists;
@@ -79,7 +79,7 @@ use function strlen;
  * @package    Kigkonsult\Asit
  * @since 2.3.05 2024-01-08
  */
-class Asit extends It
+class Asit extends It implements PkeyInterface
 {
     /**
      * Primary keys for collection element
@@ -161,17 +161,19 @@ class Asit extends It
      * Assert key/tag, int and string allowed, incl 0/'0'
      *
      * @param  mixed  $key
+     * @param string  $excptn   fqcn
      * @param  string $tmpl
      * @return void
-     * @throws InvalidArgumentException
+     * @throws PkeyException
+     * @throws TagException
      */
-    protected static function assertKey( mixed $key, string $tmpl ) : void
+    protected static function assertKey( mixed $key, string $excptn, string $tmpl ) : void
     {
         if( is_int( $key ) && ( intval( $key ) === $key )) {
             return;
         }
         if( ! is_string( $key ) || ( empty( $key ) && ( 0 != $key ))) { // note !=
-            throw new InvalidArgumentException(
+            throw new $excptn(
                 sprintf( $tmpl, get_debug_type( $key ), self::getDispVal( $key ) )
             );
         }
@@ -186,13 +188,9 @@ class Asit extends It
      */
     public static function assertPkey( mixed $pKey ) : void
     {
-        static $TMPL = "Invalid primary key : (%s) %s";
-        try {
-            self::assertKey( $pKey, $TMPL );
-        }
-        catch( InvalidArgumentException $e ) {
-            throw new PkeyException( $e->getMessage(), 10 );
-        }
+        static $TMPL = "%s : Invalid primary key : (%%s) %%s";
+        $tmpl = sprintf( $TMPL, PkeyException::getClassName( static::class ));
+        self::assertKey( $pKey, PkeyException::class, $tmpl );
     }
 
     /**
@@ -217,7 +215,11 @@ class Asit extends It
     {
         if( ! $this->pKeyExists( $pKey )) {
             throw new PkeyException(
-                sprintf( PkeyException::$PKEYNOTFOUND1, $pKey )
+                sprintf(
+                    PkeyException::$PKEYNOTFOUND1,
+                    PkeyException::getClassName( static::class ),
+                    $pKey
+                )
             );
         }
     }
@@ -233,7 +235,12 @@ class Asit extends It
     {
         if( $this->pKeyExists( $pKey )) {
             throw new PkeyException(
-                sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] )
+                sprintf(
+                    PkeyException::$PKEYFOUND,
+                    PkeyException::getClassName( static::class ),
+                    $pKey,
+                    $this->pKeys[$pKey]
+                )
             );
         }
     }
@@ -268,7 +275,12 @@ class Asit extends It
                 return $this;
             default :
                 throw new PkeyException(
-                    sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] )
+                    sprintf(
+                        PkeyException::$PKEYFOUND,
+                        PkeyException::getClassName( static::class ),
+                        $pKey,
+                        $this->pKeys[$pKey]
+                    )
                 );
         } // end switch
         try {

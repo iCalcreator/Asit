@@ -29,7 +29,7 @@ namespace Kigkonsult\Asit;
 
 use ArrayIterator;
 use Countable;
-use Kigkonsult\Asit\Exceptions\CollectionException;
+use Kigkonsult\Asit\Exceptions\BaseException;
 use Kigkonsult\Asit\Exceptions\PositionException;
 use Kigkonsult\Asit\Exceptions\SortException;
 use OutOfBoundsException;
@@ -93,7 +93,6 @@ class It implements BaseInterface, SeekableIterator, Countable
      * Class construct method
      *
      * @param mixed|null $collection
-     * @throws CollectionException
      */
     public function __construct( mixed $collection = null )
     {
@@ -109,7 +108,6 @@ class It implements BaseInterface, SeekableIterator, Countable
      * @param mixed|null $collection
      * @param mixed|null $dummy  to fix inheritance
      * @return static
-     * @throws CollectionException
      */
     public static function factory( mixed $collection = null, mixed $dummy = null ) : static
     {
@@ -122,7 +120,6 @@ class It implements BaseInterface, SeekableIterator, Countable
      * @param mixed|null $collection
      * @param mixed|null $dummy
      * @return static
-     * @throws CollectionException
      */
     public static function singleton( mixed $collection = null, mixed $dummy = null ) : static
     {
@@ -255,12 +252,20 @@ class It implements BaseInterface, SeekableIterator, Countable
             is_int( $sortParam )      => asort( $output, $sortParam ),
             is_callable( $sortParam ) => uasort( $output, $sortParam ),
             default                   => throw new SortException(
-                sprintf( SortException::$ERRTXT1, self::getDispVal( $sortParam ))
+                sprintf(
+                    SortException::$ERRTXT1,
+                    SortException::getClassName( static::class ),
+                    self::getDispVal( $sortParam )
+                )
             ),
         }; // end match
         if( false === $sortOk ) {
             throw new SortException(
-                sprintf( SortException::$ERRTXT2, self::getDispVal( $sortParam ))
+                sprintf(
+                    SortException::$ERRTXT2,
+                    SortException::getClassName( static::class ),
+                    self::getDispVal( $sortParam )
+                )
             );
         }
         return $output;
@@ -351,7 +356,6 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * @param mixed[] $collection
      * @return static
-     * @throws CollectionException
      */
     public function setCollection( iterable $collection ) : static
     {
@@ -556,9 +560,11 @@ class It implements BaseInterface, SeekableIterator, Countable
     #[\ReturnTypeWillChange]
     public function seek( $offset ) : static
     {
-        static $TMPL = "Position %d not found!";
+        static $TMPL = "%s : Position %d not found!";
         if( ! $this->exists( $offset )) {
-            throw new OutOfBoundsException( sprintf( $TMPL, $offset ));
+            throw new OutOfBoundsException(
+                sprintf( $TMPL, BaseException::getClassName( static::class ), $offset )
+            );
         }
         $this->position = $offset;
         return $this;
@@ -588,7 +594,13 @@ class It implements BaseInterface, SeekableIterator, Countable
     protected function assertCurrent() : void
     {
         if( ! $this->valid()) {
-            throw new PositionException( sprintf( PositionException::$ERR1, $this->position ));
+            throw new PositionException(
+                sprintf(
+                    PositionException::$ERR1,
+                    PositionException::getClassName( static::class ),
+                    $this->position
+                )
+            );
         }
     }
 
@@ -603,7 +615,12 @@ class It implements BaseInterface, SeekableIterator, Countable
     protected static function search( int | string $value, array $array ) : int | string
     {
         if( is_bool( $return = array_search( $value, $array, true ))) {
-            throw new PositionException( sprintf( PositionException::$ERR1, $value ));
+            throw new PositionException(
+                sprintf(
+                    PositionException::$ERR1,
+                    PositionException::getClassName( static::class ),
+                    $value )
+            );
         }
         return $return;
     }

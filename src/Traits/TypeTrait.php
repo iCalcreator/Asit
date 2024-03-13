@@ -106,7 +106,11 @@ trait TypeTrait
             return;
         }
         throw new TypeException(
-            sprintf( TypeException::$ERR2, self::getDispVal( $valueType ))
+            sprintf(
+                TypeException::$ERR2,
+                TypeException::getClassName( static::class ),
+                self::getDispVal( $valueType )
+            )
         );
     }
 
@@ -182,6 +186,7 @@ trait TypeTrait
             throw new TypeException(
                 sprintf(
                     TypeException::$ERR1,
+                    TypeException::getClassName( static::class ),
                     $errType,
                     get_debug_type( $element ),
                     $this->valueType

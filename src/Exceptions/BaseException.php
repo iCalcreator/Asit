@@ -30,17 +30,24 @@ namespace Kigkonsult\Asit\Exceptions;
 
 use InvalidArgumentException;
 
+use function array_reverse;
+use function explode;
+
 /**
- * Class CollectionException
+ * Class PkeyException
  *
  * @package Kigkonsult\Asit\Exceptions
+ * @since 2.3.11 2024-03-12
  */
-class CollectionException extends InvalidArgumentException
+abstract class BaseException extends InvalidArgumentException
 {
     /**
-     * Error text template
-     *
-     * @var string
+     * @param string $classFqcn
+     * @return string
      */
-    public static string $ERRTXT = "Invalid input, no array or Traversable :  %s";
+    public static function getClassName( string $classFqcn ) : string
+    {
+        static $BS = '\\';
+        return array_reverse( explode( $BS, $classFqcn ))[0];
+    }
 }

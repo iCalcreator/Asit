@@ -1,6 +1,8 @@
 [comment]: # (This file is part of Asit, manages array collections. Copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 ## Asit/Asmit Summary
 
+*  implements the PkeyInterface
+
 >Class **Asit** 
 * Extends [It]
 * implements _assoc_ array collection element get-/set-methods

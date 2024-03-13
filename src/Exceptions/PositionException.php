@@ -34,13 +34,14 @@ use InvalidArgumentException;
  * Class PositionException
  *
  * @package Kigkonsult\Asit\Exceptions
+ * @since 2.3.11 2024-03-12
  */
-class PositionException extends InvalidArgumentException
+class PositionException extends BaseException
 {
     /**
      * Error text templates
      *
      * @var string
      */
-    public static string $ERR1 = "Invalid current (array) position: %s";
+    public static string $ERR1 = "%s : Invalid current (array) position: %s";
 }

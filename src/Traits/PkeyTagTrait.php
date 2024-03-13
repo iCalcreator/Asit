@@ -176,7 +176,9 @@ trait PkeyTagTrait
             case (( null === $pKey ) || ( false === $pKey )) :
                 return self::sort( $tags, $sortFlag );
             case ( true === $pKey ) :
-                throw new PkeyException( PkeyException::$PKEYERR1 );
+                throw new PkeyException(
+                    sprintf( PkeyException::$PKEYERR1, PkeyException::getClassName( static::class ))
+                );
             case ! $this->pKeyExists( $pKey ) :
                 return [];
         } // end switch

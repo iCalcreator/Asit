@@ -284,7 +284,7 @@ class AsitListTest extends AsitBaseTest
             $list->assertValueType( '12345' );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( TypeException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -338,7 +338,7 @@ class AsitListTest extends AsitBaseTest
                  ->assertElementType( ItList::STRING );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( TypeException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -353,7 +353,7 @@ class AsitListTest extends AsitBaseTest
                  ->assertElementType( ItList::STRING );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( TypeException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -382,7 +382,7 @@ class AsitListTest extends AsitBaseTest
                  ->assertElementType( ItList::STRING );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( TypeException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -397,7 +397,7 @@ class AsitListTest extends AsitBaseTest
                  ->assertElementType( ItList::STRING );
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( TypeException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {

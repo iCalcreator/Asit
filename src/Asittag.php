@@ -48,7 +48,7 @@ use Kigkonsult\Asit\Traits\PkeyTagTrait;
  *
  * @package    Kigkonsult\Asit
  */
-class Asittag extends Asit
+class Asittag extends Asit implements TagInterface, PkeyTagInterface
 {
     use TagTrait;
 

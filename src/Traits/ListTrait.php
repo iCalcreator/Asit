@@ -27,7 +27,6 @@
  */
 namespace Kigkonsult\Asit\Traits;
 
-use Kigkonsult\Asit\Exceptions\CollectionException;
 use Kigkonsult\Asit\Exceptions\TypeException;
 
 use function is_object;
@@ -41,14 +40,13 @@ use function is_string;
 trait ListTrait
 {
     /**
-     * Extended constructor
+     * Extended It constructor
      *
      * Value type (required) as single or second argument
      *
      * @override It::__construct()
      * @param mixed|null $collection
      * @param string|null $valueType
-     * @throws CollectionException
      * @throws TypeException
      */
     public function __construct( mixed $collection = null, ? string $valueType = null )
@@ -75,7 +73,7 @@ trait ListTrait
     }
 
     /**
-     * Extended factory method
+     * Extended It factory method
      *
      * Value type (required) as single or second argument
      *
@@ -83,7 +81,6 @@ trait ListTrait
      * @param mixed|null $collection
      * @param mixed $valueType
      * @return static
-     * @throws CollectionException
      * @throws TypeException
      */
     public static function factory( mixed $collection = null, mixed $valueType = null ) : static
@@ -92,7 +89,7 @@ trait ListTrait
     }
 
     /**
-     * Extended class singleton method on list-type and valueType
+     * Extended It singleton method on list-type and valueType
      *
      * Value type (required) as single or second argument
      *
@@ -100,7 +97,6 @@ trait ListTrait
      * @param mixed|null $collection
      * @param mixed|null $valueType
      * @return static
-     * @throws CollectionException
      * @throws TypeException
      */
     public static function singleton( mixed $collection = null, mixed $valueType = null ) : static

@@ -463,7 +463,7 @@ class Asit2Test extends AsitBaseTest
             $asit->addPkeyTag( 'fakePkey', 'testNewTag' ); // not found addPkeyTag + exception (not found pKey)
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( PkeyException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -690,7 +690,7 @@ class Asit2Test extends AsitBaseTest
             Asittag::factory()->assertTag( '' ); // false|int|string exp
             $ok = 1;
         }
-        catch( InvalidArgumentException $e ) {
+        catch( TagException $e ) {
             $ok = 2;
         }
         catch( Exception $e ) {
@@ -830,9 +830,11 @@ class Asit2Test extends AsitBaseTest
         try {
             $asit->removePkeyTag( 'fakePkey', 'fakeTag' );
             $ok = 1;
-        } catch( RuntimeException $e ) {
+        }
+        catch( PkeyException $e ) {
             $ok = 2;
-        } catch( Exception $e ) {
+        }
+        catch( Exception $e ) {
             $ok = 3;
         }
         $this->assertEquals( 1, $ok, __FUNCTION__ . ' #1, exp 1, got ' . $ok );
@@ -841,9 +843,11 @@ class Asit2Test extends AsitBaseTest
         try {
             $asit->removePkeyTag( 'fakePkey', $asit->getCurrentTags()[0] );
             $ok = 1;
-        } catch( InvalidArgumentException $e ) {
+        }
+        catch( PkeyException $e ) {
             $ok = 2;
-        } catch( Exception $e ) {
+        }
+        catch( Exception $e ) {
             $ok = 3;
         }
         $this->assertEquals( 2, $ok, __FUNCTION__ . ' #2, exp 2, got ' . $ok );
@@ -852,9 +856,11 @@ class Asit2Test extends AsitBaseTest
         try {
             $asit->removePkeyTag( $asit->getCurrentPkey(), 'fakeTag' );
             $ok = 1;
-        } catch( RuntimeException $e ) {
+        }
+        catch( PkeyException $e ) {
             $ok = 2;
-        } catch( Exception $e ) {
+        }
+        catch( Exception $e ) {
             $ok = 3;
         }
         $this->assertEquals( 1, $ok, __FUNCTION__ . ' #3, exp 1, got ' . $ok );
@@ -894,9 +900,11 @@ class Asit2Test extends AsitBaseTest
         try {
             $asit->removeCurrentTag( 'fakeTag' );
             $ok = 1;
-        } catch( PositionException $e ) {
+        }
+        catch( PositionException $e ) {
             $ok = 2;
-        } catch( Exception $e ) {
+        }
+        catch( Exception $e ) {
             $ok = 3;
         }
         $this->assertEquals( 2, $ok, __FUNCTION__ . ' #9, exp 2, got ' . $ok );

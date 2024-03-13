@@ -34,8 +34,14 @@ use InvalidArgumentException;
  * Class TagException
  *
  * @package Kigkonsult\Asit\Exceptions
+ * @since 2.3.11 2024-03-12
  */
-class TagException extends InvalidArgumentException
+class TagException extends BaseException
 {
-
+    /**
+     * Error text template
+     *
+     * @var string
+     */
+    public static string $ERRTXT = "%s : %s";
 }

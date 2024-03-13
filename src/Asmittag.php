@@ -50,7 +50,7 @@ use function strlen;
  *
  * @package    Kigkonsult\Asit
  */
-class Asmittag extends Asmit
+class Asmittag extends Asmit implements TagInterface, PkeyTagInterface
 {
     use TagTrait;
 

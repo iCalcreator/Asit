@@ -1,6 +1,8 @@
 [comment]: # (This file is part of Asit, manages array collections. Copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 ## Asittag/Asmittag Summary
 
+*  implements TagInterface, PkeyTagInterface
+
 > Class Asittag 
 * extends [Asit] 
   * (unique) primary key for each collection element

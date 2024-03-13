@@ -134,7 +134,12 @@ class Asmit extends Asit
                 return $this;
             default :
                 throw new PkeyException(
-                    sprintf( PkeyException::$PKEYFOUND, $pKey, $this->pKeys[$pKey] )
+                    sprintf(
+                        PkeyException::$PKEYFOUND,
+                        PkeyException::getClassName( static::class ),
+                        $pKey,
+                        $this->pKeys[$pKey]
+                    )
                 );
         } // end switch
         $this->pKeys[$pKey] = $position;

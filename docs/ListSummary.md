@@ -1,15 +1,17 @@
 [comment]: # (This file is part of Asit, manages array collections. Copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved, licence LGPL 3.0)
 ## List Summary
 
+* implements ListTypeInterface
+
 > Class **ItList** extends [It]
 
 > Class **AsitList** extends [Asit]
 
-> Class **AsittagList** extends [Asittag]
+> Class **AsittagList** extends [Asittag] implements TagInterface, PkeyTagInterface
 
 > Class **AsmitList** extends [Asmit]
 
-> Class **AsmittagList** extends [Asmittag]
+> Class **AsmittagList** extends [Asmittag] implements TagInterface, PkeyTagInterface
 
 * assert collection elements of expected valueType 
   * one of ListTypeInterface constants or FQCN (for class or interface)

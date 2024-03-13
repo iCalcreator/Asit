@@ -34,15 +34,15 @@ use InvalidArgumentException;
  * Class TypeException
  *
  * @package Kigkonsult\Asit\Exceptions
+ * @since 2.3.11 2024-03-12
  */
-class TypeException extends InvalidArgumentException
+class TypeException extends BaseException
 {
     /**
      * Error text templates
      *
      * @var string
      */
-    public static string $ERR1 = "Invalid value type (#%d) : %s, expects %s";
-    public static string $ERR2 = "Invalid value type : %s";
-    public static string $ERR3 = "Value type NOT set";
+    public static string $ERR1 = "%s : Invalid value type (#%d) : %s, expects %s";
+    public static string $ERR2 = "%s : Invalid value type : %s";
 }

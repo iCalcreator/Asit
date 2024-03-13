@@ -34,16 +34,17 @@ use InvalidArgumentException;
  * Class PkeyException
  *
  * @package Kigkonsult\Asit\Exceptions
+ * @since 2.3.11 2024-03-12
  */
-class PkeyException extends InvalidArgumentException
+class PkeyException extends BaseException
 {
     /**
      * Error text templates
      *
      * @var string
      */
-    public static string $PKEYERR1      = 'null|false|int|string expected, got bool true';
-    public static string $PKEYFOUND     = "The new primary key : '%s' exists with position %d";
-    public static string $PKEYNOTFOUND1 = 'Primary key : %s not found';
-    public static string $PKEYNOTFOUND2 = 'Primary key for position %d not found';
+    public static string $PKEYERR1      = '%s : null|false|int|string expected, got bool true';
+    public static string $PKEYERR2      = '%s : %s';
+    public static string $PKEYFOUND     = "%s : The new primary key : '%s' exists with position %d";
+    public static string $PKEYNOTFOUND1 = '%s : Primary key : %s not found';
 }
