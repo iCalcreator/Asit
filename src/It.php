@@ -36,6 +36,7 @@ use OutOfBoundsException;
 use SeekableIterator;
 use Traversable;
 
+use function array_diff_key;
 use function array_key_exists;
 use function array_key_last;
 use function array_keys;
@@ -232,25 +233,20 @@ class It implements BaseInterface, SeekableIterator, Countable
      * @param null|callable|int $sortParam
      * @return mixed[]
      * @throws SortException
+     * @since 2.3.12 2024-05-03
      */
     protected static function sort(
         array $collection,
         null | int | callable $sortParam = null
     ) : array
     {
-        $output = [];
-        foreach( array_keys( $collection ) as $x ) {
-            if( null !== $collection[$x] ) {
-                $output[$x] = $collection[$x];
-            }
-        }
-        if( 1 >= count( $output )) {
-            return $output;
+        if( 1 >= count( $collection )) {
+            return $collection;
         }
         $sortOk = match( true ) {
-            ( null === $sortParam )   => ksort( $output ),
-            is_int( $sortParam )      => asort( $output, $sortParam ),
-            is_callable( $sortParam ) => uasort( $output, $sortParam ),
+            ( null === $sortParam )   => ksort( $collection ),
+            is_int( $sortParam )      => asort( $collection, $sortParam ),
+            is_callable( $sortParam ) => uasort( $collection, $sortParam ),
             default                   => throw new SortException(
                 sprintf(
                     SortException::$ERRTXT1,
@@ -268,7 +264,7 @@ class It implements BaseInterface, SeekableIterator, Countable
                 )
             );
         }
-        return $output;
+        return $collection;
     }
 
     /**
@@ -425,12 +421,11 @@ class It implements BaseInterface, SeekableIterator, Countable
      *
      * @param  int $position
      * @return bool
-     * @since 2.2.1 2024-01-08
+     * @since 2.3.12 2024-05-02
      */
     public function exists( int $position ) : bool
     {
-        return ( array_key_exists( $position, $this->collection ) &&
-            ( null !== $this->collection[$position] ));
+        return array_key_exists( $position, $this->collection );
     }
 
     /**
@@ -519,15 +514,17 @@ class It implements BaseInterface, SeekableIterator, Countable
     /**
      * Remove the Iterator current element
      *
-     * The current element is hereafter null
+     * The current position is hereafter invalid
      *
      * @return static
-     * @since 2.2.1 2024-01-08
+     * @since 2.3.12 2024-05-02
      */
     public function remove() : static
     {
-        $key = $this->position;
-        $this->collection[$key] = null;
+        $this->collection = array_diff_key(
+            $this->collection,
+            [ $this->position => $this->position ]
+        );
         return $this;
     }
 

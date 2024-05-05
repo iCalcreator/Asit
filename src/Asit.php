@@ -34,6 +34,7 @@ use Kigkonsult\Asit\Exceptions\SortException;
 use Kigkonsult\Asit\Exceptions\TagException;
 use Traversable;
 
+use function array_diff_key;
 use function array_key_exists;
 use function array_keys;
 use function array_search;
@@ -77,7 +78,7 @@ use function strlen;
  *   assert collection elements of expected valueType
  *
  * @package    Kigkonsult\Asit
- * @since 2.3.05 2024-01-08
+ * @since 2.3.12 2024-05-02
  */
 class Asit extends It implements PkeyInterface
 {
@@ -142,14 +143,17 @@ class Asit extends It implements PkeyInterface
      *
      * @override
      * @return static
-     * @since 2.2.1 2024-01-08
+     * @since 2.3.12 2024-05-02
      */
     public function remove() : static
     {
+        if( false !==( $pKey = array_search( $this->position, $this->pKeys, true ))) {
+            $this->pKeys = array_diff_key(
+                $this->pKeys,
+                [ $pKey => $pKey ]
+            );
+        }
         parent::remove();
-        $key  = $this->position;
-        $pKey = array_search( $key, $this->pKeys, true );
-        unset( $this->pKeys[$pKey] );
         return $this;
     }
 
@@ -169,7 +173,7 @@ class Asit extends It implements PkeyInterface
      */
     protected static function assertKey( mixed $key, string $excptn, string $tmpl ) : void
     {
-        if( is_int( $key ) && ( intval( $key ) === $key )) {
+        if( is_int( $key ) && (((int) $key ) == $key )) { // note ==
             return;
         }
         if( ! is_string( $key ) || ( empty( $key ) && ( 0 != $key ))) { // note !=

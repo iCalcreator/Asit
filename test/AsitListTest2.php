@@ -138,27 +138,32 @@ class AsitListTest2 extends TestCase
         $act = $list->tagGet( $TAG2, true, [ $TAG1, $TAG3 ] ); // excl all with 'tag1', 'tag3'
         $this->assertEquals( $exp1, $act, __FUNCTION__ . ', error 4' );
 
+        $act = $list->tagGet( [ $TAG2, $TAG5 ], false ); // all elements with tag 2 OR 5
+        $this->assertEquals( 5, count( $act ), __FUNCTION__ . ', error 5' );
+
+        $act = $list->tagGet( [ $TAG2, $TAG5 ], true ); // all elements with tag 2 AND 5
+        $this->assertEquals( 1, count( $act ), __FUNCTION__ . ', error 6' );
+
         // output is in input order, only tag 'tag1'
         $act = $list->tagGet( $TAG1, null, [ $TAG3 ] );
-        $this->assertEquals( $exp2, $act, __FUNCTION__ . ', error 5'
-        );
+        $this->assertEquals( $exp2, $act, __FUNCTION__ . ', error 7' );
 
         // output in 'sorter' order
         $act = $list->tagGet( $TAG1,true, $TAG3, $sort1  );
         uasort( $exp2, $sort1  );
-        $this->assertEquals( $exp2, $act, __FUNCTION__ . ', error 6' );
+        $this->assertEquals( $exp2, $act, __FUNCTION__ . ', error 8' );
 
         // pkey search
         $pkeySearch = [ $KEY . 1, $KEY . 4, $KEY . 5 ];
         $act = $list->pKeyTagGet( $pkeySearch );
-        $this->assertEquals( $exp3, $act, __FUNCTION__ . ', error 7' );
+        $this->assertEquals( $exp3, $act, __FUNCTION__ . ', error 9' );
 
         // pkey search with tag exclude and sort
         $act = $list->pKeyTagGet( $pkeySearch, null, null, $TAG4, $sort2 );
-        $this->assertEquals( $exp4, $act, __FUNCTION__ . ', error 8' );
+        $this->assertEquals( $exp4, $act, __FUNCTION__ . ', error 10' );
 
         // pkey search with tagS exclude and sort
         $act = $list->pKeyTagGet( $pkeySearch, null, null, [ $TAG4, 'fakeTag' ], $sort2 );
-        $this->assertEquals( $exp4, $act, __FUNCTION__ . ', error 8' );
+        $this->assertEquals( $exp4, $act, __FUNCTION__ . ', error 11' );
     }
 }

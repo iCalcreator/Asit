@@ -32,6 +32,7 @@ use Kigkonsult\Asit\Exceptions\PkeyException;
 use Kigkonsult\Asit\Exceptions\PositionException;
 use Traversable;
 
+use function array_diff_key;
 use function array_keys;
 use function count;
 use function ksort;
@@ -100,13 +101,14 @@ class Asmit extends Asit
      *
      * @override
      * @return static
-     * @since 2.2.1 2024-01-08
+     * @since 2.3.12 2024-05-02
      */
     public function remove() : static
     {
-        foreach( $this->getCurrentPkeys() as $pKey ) {
-            unset( $this->pKeys[$pKey] );
-        }
+        $this->pKeys = array_diff_key(
+            $this->pKeys,
+            array_flip( $this->getCurrentPkeys())
+        );
         parent::remove();
         return $this;
     }

@@ -1,4 +1,6 @@
 
+2.3.12 method remove update
+
 2.3.11 remove CollectionException, exp int. Exceptions errTxts
 2.3.10 new PkeyTagInterface
 2.3.09 new PkeyInterface

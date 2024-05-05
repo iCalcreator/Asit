@@ -265,12 +265,12 @@ class Asit2Test extends AsitBaseTest
             $asit->getTags( $pKey2 )
         );
         $this->assertEquals(
-            [], $asit->pKeyTagGet( $search, $tags, true ),  // get( pKeys, tags )
+            [], $asit->pKeyTagGet( $search, $tags, true ),  // get( pKeys, tags ), union=true
             __FUNCTION__ . ' #12'
         );
         $this->assertEquals(
             [  $ix1 => 'element' . $ix1, $ix2 => 'element' . $ix2 ],
-            $asit->pKeyTagGet( $search, $tags, false ),  // get( pKeys, tags )
+            $asit->pKeyTagGet( $search, $tags, false ),  // get( pKeys, tags ), union=false
             __FUNCTION__ . ' #13'
         );
 
@@ -388,6 +388,33 @@ class Asit2Test extends AsitBaseTest
     }
 
     /**
+     * Testing Asittag::pKeyTagGet() with invalid tag (will be ignored)
+     *
+     * @test
+     */
+    public function asitTest39() : void
+    {
+        $asit = new Asittag();
+        foreach( self::arrayLoader( 5 ) as $pKey => $value ) {
+            $asit->append( $value, $pKey );
+            $asit->addPkeyTag( $pKey, self::getAttribute( $asit->key()));
+        } // end for
+
+        $this->assertEquals(
+            [],
+            $asit->pKeyTagGet( null, [ 2.1 ] ), // invalid tag
+            __FUNCTION__ . ' #1'
+        );
+
+        $tag  = array_rand( array_flip( $asit->getTags()));
+        $this->assertCount(
+            $asit->tagCount( $tag ),
+            $asit->pKeyTagGet( null, [ $tag, 2.1 ] ), // valid/invalid tag
+            __FUNCTION__ . ' #2'
+        );
+    }
+
+    /**
      * Testing Asit/Asmit replacePkey and reuse key
      *
      * @test
@@ -395,7 +422,10 @@ class Asit2Test extends AsitBaseTest
     public function asitTest41() : void
     {
         foreach(
-            [ new Asit( self::arrayLoader( 10 )), new Asmit( self::arrayLoader( 10 )) ]
+            [
+                new Asit( self::arrayLoader( 10 )),
+                new Asmit( self::arrayLoader( 10 ))
+            ]
             as $tx => $asit ) {
 
             $asit->seek( array_rand( array_flip( range( 0, 8 ))));
@@ -1077,11 +1107,59 @@ class Asit2Test extends AsitBaseTest
         $asit->remove();
         $asit->previous();
         $asit->remove();
+        $cnt = count( $asit->get());
+        $this->assertEquals( 2, $cnt, __FUNCTION__ . '-4, exp 2, got: ' . $cnt );
         $asit->previous();
         $asit->remove();
         $asit->previous();
         $asit->remove();
-        $this->assertEquals( 0, $asit->count(), __FUNCTION__ . '-4, exp 0, got: ' . $asit->count());
+        $this->assertEquals( 0, $asit->count(), __FUNCTION__ . '-5, exp 0, got: ' . $asit->count());
     }
 
+    /**
+     * Testing Asmit getCurrentPkeys, pKeyExists, remove
+     *
+     * @test
+     */
+    public function asmitTest77() : void
+    {
+        $asmit = new Asmit();
+        foreach( self::arrayLoader( 10 ) as $key => $value ) {
+            $asmit->append( $value, $key . 1 );
+            $asmit->addCurrentPkey( $key . 2 );
+        } // end for
+        $cnt = $asmit->count();
+
+        $this->assertEquals( $cnt, $asmit->count(), __FUNCTION__ . '-1' );
+
+        $asmit->last()
+            ->previous()
+            ->previous()
+            ->previous()
+            ->previous()
+            ->previous();
+        $pKeys = $asmit->getCurrentPkeys();
+        $this->assertTrue( $asmit->pKeyExists( $pKeys[0] ), __FUNCTION__ . '-2' );
+        $this->assertTrue( $asmit->pKeyExists( $pKeys[1] ), __FUNCTION__ . '-3' );
+
+        $key   = $asmit->key();
+        $this->assertTrue( $asmit->exists( $key ), __FUNCTION__ . '-4' );
+
+        $asmit->rewind();
+        $asmit->pKeySeek( $pKeys[0] );
+        $this->assertEquals( $key, $asmit->key(), __FUNCTION__ . '-5' );
+
+        $asmit->last();
+        $asmit->pKeySeek( $pKeys[1] );
+        $this->assertEquals( $key, $asmit->key(), __FUNCTION__ . '-6' );
+
+        $cnt = $asmit->count();
+        $asmit->remove();
+        $this->assertCount(( $cnt - 1 ), $asmit->get(), __FUNCTION__ . '-7' );
+        $this->assertEquals(( $cnt - 1 ), $asmit->count(), __FUNCTION__ . '-8' );
+
+        $this->assertFalse( $asmit->pKeyExists( $pKeys[0] ), __FUNCTION__ . '-9' );
+        $this->assertFalse( $asmit->pKeyExists( $pKeys[1] ), __FUNCTION__ . '-010' );
+        $this->assertFalse( $asmit->exists( $key ), __FUNCTION__ . '-11' );
+    }
 }

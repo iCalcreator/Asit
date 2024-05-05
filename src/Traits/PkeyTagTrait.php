@@ -216,17 +216,17 @@ trait PkeyTagTrait
      *
      * Return empty array on not found or for incompatible tags
      *
-     * @param int|string|int[]|string[] $tags
+     * @param int[]|string[] $tags
      * @param bool|null $union
      * @return int[]
      */
-    protected function getTagIndexes( array|int|string $tags, ? bool $union = true ) : array
+    protected function getTagIndexes( array $tags, ? bool $union = true ) : array
     {
         $elementIxs = [];
         if( null === $union ) {
             $union = true;
         }
-        foreach((array) $tags as $tag ) {
+        foreach( $tags as $tag ) {
             try {
                 self::assertTag( $tag );
             }

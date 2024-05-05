@@ -373,7 +373,7 @@ class ItTest extends AsitBaseTest
     }
 
     /**
-     * @test It isCollectionSet, last, previous, remove
+     * @test It isCollectionSet, last, previous, remove, counting
      *
      */
     public function itTest4() : void
@@ -424,11 +424,35 @@ class ItTest extends AsitBaseTest
         $key = $it->key();
         $this->assertEquals( 4, $key, __FUNCTION__ . ' #12, exp 4, got: ' . $key );
 
+        $cnt1 = $it->count();
+        $cnt2 = count( $it->get());
+        $this->assertEquals( $cnt1, $cnt2, __FUNCTION__ . ' #13, exp ' . $cnt1 . ', got: ' . $cnt2 );
+
         $it->last();
         while( $it->valid()) {
             $it->remove();
             $it->previous();
         }
-        $this->assertEquals( -1, $it->key(), __FUNCTION__ . ' #13');
+
+        $currKey = $it->key();
+        $ok = 0;
+        try {
+            $it->seek( $currKey );
+            $ok = 1;
+        }
+        catch( OutOfBoundsException $e ) {
+            $ok = 2;
+        }
+        catch( Exception $e ) {
+            $ok = 3;
+        }
+        $this->assertEquals( 2, $ok, __FUNCTION__ . ' #14, exp 2, got: ' . $ok );
+
+        $this->assertEquals( -1, $currKey, __FUNCTION__ . ' #15, exp -1, got: ' . $currKey );
+
+        $cnt1 = $it->count();
+        $this->assertEquals( 0, $cnt1, __FUNCTION__ . ' #15, exp 0, got: ' . $cnt1 );
+        $cnt2 = count( $it->get());
+        $this->assertEquals( 0, $cnt2, __FUNCTION__ . ' #16, exp 0, got: ' . $cnt2 );
     }
 }

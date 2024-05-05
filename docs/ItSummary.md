@@ -125,7 +125,7 @@ It class is extended by :
  
 ```It::remove()```
 * Remove the current element. 
-* The current element is hereafter null (i.e. NOT valid)
+* The current position is hereafter invalid
 * Return _static_
 
 ```It::rewind()```
